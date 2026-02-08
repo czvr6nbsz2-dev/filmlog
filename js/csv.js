@@ -7,6 +7,8 @@ export function parseCSV(text) {
     const titleIdx = header.findIndex(h => h.includes('titel') || h.includes('title') || h.includes('film'));
     const dateIdx = header.findIndex(h => h.includes('datum') || h.includes('date'));
     const locIdx = header.findIndex(h => h.includes('locatie') || h.includes('location') || h.includes('bioscoop') || h.includes('waar'));
+    const descIdx = header.findIndex(h => h.includes('toelichting') || h.includes('beschrijving') || h.includes('description'));
+    const reviewIdx = header.findIndex(h => h.includes('oordeel') || h.includes('review') || h.includes('beoordeling'));
 
     if (titleIdx === -1) {
         throw new Error('Kolom "filmtitel" niet gevonden. Verwacht: filmtitel, kijkdatum, locatie');
@@ -40,7 +42,17 @@ export function parseCSV(text) {
             }
         }
 
-        entries.push({ title, watchDate, location });
+        let description = null;
+        if (descIdx >= 0 && cols[descIdx]) {
+            description = cols[descIdx].trim() || null;
+        }
+
+        let review = null;
+        if (reviewIdx >= 0 && cols[reviewIdx]) {
+            review = cols[reviewIdx].trim() || null;
+        }
+
+        entries.push({ title, watchDate, location, description, review });
     }
 
     if (!entries.length) throw new Error('Geen geldige filmregels gevonden.');
