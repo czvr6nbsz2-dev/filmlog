@@ -387,6 +387,7 @@ async function handleCSVImport(file) {
                 title: entry.title,
                 watchDate: entry.watchDate,
                 location: entry.location,
+                myReview: [entry.description, entry.review].filter(Boolean).join(' — ') || null,
             };
 
             if (hasApiKey()) {
@@ -394,7 +395,7 @@ async function handleCSVImport(file) {
                     const results = await searchFilms(entry.title);
                     if (results.length > 0) {
                         const detail = await fetchDetail(results[0].imdbID);
-                        film = enrichFilm(film, detail);
+                        film = { ...enrichFilm(film, detail), myReview: film.myReview };
                     }
                     // Respect rate limit
                     await sleep(350);
