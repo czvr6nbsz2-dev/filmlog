@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BoekLog">
+    <meta name="theme-color" content="#ffffff">
+    <title>BoekLog</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main Screen -->
+    <div id="main-screen" class="screen" hidden>
+        <header class="topbar">
+            <button id="btn-settings" class="icon-btn" aria-label="Instellingen">&#x2699;&#xFE0F;</button>
+            <h1>Boekenlogboek</h1>
+            <button id="btn-add" class="icon-btn" aria-label="Boek toevoegen">&#xFF0B;</button>
+        </header>
+
+        <div id="book-list" class="book-list">
+            <div id="empty-state" class="empty-state" hidden>
+                <div class="empty-icon">📚</div>
+                <p>Nog geen boeken.<br>Voeg je eerste boek toe!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Book Modal -->
+    <div id="add-modal" class="modal" hidden>
+        <div class="modal-content">
+            <header class="modal-header">
+                <button class="modal-close" data-close="add-modal">&#x2715;</button>
+                <h2 id="add-modal-title">Boek toevoegen</h2>
+                <div></div>
+            </header>
+
+            <!-- Step 1: Input -->
+            <div id="add-step-input" class="step">
+                <div class="form-group">
+                    <label>Titel</label>
+                    <input type="text" id="book-title-input" placeholder="Bijv. De ontdekking van de hemel" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Auteur</label>
+                    <input type="text" id="book-author-input" placeholder="Bijv. Harry Mulisch" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Datum uitgelezen</label>
+                    <input type="date" id="book-date-input">
+                </div>
+                <button id="btn-search" class="btn-primary" disabled>Zoeken</button>
+            </div>
+
+            <!-- Step 2: Search Results -->
+            <div id="add-step-results" class="step" hidden>
+                <p class="step-hint">Selecteer het juiste boek:</p>
+                <div id="search-results"></div>
+                <button id="btn-skip-search" class="btn-text">Overslaan zonder verrijking</button>
+            </div>
+
+            <!-- Step 3: Confirm -->
+            <div id="add-step-confirm" class="step" hidden>
+                <div id="confirm-card" class="book-card-detail"></div>
+                <button id="btn-confirm" class="btn-primary">Bevestigen &amp; oordeel geven</button>
+            </div>
+
+            <!-- Step 4: Review -->
+            <div id="add-step-review" class="step" hidden>
+                <div class="form-group">
+                    <label>Wat vond je ervan?</label>
+                    <textarea id="review-input" rows="4" placeholder="Je persoonlijke oordeel..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Score (optioneel)</label>
+                    <div class="rating-picker" id="rating-picker">
+                        <button class="rating-dot" data-rating="1">1</button>
+                        <button class="rating-dot" data-rating="2">2</button>
+                        <button class="rating-dot" data-rating="3">3</button>
+                        <button class="rating-dot" data-rating="4">4</button>
+                        <button class="rating-dot" data-rating="5">5</button>
+                        <button class="rating-dot" data-rating="6">6</button>
+                        <button class="rating-dot" data-rating="7">7</button>
+                        <button class="rating-dot" data-rating="8">8</button>
+                        <button class="rating-dot" data-rating="9">9</button>
+                        <button class="rating-dot" data-rating="10">10</button>
+                    </div>
+                </div>
+                <button id="btn-save" class="btn-primary">Opslaan</button>
+            </div>
+
+            <!-- Loading -->
+            <div id="add-step-loading" class="step" hidden>
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p id="loading-text">Zoeken...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detail-modal" class="modal" hidden>
+        <div class="modal-content">
+            <header class="modal-header">
+                <button class="modal-close" data-close="detail-modal">&#x2715;</button>
+                <h2 id="detail-title">Boek</h2>
+                <button id="btn-edit-review" class="header-action">Bewerk</button>
+            </header>
+            <div id="detail-content"></div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal" hidden>
+        <div class="modal-content">
+            <header class="modal-header">
+                <button class="modal-close" data-close="settings-modal">&#x2715;</button>
+                <h2>Instellingen</h2>
+                <div></div>
+            </header>
+            <div class="settings-body">
+                <div class="settings-section">
+                    <h3>PDF Export</h3>
+                    <button id="btn-pdf" class="btn-secondary">&#x1F4C4; PDF genereren &amp; downloaden</button>
+                </div>
+                <div class="settings-section" id="csv-section">
+                    <h3>CSV Import</h3>
+                    <p class="hint">Eenmalige import van je leesgeschiedenis.</p>
+                    <input type="file" id="csv-file" accept=".csv,.txt" hidden>
+                    <button id="btn-csv" class="btn-secondary">&#x1F4C1; CSV importeren</button>
+                    <div id="import-progress" hidden>
+                        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+                        <p id="import-status"></p>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>Data</h3>
+                    <button id="btn-export-json" class="btn-secondary">&#x1F4BE; Backup exporteren (JSON)</button>
+                    <input type="file" id="json-file" accept=".json" hidden>
+                    <button id="btn-import-json" class="btn-secondary">&#x1F4C2; Backup importeren (JSON)</button>
+                </div>
+                <div class="settings-section">
+                    <p class="stats" id="stats"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+    <script type="module" src="js/db.js"></script>
+    <script type="module" src="js/openlibrary.js"></script>
+    <script type="module" src="js/pdf.js"></script>
+    <script type="module" src="js/csv.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
