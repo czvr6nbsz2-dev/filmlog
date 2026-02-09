@@ -1,4 +1,4 @@
-const CACHE_NAME = 'boeklog-v1';
+const CACHE_NAME = 'boeklog-v2';
 const ASSETS = [
     './',
     './index.html',
@@ -6,6 +6,7 @@ const ASSETS = [
     './js/app.js',
     './js/db.js',
     './js/openlibrary.js',
+    './js/github.js',
     './js/pdf.js',
     './js/csv.js',
     './manifest.json',
@@ -29,7 +30,7 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
     // Network-first for API calls, cache-first for assets
-    if (e.request.url.includes('openlibrary.org')) {
+    if (e.request.url.includes('openlibrary.org') || e.request.url.includes('api.github.com')) {
         e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
     } else {
         e.respondWith(

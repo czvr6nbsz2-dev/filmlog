@@ -259,6 +259,7 @@ body {
 
 input[type="text"],
 input[type="date"],
+input[type="password"],
 textarea {
     width: 100%;
     padding: 12px 14px;
@@ -604,3 +605,35 @@ textarea { resize: vertical; }
 .year-header:first-child {
     padding-top: 8px;
 }
+
+/* ---- Sync Indicator ---- */
+
+.sync-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+.sync-indicator.syncing {
+    background: var(--amber);
+    animation: pulse 1s ease infinite;
+}
+
+.sync-indicator.synced {
+    background: var(--green);
+}
+
+.sync-indicator.error {
+    background: var(--red);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+#github-status.success { color: var(--green); }
+#github-status.error { color: var(--red); }
