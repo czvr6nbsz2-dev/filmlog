@@ -1,5 +1,6 @@
-import { getAllBooks, saveBook, deleteBook, saveMany, getSetting, setSetting, exportAll, importAll } from './db.js';
+import { getAllBooks, getAllBooksIncludingDeleted, saveBook, deleteBook, softDeleteBook, saveMany, getSetting, setSetting, exportAll, importAll, replaceAll } from './db.js';
 import { searchBooks, getFullBookDetail, enrichBook } from './openlibrary.js';
+import { isSyncEnabled, syncAll } from './github.js';
 import { generatePDF } from './pdf.js';
 import { parseCSV } from './csv.js';
 
@@ -24,6 +25,42 @@ document.addEventListener('DOMContentLoaded', init);
 async function init() {
     showMain();
     initEventListeners();
+    if (isSyncEnabled()) {
+        triggerSync();
+    }
+    window.addEventListener('online', () => {
+        if (isSyncEnabled()) triggerSync();
+    });
+}
+
+// ---- Sync ----
+let syncing = false;
+
+function showSyncIndicator(state) {
+    const el = $('#sync-indicator');
+    if (!el) return;
+    el.hidden = state === 'idle';
+    el.className = 'sync-indicator ' + state;
+}
+
+async function triggerSync() {
+    if (syncing) return;
+    syncing = true;
+    showSyncIndicator('syncing');
+    try {
+        const localBooks = await getAllBooksIncludingDeleted();
+        const result = await syncAll(localBooks);
+        await replaceAll(result.books);
+        books = result.books.filter(b => !b.deletedAt).sort((a, b) => new Date(b.readDate) - new Date(a.readDate));
+        renderBookList();
+        showSyncIndicator('synced');
+        setTimeout(() => showSyncIndicator('idle'), 3000);
+    } catch {
+        showSyncIndicator('error');
+        setTimeout(() => showSyncIndicator('idle'), 5000);
+    } finally {
+        syncing = false;
+    }
 }
 
 // ---- Main Screen ----
@@ -212,6 +249,7 @@ async function doSave() {
         books.sort((a, b) => new Date(b.readDate) - new Date(a.readDate));
         renderBookList();
         addModal.hidden = true;
+        if (isSyncEnabled()) triggerSync();
     } catch (err) {
         alert('Fout bij opslaan: ' + err.message);
         showStep('add-step-review');
@@ -266,10 +304,15 @@ function showDetail(book) {
 
     $('#btn-delete-book').addEventListener('click', async () => {
         if (!confirm(`'${book.title}' verwijderen?`)) return;
-        await deleteBook(book.id);
+        if (isSyncEnabled()) {
+            await softDeleteBook(book.id);
+        } else {
+            await deleteBook(book.id);
+        }
         books = books.filter(b => b.id !== book.id);
         renderBookList();
         detailModal.hidden = true;
+        if (isSyncEnabled()) triggerSync();
     });
 
     detailModal.hidden = false;
@@ -316,6 +359,7 @@ function showEditReview(book) {
         if (idx >= 0) books[idx] = book;
         renderBookList();
         showDetail(book);
+        if (isSyncEnabled()) triggerSync();
     });
 }
 
@@ -323,8 +367,16 @@ function showEditReview(book) {
 function openSettings() {
     const csvSection = $('#csv-section');
     if (getSetting('importCompleted')) {
-        csvSection.innerHTML = '<h3>CSV Import</h3><p style="color:var(--green)">&#x2713; Import voltooid</p>';
+        csvSection.innerHTML = '<h3>CSV Import</h3><p style="color:var(--green)">\u2713 Import voltooid</p>';
     }
+    // GitHub sync settings
+    $('#github-token').value = getSetting('github_token') || '';
+    $('#github-repo').value = getSetting('github_repo') || 'czvr6nbsz2-dev/filmlog';
+    $('#github-path').value = getSetting('github_path') || 'boeklog/data/boeken.json';
+    const ghStatus = $('#github-status');
+    ghStatus.textContent = isSyncEnabled() ? '\u2713 Sync is actief' : '';
+    ghStatus.className = isSyncEnabled() ? 'hint success' : 'hint';
+
     $('#stats').textContent = `${books.length} boeken in je logboek`;
     settingsModal.hidden = false;
 }
@@ -376,7 +428,8 @@ async function handleCSVImport(file) {
         renderBookList();
 
         status.textContent = `\u2713 ${newBooks.length} boeken ge\u00EFmporteerd!`;
-        alert(`${newBooks.length} boeken succesvol geimporteerd.`);
+        alert(`${newBooks.length} boeken succesvol ge\u00EFmporteerd.`);
+        if (isSyncEnabled()) triggerSync();
     } catch (err) {
         alert('Importfout: ' + err.message);
         progress.hidden = true;
@@ -439,6 +492,37 @@ function initEventListeners() {
     $('#btn-csv').addEventListener('click', () => $('#csv-file').click());
     $('#csv-file').addEventListener('change', (e) => {
         if (e.target.files[0]) handleCSVImport(e.target.files[0]);
+    });
+
+    // Settings: GitHub sync
+    $('#btn-github-save').addEventListener('click', () => {
+        const token = $('#github-token').value.trim();
+        const repo = $('#github-repo').value.trim();
+        const path = $('#github-path').value.trim();
+        setSetting('github_token', token);
+        if (repo) setSetting('github_repo', repo);
+        if (path) setSetting('github_path', path);
+        const ghStatus = $('#github-status');
+        ghStatus.textContent = token ? '\u2713 Instellingen opgeslagen' : 'Token verwijderd';
+        ghStatus.className = token ? 'hint success' : 'hint';
+    });
+    $('#btn-github-sync').addEventListener('click', async () => {
+        const ghStatus = $('#github-status');
+        if (!isSyncEnabled()) {
+            ghStatus.textContent = 'Sla eerst een token op.';
+            ghStatus.className = 'hint error';
+            return;
+        }
+        ghStatus.textContent = 'Synchroniseren...';
+        ghStatus.className = 'hint';
+        try {
+            await triggerSync();
+            ghStatus.textContent = `\u2713 Gesynchroniseerd (${books.length} boeken)`;
+            ghStatus.className = 'hint success';
+        } catch (err) {
+            ghStatus.textContent = 'Fout: ' + err.message;
+            ghStatus.className = 'hint error';
+        }
     });
 
     // Settings: JSON export/import

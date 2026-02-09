@@ -17,7 +17,7 @@
     <div id="main-screen" class="screen" hidden>
         <header class="topbar">
             <button id="btn-settings" class="icon-btn" aria-label="Instellingen">&#x2699;&#xFE0F;</button>
-            <h1>Boekenlogboek</h1>
+            <h1>Boekenlogboek <span id="sync-indicator" class="sync-indicator" hidden></span></h1>
             <button id="btn-add" class="icon-btn" aria-label="Boek toevoegen">&#xFF0B;</button>
         </header>
 
@@ -137,6 +137,25 @@
                         <p id="import-status"></p>
                     </div>
                 </div>
+                <div class="settings-section" id="github-section">
+                    <h3>GitHub Sync</h3>
+                    <p class="hint">Synchroniseer je boeken via GitHub zodat je op meerdere apparaten dezelfde data hebt.</p>
+                    <div class="form-group">
+                        <label>Personal Access Token</label>
+                        <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label>Repository</label>
+                        <input type="text" id="github-repo" placeholder="czvr6nbsz2-dev/filmlog" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label>Bestandspad</label>
+                        <input type="text" id="github-path" placeholder="boeklog/data/boeken.json" autocomplete="off">
+                    </div>
+                    <button id="btn-github-save" class="btn-small">Opslaan</button>
+                    <button id="btn-github-sync" class="btn-secondary">&#x1F504; Nu synchroniseren</button>
+                    <p id="github-status" class="hint"></p>
+                </div>
                 <div class="settings-section">
                     <h3>Data</h3>
                     <button id="btn-export-json" class="btn-secondary">&#x1F4BE; Backup exporteren (JSON)</button>
@@ -155,6 +174,7 @@
     <script type="module" src="js/openlibrary.js"></script>
     <script type="module" src="js/pdf.js"></script>
     <script type="module" src="js/csv.js"></script>
+    <script type="module" src="js/github.js"></script>
     <script type="module" src="js/app.js"></script>
 </body>
 </html>

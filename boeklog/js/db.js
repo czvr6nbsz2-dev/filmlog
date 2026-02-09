@@ -34,7 +34,12 @@ function reqToPromise(req) {
 export async function getAllBooks() {
     const store = await tx('readonly');
     const books = await reqToPromise(store.getAll());
-    return books.sort((a, b) => new Date(b.readDate) - new Date(a.readDate));
+    return books.filter(b => !b.deletedAt).sort((a, b) => new Date(b.readDate) - new Date(a.readDate));
+}
+
+export async function getAllBooksIncludingDeleted() {
+    const store = await tx('readonly');
+    return reqToPromise(store.getAll());
 }
 
 export async function saveBook(book) {
@@ -48,6 +53,30 @@ export async function saveBook(book) {
 export async function deleteBook(id) {
     const store = await tx('readwrite');
     await reqToPromise(store.delete(id));
+}
+
+export async function softDeleteBook(id) {
+    const store = await tx('readwrite');
+    const book = await reqToPromise(store.get(id));
+    if (book) {
+        book.deletedAt = new Date().toISOString();
+        book.updatedAt = new Date().toISOString();
+        await reqToPromise(store.put(book));
+    }
+}
+
+export async function replaceAll(books) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(STORE, 'readwrite');
+        const store = transaction.objectStore(STORE);
+        store.clear();
+        for (const book of books) {
+            store.put(book);
+        }
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = () => reject(transaction.error);
+    });
 }
 
 export async function saveMany(books) {
