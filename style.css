@@ -188,6 +188,10 @@ body {
     font-weight: 600;
 }
 
+a.badge-imdb {
+    text-decoration: none;
+}
+
 .badge-my {
     color: var(--pink);
     font-weight: 600;
@@ -501,6 +505,28 @@ textarea { resize: vertical; }
     color: var(--text-secondary);
     line-height: 1.5;
     font-style: italic;
+}
+
+.imdb-link {
+    color: var(--orange);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.search-no-results {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--text-secondary);
+}
+
+.search-no-results p:first-child {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.search-no-results p:last-child {
+    font-size: 0.85rem;
 }
 
 /* ---- Detail View ---- */

@@ -101,7 +101,8 @@ function renderFilmList() {
         const locName = film.location === 'bioscoop' ? 'Bioscoop' : 'Thuis';
 
         let ratingsHTML = '';
-        if (film.imdbRating) ratingsHTML += `<span class="badge-imdb">★ ${esc(film.imdbRating)}</span>`;
+        if (film.imdbRating && film.imdbID) ratingsHTML += `<a href="https://www.imdb.com/title/${esc(film.imdbID)}/" target="_blank" class="badge-imdb badge-imdb-link" onclick="event.stopPropagation()">★ ${esc(film.imdbRating)}</a>`;
+        else if (film.imdbRating) ratingsHTML += `<span class="badge-imdb">★ ${esc(film.imdbRating)}</span>`;
         if (film.myRating) ratingsHTML += `<span class="badge-my">♥ ${film.myRating}/10</span>`;
 
         row.innerHTML = `
@@ -159,12 +160,15 @@ async function doSearch() {
         if (results.length === 1) {
             await selectSearchResult(results[0].imdbID);
         } else {
+            $('#add-step-results .step-hint').hidden = false;
             renderSearchResults(results);
             showStep('add-step-results');
         }
     } catch (err) {
-        alert(err.message);
-        showStep('add-step-input');
+        // Show results step so user can still save without IMDb
+        $('#search-results').innerHTML = `<div class="search-no-results"><p>${esc(err.message)}</p><p>Je kunt doorgaan zonder IMDb-koppeling.</p></div>`;
+        $('#add-step-results .step-hint').hidden = true;
+        showStep('add-step-results');
     }
 }
 
@@ -223,7 +227,8 @@ function renderConfirmation(detail) {
     `;
     if (detail.directors) html += `<div class="detail-row"><span class="detail-label">Regie</span><span class="detail-value">${esc(detail.directors)}</span></div>`;
     if (detail.actors) html += `<div class="detail-row"><span class="detail-label">Acteurs</span><span class="detail-value">${esc(detail.actors)}</span></div>`;
-    if (detail.imdbRating) html += `<div class="detail-row"><span class="detail-label">IMDb</span><span class="detail-value">★ ${esc(detail.imdbRating)}</span></div>`;
+    if (detail.imdbRating && detail.imdbID) html += `<div class="detail-row"><span class="detail-label">IMDb</span><a href="https://www.imdb.com/title/${esc(detail.imdbID)}/" target="_blank" class="detail-value imdb-link">★ ${esc(detail.imdbRating)}</a></div>`;
+    else if (detail.imdbRating) html += `<div class="detail-row"><span class="detail-label">IMDb</span><span class="detail-value">★ ${esc(detail.imdbRating)}</span></div>`;
     if (detail.plot) html += `<div class="detail-plot">${esc(detail.plot)}</div>`;
 
     card.innerHTML = html;
@@ -265,7 +270,8 @@ function showDetail(film) {
     if (film.year) html += `<div class="detail-row"><span class="detail-label">Jaar</span><span class="detail-value">${esc(film.year)}</span></div>`;
     if (film.directors) html += `<div class="detail-row"><span class="detail-label">Regie</span><span class="detail-value">${esc(film.directors)}</span></div>`;
     if (film.actors) html += `<div class="detail-row"><span class="detail-label">Acteurs</span><span class="detail-value">${esc(film.actors)}</span></div>`;
-    if (film.imdbRating) html += `<div class="detail-row"><span class="detail-label">IMDb</span><span class="detail-value">★ ${esc(film.imdbRating)}</span></div>`;
+    if (film.imdbRating && film.imdbID) html += `<div class="detail-row"><span class="detail-label">IMDb</span><a href="https://www.imdb.com/title/${esc(film.imdbID)}/" target="_blank" class="detail-value imdb-link">★ ${esc(film.imdbRating)}</a></div>`;
+    else if (film.imdbRating) html += `<div class="detail-row"><span class="detail-label">IMDb</span><span class="detail-value">★ ${esc(film.imdbRating)}</span></div>`;
     html += `</div></div>`;
 
     // Watch info
