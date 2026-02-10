@@ -101,7 +101,9 @@ function renderFilmList() {
         const locName = film.location === 'bioscoop' ? 'Bioscoop' : 'Thuis';
 
         let ratingsHTML = '';
-        if (film.imdbRating) ratingsHTML += `<span class="badge-imdb">★ ${esc(film.imdbRating)}</span>`;
+        if (film.imdbRating && film.imdbID) {
+            ratingsHTML += `<a href="https://www.imdb.com/title/${esc(film.imdbID)}" target="_blank" class="badge-imdb" style="text-decoration:none;cursor:pointer">★ ${esc(film.imdbRating)}</a>`;
+        }
         if (film.myRating) ratingsHTML += `<span class="badge-my">♥ ${film.myRating}/10</span>`;
 
         row.innerHTML = `
@@ -158,13 +160,25 @@ async function doSearch() {
         const results = await searchFilms(query);
         if (results.length === 1) {
             await selectSearchResult(results[0].imdbID);
-        } else {
+        } else if (results.length > 0) {
             renderSearchResults(results);
             showStep('add-step-results');
+        } else {
+            // No results found - show option to continue without IMDb
+            const msg = `'${query}' niet gevonden op IMDb.\n\nJe kunt:\n• Opnieuw zoeken met andere woorden\n• Zonder IMDb-data doorgaan en de film handmatig invullen`;
+            if (confirm(msg + '\n\nKlik OK om zonder IMDb door te gaan, of Cancel om opnieuw te zoeken.')) {
+                showStep('add-step-review');
+            } else {
+                showStep('add-step-input');
+            }
         }
     } catch (err) {
-        alert(err.message);
-        showStep('add-step-input');
+        // Search error - offer to continue without IMDb
+        if (confirm(`Zoeken mislukt: ${err.message}\n\nWil je zonder IMDb-data doorgaan?`)) {
+            showStep('add-step-review');
+        } else {
+            showStep('add-step-input');
+        }
     }
 }
 
@@ -223,7 +237,12 @@ function renderConfirmation(detail) {
     `;
     if (detail.directors) html += `<div class="detail-row"><span class="detail-label">Regie</span><span class="detail-value">${esc(detail.directors)}</span></div>`;
     if (detail.actors) html += `<div class="detail-row"><span class="detail-label">Acteurs</span><span class="detail-value">${esc(detail.actors)}</span></div>`;
-    if (detail.imdbRating) html += `<div class="detail-row"><span class="detail-label">IMDb</span><span class="detail-value">★ ${esc(detail.imdbRating)}</span></div>`;
+    if (detail.imdbRating) {
+        const imdbLink = detail.imdbID
+            ? `<a href="https://www.imdb.com/title/${esc(detail.imdbID)}" target="_blank" style="text-decoration:none;color:inherit;cursor:pointer">★ ${esc(detail.imdbRating)}</a>`
+            : `★ ${esc(detail.imdbRating)}`;
+        html += `<div class="detail-row"><span class="detail-label">IMDb</span><span class="detail-value">${imdbLink}</span></div>`;
+    }
     if (detail.plot) html += `<div class="detail-plot">${esc(detail.plot)}</div>`;
 
     card.innerHTML = html;
@@ -265,7 +284,12 @@ function showDetail(film) {
     if (film.year) html += `<div class="detail-row"><span class="detail-label">Jaar</span><span class="detail-value">${esc(film.year)}</span></div>`;
     if (film.directors) html += `<div class="detail-row"><span class="detail-label">Regie</span><span class="detail-value">${esc(film.directors)}</span></div>`;
     if (film.actors) html += `<div class="detail-row"><span class="detail-label">Acteurs</span><span class="detail-value">${esc(film.actors)}</span></div>`;
-    if (film.imdbRating) html += `<div class="detail-row"><span class="detail-label">IMDb</span><span class="detail-value">★ ${esc(film.imdbRating)}</span></div>`;
+    if (film.imdbRating) {
+        const imdbLink = film.imdbID
+            ? `<a href="https://www.imdb.com/title/${esc(film.imdbID)}" target="_blank" style="text-decoration:none;color:inherit;cursor:pointer">★ ${esc(film.imdbRating)}</a>`
+            : `★ ${esc(film.imdbRating)}`;
+        html += `<div class="detail-row"><span class="detail-label">IMDb</span><span class="detail-value">${imdbLink}</span></div>`;
+    }
     html += `</div></div>`;
 
     // Watch info
