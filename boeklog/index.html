@@ -21,12 +21,15 @@
             <button id="btn-add" class="icon-btn" aria-label="Boek toevoegen">&#xFF0B;</button>
         </header>
 
-        <div id="book-list" class="book-list">
-            <div id="empty-state" class="empty-state" hidden>
-                <div class="empty-icon">📚</div>
-                <p>Nog geen boeken.<br>Voeg je eerste boek toe!</p>
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" class="search-input" placeholder="Zoek op titel of auteur..." autocomplete="off">
+                <button id="search-clear" class="search-clear" hidden aria-label="Wissen">✕</button>
             </div>
         </div>
+
+        <div id="book-list" class="book-list"></div>
     </div>
 
     <!-- Add Book Modal -->

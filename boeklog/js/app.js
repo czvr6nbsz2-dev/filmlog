@@ -9,6 +9,7 @@ let books = [];
 let currentBook = {};
 let selectedDetail = null;
 let selectedRating = null;
+let searchQuery = '';
 
 // ---- DOM refs ----
 const $ = (sel) => document.querySelector(sel);
@@ -18,6 +19,9 @@ const mainScreen = $('#main-screen');
 const addModal = $('#add-modal');
 const detailModal = $('#detail-modal');
 const settingsModal = $('#settings-modal');
+
+const searchInput = $('#search-input');
+const searchClear = $('#search-clear');
 
 // ---- Init ----
 document.addEventListener('DOMContentLoaded', init);
@@ -70,21 +74,42 @@ async function showMain() {
     renderBookList();
 }
 
+function filterBooks(books, query) {
+    if (!query || !query.trim()) {
+        return books;
+    }
+
+    const searchTerm = query.trim().toLowerCase();
+
+    return books.filter(book => {
+        const titleMatch = book.title && book.title.toLowerCase().includes(searchTerm);
+        const authorMatch = book.author && book.author.toLowerCase().includes(searchTerm);
+        return titleMatch || authorMatch;
+    });
+}
+
 function renderBookList() {
     const list = $('#book-list');
-    const empty = $('#empty-state');
+    list.querySelectorAll('.book-row, .year-header, .no-results').forEach(el => el.remove());
 
-    list.querySelectorAll('.book-row, .year-header').forEach(el => el.remove());
+    // Filter books based on search query
+    const filteredBooks = filterBooks(books, searchQuery);
 
-    if (!books.length) {
-        empty.hidden = false;
+    // If search active but no results, show no-results message
+    if (searchQuery.trim() && !filteredBooks.length) {
+        const noResults = document.createElement('div');
+        noResults.className = 'no-results';
+        noResults.innerHTML = `
+            <div class="no-results-icon">🔍</div>
+            <p>Geen boeken gevonden<br>voor "${esc(searchQuery)}"</p>
+        `;
+        list.appendChild(noResults);
         return;
     }
-    empty.hidden = true;
 
     let currentYear = null;
 
-    for (const book of books) {
+    for (const book of filteredBooks) {
         const year = new Date(book.readDate).getFullYear();
         if (year !== currentYear) {
             currentYear = year;
@@ -449,6 +474,35 @@ function initEventListeners() {
         });
     });
 
+    // Search functionality
+    const debouncedSearch = debounce(() => {
+        searchQuery = searchInput.value;
+        renderBookList();
+    }, 300);
+
+    searchInput.addEventListener('input', (e) => {
+        const hasValue = e.target.value.trim().length > 0;
+        searchClear.hidden = !hasValue;
+        debouncedSearch();
+    });
+
+    // Clear search button
+    searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        searchQuery = '';
+        searchClear.hidden = true;
+        renderBookList();
+    });
+
+    // Enter key on mobile triggers search immediately (bypasses debounce)
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            searchQuery = searchInput.value;
+            renderBookList();
+        }
+    });
+
     // Title/author input -> enable search
     const titleInput = $('#book-title-input');
     const authorInput = $('#book-author-input');
@@ -556,6 +610,14 @@ function formatDate(dateStr) {
     } catch {
         return dateStr;
     }
+}
+
+function debounce(func, delay) {
+    let timeoutId;
+    return function(...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
 }
 
 function esc(str) {
