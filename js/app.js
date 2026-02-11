@@ -66,19 +66,29 @@ async function showMain() {
 function renderFilmList() {
     const list = $('#film-list');
     const empty = $('#empty-state');
+    const query = ($('#search-input')?.value || '').trim().toLowerCase();
 
     // Remove existing rows and headers
     list.querySelectorAll('.film-row, .year-header').forEach(el => el.remove());
 
-    if (!films.length) {
-        empty.hidden = false;
+    const filtered = query
+        ? films.filter(f => f.title.toLowerCase().includes(query) ||
+            (f.directors && f.directors.toLowerCase().includes(query)) ||
+            (f.actors && f.actors.toLowerCase().includes(query)))
+        : films;
+
+    if (!filtered.length) {
+        empty.style.display = 'flex';
+        empty.querySelector('p').innerHTML = query
+            ? `Geen films gevonden voor '<b>${esc(query)}</b>'.`
+            : 'Nog geen films.<br>Voeg je eerste film toe!';
         return;
     }
-    empty.hidden = true;
+    empty.style.display = 'none';
 
     let currentYear = null;
 
-    for (const film of films) {
+    for (const film of filtered) {
         const year = new Date(film.watchDate).getFullYear();
         if (year !== currentYear) {
             currentYear = year;
@@ -446,6 +456,9 @@ async function handleCSVImport(file) {
 
 // ---- Event Listeners ----
 function initEventListeners() {
+    // Search
+    $('#search-input').addEventListener('input', () => renderFilmList());
+
     // Add film
     $('#btn-add').addEventListener('click', openAddModal);
     $('#btn-settings').addEventListener('click', openSettings);
