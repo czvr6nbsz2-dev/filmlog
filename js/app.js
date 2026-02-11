@@ -78,13 +78,13 @@ function renderFilmList() {
         : films;
 
     if (!filtered.length) {
-        empty.hidden = false;
+        empty.style.display = 'flex';
         empty.querySelector('p').innerHTML = query
             ? `Geen films gevonden voor '<b>${esc(query)}</b>'.`
             : 'Nog geen films.<br>Voeg je eerste film toe!';
         return;
     }
-    empty.hidden = true;
+    empty.style.display = 'none';
 
     let currentYear = null;
 
