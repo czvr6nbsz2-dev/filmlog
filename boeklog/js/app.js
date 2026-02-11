@@ -641,7 +641,14 @@ function download(filename, content, type) {
     URL.revokeObjectURL(url);
 }
 
-// Register service worker
+// Register service worker with cache busting
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    // Unregister old service workers first
+    navigator.serviceWorker.getRegistrations().then(registrations => {
+        for (const registration of registrations) {
+            registration.unregister();
+        }
+    });
+    // Register fresh service worker
+    navigator.serviceWorker.register('sw.js?v=4').catch(() => {});
 }
