@@ -34,8 +34,12 @@
             <button id="btn-add" class="icon-btn" aria-label="Film toevoegen">＋</button>
         </header>
 
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Zoek in je filmlogboek..." autocomplete="off">
+        </div>
+
         <div id="film-list" class="film-list">
-            <div id="empty-state" class="empty-state" hidden>
+            <div id="empty-state" class="empty-state" style="display:none">
                 <div class="empty-icon">🎬</div>
                 <p>Nog geen films.<br>Voeg je eerste film toe!</p>
             </div>
