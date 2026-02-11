@@ -1,4 +1,4 @@
-const CACHE_NAME = 'filmlog-v2';
+const CACHE_NAME = 'filmlog-v3';
 const ASSETS = [
     './',
     './index.html',
