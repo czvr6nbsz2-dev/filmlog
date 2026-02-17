@@ -2765,5 +2765,20 @@
     "numberOfPages": null,
     "id": "ff447cac-a9d2-4554-a419-39c207853a49",
     "updatedAt": "2026-02-09T07:26:28.147Z"
+  },
+  {
+    "readDate": "2026-02-17",
+    "title": "Alsof het voorbij is",
+    "author": "Julian barnes",
+    "openLibraryKey": "/works/OL33390862W",
+    "publishYear": "2018",
+    "coverURL": "https://covers.openlibrary.org/b/id/13125889-M.jpg",
+    "description": null,
+    "subjects": null,
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 6,
+    "id": "7eaa7930-370c-4c84-9ce7-8ebd07d3e89c",
+    "updatedAt": "2026-02-17T15:20:36.327Z"
   }
 ]
