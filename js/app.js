@@ -150,6 +150,11 @@ function showStep(stepId) {
     $$('#add-modal .step').forEach(s => s.hidden = s.id !== stepId);
 }
 
+function extractImdbID(input) {
+    const match = input.match(/tt\d{7,}/);
+    return match ? match[0] : null;
+}
+
 async function doSearch() {
     const query = $('#film-title-input').value.trim();
     if (!query) return;
@@ -160,6 +165,25 @@ async function doSearch() {
     if (!hasApiKey()) {
         // Skip IMDb, go straight to review
         showStep('add-step-review');
+        return;
+    }
+
+    // Check if input is an IMDb URL or ID
+    const imdbID = extractImdbID(query);
+    if (imdbID) {
+        showStep('add-step-loading');
+        $('#loading-text').textContent = 'IMDb-gegevens ophalen...';
+        try {
+            const detail = await fetchDetail(imdbID);
+            currentFilm.title = detail.title;
+            selectedDetail = detail;
+            currentFilm = enrichFilm(currentFilm, detail);
+            renderConfirmation(detail);
+            showStep('add-step-confirm');
+        } catch (err) {
+            alert('Kon film niet ophalen: ' + err.message);
+            showStep('add-step-input');
+        }
         return;
     }
 
