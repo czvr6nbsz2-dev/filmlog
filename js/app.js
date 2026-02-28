@@ -112,7 +112,7 @@ function renderFilmList() {
 
         let ratingsHTML = '';
         if (film.imdbRating && film.imdbID) {
-            ratingsHTML += `<a href="https://www.imdb.com/title/${esc(film.imdbID)}" target="_blank" class="badge-imdb" style="text-decoration:none;cursor:pointer">★ ${esc(film.imdbRating)}</a>`;
+            ratingsHTML += `<a href="https://www.imdb.com/title/${esc(film.imdbID)}/" target="_blank" class="badge-imdb imdb-link" onclick="event.stopPropagation()">★ ${esc(film.imdbRating)}</a>`;
         }
         if (film.myRating) ratingsHTML += `<span class="badge-my">♥ ${film.myRating}/10</span>`;
 
@@ -271,11 +271,10 @@ function renderConfirmation(detail) {
     `;
     if (detail.directors) html += `<div class="detail-row"><span class="detail-label">Regie</span><span class="detail-value">${esc(detail.directors)}</span></div>`;
     if (detail.actors) html += `<div class="detail-row"><span class="detail-label">Acteurs</span><span class="detail-value">${esc(detail.actors)}</span></div>`;
-    if (detail.imdbRating) {
-        const imdbLink = detail.imdbID
-            ? `<a href="https://www.imdb.com/title/${esc(detail.imdbID)}" target="_blank" style="text-decoration:none;color:inherit;cursor:pointer">★ ${esc(detail.imdbRating)}</a>`
-            : `★ ${esc(detail.imdbRating)}`;
-        html += `<div class="detail-row"><span class="detail-label">IMDb</span><span class="detail-value">${imdbLink}</span></div>`;
+    if (detail.imdbRating && detail.imdbID) {
+        html += `<div class="detail-row"><span class="detail-label">IMDb</span><a href="https://www.imdb.com/title/${esc(detail.imdbID)}/" target="_blank" class="detail-value imdb-link">★ ${esc(detail.imdbRating)} ↗</a></div>`;
+    } else if (detail.imdbRating) {
+        html += `<div class="detail-row"><span class="detail-label">IMDb</span><span class="detail-value">★ ${esc(detail.imdbRating)}</span></div>`;
     }
     if (detail.plot) html += `<div class="detail-plot">${esc(detail.plot)}</div>`;
 
@@ -318,11 +317,10 @@ function showDetail(film) {
     if (film.year) html += `<div class="detail-row"><span class="detail-label">Jaar</span><span class="detail-value">${esc(film.year)}</span></div>`;
     if (film.directors) html += `<div class="detail-row"><span class="detail-label">Regie</span><span class="detail-value">${esc(film.directors)}</span></div>`;
     if (film.actors) html += `<div class="detail-row"><span class="detail-label">Acteurs</span><span class="detail-value">${esc(film.actors)}</span></div>`;
-    if (film.imdbRating) {
-        const imdbLink = film.imdbID
-            ? `<a href="https://www.imdb.com/title/${esc(film.imdbID)}" target="_blank" style="text-decoration:none;color:inherit;cursor:pointer">★ ${esc(film.imdbRating)}</a>`
-            : `★ ${esc(film.imdbRating)}`;
-        html += `<div class="detail-row"><span class="detail-label">IMDb</span><span class="detail-value">${imdbLink}</span></div>`;
+    if (film.imdbRating && film.imdbID) {
+        html += `<div class="detail-row"><span class="detail-label">IMDb</span><a href="https://www.imdb.com/title/${esc(film.imdbID)}/" target="_blank" class="detail-value imdb-link">★ ${esc(film.imdbRating)} ↗</a></div>`;
+    } else if (film.imdbRating) {
+        html += `<div class="detail-row"><span class="detail-label">IMDb</span><span class="detail-value">★ ${esc(film.imdbRating)}</span></div>`;
     }
     html += `</div></div>`;
 

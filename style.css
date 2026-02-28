@@ -211,6 +211,12 @@ body {
     font-weight: 600;
 }
 
+.imdb-link {
+    color: var(--orange);
+    font-weight: 600;
+    text-decoration: none;
+}
+
 .badge-my {
     color: var(--pink);
     font-weight: 600;
