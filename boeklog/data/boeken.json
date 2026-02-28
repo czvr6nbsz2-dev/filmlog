@@ -2765,5 +2765,50 @@
     "numberOfPages": null,
     "id": "ff447cac-a9d2-4554-a419-39c207853a49",
     "updatedAt": "2026-02-09T07:26:28.147Z"
+  },
+  {
+    "readDate": "2026-02-17",
+    "title": "Alsof het voorbij is",
+    "author": "Julian barnes",
+    "openLibraryKey": "/works/OL33390862W",
+    "publishYear": "2018",
+    "coverURL": "https://covers.openlibrary.org/b/id/13125889-M.jpg",
+    "description": null,
+    "subjects": null,
+    "numberOfPages": null,
+    "myReview": "Mooi, stemt tot nadenken.",
+    "myRating": 7,
+    "id": "7eaa7930-370c-4c84-9ce7-8ebd07d3e89c",
+    "updatedAt": "2026-02-21T16:43:41.137Z"
+  },
+  {
+    "readDate": "2026-02-21",
+    "title": "When Nietzsche wept",
+    "author": "Irvin Yalom",
+    "openLibraryKey": "/works/OL2680436W",
+    "publishYear": "1992",
+    "coverURL": "https://covers.openlibrary.org/b/id/34307-M.jpg",
+    "description": "In 19th-century Vienna, a drama of love, fate, and will is played out amid the intellectual ferment that defined the era.\r\n\r\nJosef Breuer, one of the founding fathers of psychoanalysis, is at the height of his career. Friedrich Nietzsche, Europe's greatest philosopher, is on the brink of suicidal despair, unable to find a cure for the headaches and other ailments that plague him. When he agrees to treat Nietzsche with his experimental \"talking cure\", Breuer never expects that he, too, will find solace in their sessions. Only through facing his own inner demons can the gifted healer begin to help his patient.\r\n\r\nIn When Nietzsche Wept, Irvin Yalom blends fact and fiction, atmosphere and suspense to unfold an unforgettable story about the redemptive power of friendship.",
+    "subjects": "Fiction, Male friendship, Mental Depression, Psychotherapist and patient, Suicidal behavior",
+    "numberOfPages": null,
+    "myReview": "Interessant",
+    "myRating": 7,
+    "id": "850d5b4f-e421-43ee-90b3-209737067e81",
+    "updatedAt": "2026-02-28T15:10:24.968Z"
+  },
+  {
+    "readDate": "2026-02-28",
+    "title": "Waiting for the Barbarians",
+    "author": "Coetzee",
+    "openLibraryKey": "/works/OL500388W",
+    "publishYear": "1980",
+    "coverURL": "https://covers.openlibrary.org/b/id/6984133-M.jpg",
+    "description": "For decades the Magistrate has run the affairs of a tiny frontier settlement, ignoring the impending war between the barbarians and the Empire, whose servant he is. But when the interrogation experts arrive, he is jolted into sympathy for the victims, and into a quixotic act of rebellion which lands him in prison.",
+    "subjects": "Administradores coloniales, Allegorías, Colonial administrators, Ficción, Fiction",
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 6,
+    "id": "b8a60e3e-c217-416d-a260-e9d48d19334f",
+    "updatedAt": "2026-02-28T15:10:03.118Z"
   }
 ]
