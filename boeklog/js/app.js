@@ -183,13 +183,27 @@ async function doSearch() {
         const results = await searchBooks(title, author);
         if (results.length === 1) {
             await selectSearchResult(results[0]);
-        } else {
+        } else if (results.length > 0) {
             renderSearchResults(results);
             showStep('add-step-results');
+        } else {
+            // No results found - show option to continue without OpenLibrary
+            const msg = `'${title || author}' niet gevonden.\n\nJe kunt:\n• Opnieuw zoeken met andere woorden\n• Zonder zoekopdracht doorgaan en handmatig invullen`;
+            if (confirm(msg + '\n\nKlik OK om handmatig door te gaan, of Cancel om opnieuw te zoeken.')) {
+                renderConfirmation(currentBook);
+                showStep('add-step-confirm');
+            } else {
+                showStep('add-step-input');
+            }
         }
     } catch (err) {
-        alert(err.message);
-        showStep('add-step-input');
+        // Search error - offer to continue without OpenLibrary
+        if (confirm(`Zoeken mislukt: ${err.message}\n\nWil je handmatig doorgaan?`)) {
+            renderConfirmation(currentBook);
+            showStep('add-step-confirm');
+        } else {
+            showStep('add-step-input');
+        }
     }
 }
 
@@ -525,6 +539,18 @@ function initEventListeners() {
     // Search & save
     searchBtn.addEventListener('click', doSearch);
     $('#btn-skip-search').addEventListener('click', () => showStep('add-step-review'));
+    $('#btn-add-without-search').addEventListener('click', () => {
+        const title = $('#book-title-input').value.trim();
+        const author = $('#book-author-input').value.trim();
+        if (!title && !author) return;
+
+        currentBook.title = title || 'Onbekende titel';
+        currentBook.author = author || null;
+        currentBook.readDate = $('#book-date-input').value || today();
+
+        renderConfirmation(currentBook);
+        showStep('add-step-confirm');
+    });
     $('#btn-confirm').addEventListener('click', () => showStep('add-step-review'));
     $('#btn-save').addEventListener('click', doSave);
 
