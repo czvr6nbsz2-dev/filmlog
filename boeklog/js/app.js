@@ -581,9 +581,21 @@ function initEventListeners() {
     $('#btn-pdf').addEventListener('click', () => generatePDF(books));
 
     // Settings: CSV export/import
-    $('#btn-export-csv').addEventListener('click', async () => {
-        const csv = exportCSV(books);
-        download('boeklog-export.csv', csv, 'text/csv');
+    $('#btn-export-csv').addEventListener('click', () => {
+        try {
+            if (!books || books.length === 0) {
+                alert('Geen boeken om te exporteren. Voeg eerst boeken toe.');
+                return;
+            }
+            const csv = exportCSV(books);
+            if (!csv) {
+                alert('Fout bij genereren CSV.');
+                return;
+            }
+            download('boeklog-export.csv', csv, 'text/csv');
+        } catch (err) {
+            alert('Fout bij exporteren: ' + err.message);
+        }
     });
     $('#btn-import-csv').addEventListener('click', () => $('#csv-file').click());
     $('#csv-file').addEventListener('change', (e) => {
@@ -787,13 +799,19 @@ function sleep(ms) {
 }
 
 function download(filename, content, type) {
-    const blob = new Blob([content], { type });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+    } catch (err) {
+        alert('Download mislukt: ' + err.message);
+    }
 }
 
 // Register service worker with cache busting
