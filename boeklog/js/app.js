@@ -814,28 +814,24 @@ function download(filename, content, type) {
     }
 }
 
-// Register service worker with cache busting
+// DISABLE service workers to bypass Safari iOS fetch event issues
 if ('serviceWorker' in navigator) {
-    // Unregister old service workers first
+    console.log('[BoekLog] Unregistering all service workers...');
     navigator.serviceWorker.getRegistrations().then(registrations => {
         registrations.forEach(registration => {
-            console.log('[BoekLog] Unregistering old service worker:', registration.scope);
             registration.unregister().then(() => {
-                console.log('[BoekLog] Service worker unregistered');
+                console.log('[BoekLog] Service worker unregistered:', registration.scope);
+                // Clear all caches
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        caches.delete(name).then(() => {
+                            console.log('[BoekLog] Cache cleared:', name);
+                        });
+                    });
+                });
             });
         });
     }).catch(err => {
-        console.error('[BoekLog] Error during unregister:', err);
+        console.error('[BoekLog] Error unregistering service workers:', err);
     });
-
-    // Register fresh service worker with retry
-    setTimeout(() => {
-        navigator.serviceWorker.register('sw.js?v=13', { scope: './' })
-            .then(reg => {
-                console.log('[BoekLog] Service worker registered:', reg.scope);
-            })
-            .catch(err => {
-                console.error('[BoekLog] Service worker registration failed:', err);
-            });
-    }, 500);
 }
