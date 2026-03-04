@@ -1,4 +1,4 @@
-const CACHE_NAME = 'boeklog-v11';
+const CACHE_NAME = 'boeklog-v12';
 const ASSETS = [
     './',
     './index.html',
@@ -30,17 +30,17 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-    // Only cache local assets - never intercept ANY external calls
+    // Only cache local assets
     const url = e.request.url;
-    const isLocal = !url.includes('://') || url.includes(self.location.origin);
+    const isLocal = url.includes(self.location.origin);
 
-    if (!isLocal) {
-        // External requests bypass service worker completely
-        return;
+    if (isLocal) {
+        // Local assets: cache-first
+        e.respondWith(
+            caches.match(e.request).then(cached => cached || fetch(e.request))
+        );
+    } else {
+        // External requests: pass through directly with minimal error handling
+        e.respondWith(fetch(e.request));
     }
-
-    // Local assets only: cache-first
-    e.respondWith(
-        caches.match(e.request).then(cached => cached || fetch(e.request))
-    );
 });
