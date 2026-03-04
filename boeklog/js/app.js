@@ -823,5 +823,5 @@ if ('serviceWorker' in navigator) {
         }
     });
     // Register fresh service worker
-    navigator.serviceWorker.register('sw.js?v=8').catch(() => {});
+    navigator.serviceWorker.register('sw.js?v=9').catch(() => {});
 }
