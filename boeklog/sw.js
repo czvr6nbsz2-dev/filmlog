@@ -1,4 +1,4 @@
-const CACHE_NAME = 'boeklog-v9';
+const CACHE_NAME = 'boeklog-v10';
 const ASSETS = [
     './',
     './index.html',
@@ -29,35 +29,17 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-    // Anthropic API calls - go straight through without any caching
-    if (e.request.url.includes('api.anthropic.com')) {
-        e.respondWith(
-            fetch(e.request).catch(() =>
-                new Response(JSON.stringify({ error: 'Network error' }), {
-                    status: 503,
-                    headers: { 'Content-Type': 'application/json' }
-                })
-            )
-        );
+    const url = e.request.url;
+
+    // NEVER cache external API calls - let them go straight through
+    if (url.includes('api.anthropic.com') ||
+        url.includes('openlibrary.org') ||
+        url.includes('api.github.com')) {
         return;
     }
 
-    // Network-first for other API calls, cache-first for assets
-    if (e.request.url.includes('openlibrary.org') ||
-        e.request.url.includes('api.github.com')) {
-        // For API calls: try network first, fall back to cache
-        e.respondWith(
-            fetch(e.request)
-                .catch(() => caches.match(e.request))
-                .then(response => {
-                    // If both network and cache failed, return error response
-                    return response || new Response('Offline - API unavailable', { status: 503 });
-                })
-        );
-    } else {
-        // For assets: cache first, fall back to network
-        e.respondWith(
-            caches.match(e.request).then(cached => cached || fetch(e.request))
-        );
-    }
+    // Cache-first strategy for local assets only
+    e.respondWith(
+        caches.match(e.request).then(cached => cached || fetch(e.request))
+    );
 });
