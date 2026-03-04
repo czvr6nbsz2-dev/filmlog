@@ -1,4 +1,4 @@
-const CACHE_NAME = 'boeklog-v4';
+const CACHE_NAME = 'boeklog-v5';
 const ASSETS = [
     './',
     './index.html',
@@ -30,7 +30,9 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
     // Network-first for API calls, cache-first for assets
-    if (e.request.url.includes('openlibrary.org') || e.request.url.includes('api.github.com')) {
+    if (e.request.url.includes('openlibrary.org') ||
+        e.request.url.includes('api.github.com') ||
+        e.request.url.includes('api.anthropic.com')) {
         e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
     } else {
         e.respondWith(
