@@ -125,13 +125,21 @@ Consider their reading style and level when making recommendations for this spec
 
         if (!response.ok) {
             const errorData = await response.text();
-            console.error('[BoekLog] API error response:', errorData);
+            console.error('[BoekLog] API error response:', { status: response.status, body: errorData });
+
             if (response.status === 401) {
                 throw new Error('API-sleutel ongeldig. Controleer je Anthropic-token in Instellingen.');
             } else if (response.status === 429) {
                 throw new Error('Te veel verzoeken. Even geduld en daarna opnieuw proberen.');
             } else if (response.status >= 500) {
-                throw new Error('Anthropic API-fout. Probeer het later opnieuw.');
+                // Try to parse error message from Anthropic
+                try {
+                    const errorJson = JSON.parse(errorData);
+                    const message = errorJson.error?.message || errorJson.message || 'Onbekende fout';
+                    throw new Error(`Anthropic API-fout (${response.status}): ${message}`);
+                } catch (e) {
+                    throw new Error(`Anthropic API-fout (${response.status}). Probeer het later opnieuw.`);
+                }
             } else {
                 throw new Error(`API-fout: ${response.status}`);
             }
