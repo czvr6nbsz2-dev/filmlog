@@ -818,10 +818,24 @@ function download(filename, content, type) {
 if ('serviceWorker' in navigator) {
     // Unregister old service workers first
     navigator.serviceWorker.getRegistrations().then(registrations => {
-        for (const registration of registrations) {
-            registration.unregister();
-        }
+        registrations.forEach(registration => {
+            console.log('[BoekLog] Unregistering old service worker:', registration.scope);
+            registration.unregister().then(() => {
+                console.log('[BoekLog] Service worker unregistered');
+            });
+        });
+    }).catch(err => {
+        console.error('[BoekLog] Error during unregister:', err);
     });
-    // Register fresh service worker
-    navigator.serviceWorker.register('sw.js?v=12').catch(() => {});
+
+    // Register fresh service worker with retry
+    setTimeout(() => {
+        navigator.serviceWorker.register('sw.js?v=13', { scope: './' })
+            .then(reg => {
+                console.log('[BoekLog] Service worker registered:', reg.scope);
+            })
+            .catch(err => {
+                console.error('[BoekLog] Service worker registration failed:', err);
+            });
+    }, 500);
 }
