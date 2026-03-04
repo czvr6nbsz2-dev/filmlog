@@ -1,4 +1,4 @@
-const CACHE_NAME = 'boeklog-v7';
+const CACHE_NAME = 'boeklog-v8';
 const ASSETS = [
     './',
     './index.html',
@@ -29,9 +29,10 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-    // Don't intercept Anthropic API calls - let them go through directly
+    // Anthropic API calls - go straight through without any caching
     if (e.request.url.includes('api.anthropic.com')) {
-        return; // Let browser handle normally without service worker
+        e.respondWith(fetch(e.request));
+        return;
     }
 
     // Network-first for other API calls, cache-first for assets
