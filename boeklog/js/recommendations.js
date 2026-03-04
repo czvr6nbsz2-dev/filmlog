@@ -108,7 +108,7 @@ Consider their reading style and level when making recommendations for this spec
             headers: {
                 'Content-Type': 'application/json',
                 'x-api-key': apiKey,
-                'anthropic-version': '2023-06-01'
+                'anthropic-version': '2024-06-01'
             },
             body: JSON.stringify({
                 model: 'claude-3-5-sonnet-20241022',
