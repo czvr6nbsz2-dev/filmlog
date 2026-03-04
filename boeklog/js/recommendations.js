@@ -102,24 +102,33 @@ Consider their reading style and level when making recommendations for this spec
 
     try {
         console.log('[BoekLog] Generating recommendations...', { mode, theme, booksCount: books.length });
+        console.log('[BoekLog] API key present:', !!apiKey, 'length:', apiKey?.length);
 
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': apiKey,
-                'anthropic-version': '2024-06-01'
-            },
-            body: JSON.stringify({
-                model: 'claude-3-5-sonnet-20241022',
-                max_tokens: 2000,
-                temperature: 0.7,
-                system: systemPrompt,
-                messages: [
-                    { role: 'user', content: userPrompt }
-                ]
-            })
-        });
+        let response;
+        try {
+            console.log('[BoekLog] Sending fetch request to Anthropic API...');
+            response = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': apiKey,
+                    'anthropic-version': '2024-06-01'
+                },
+                body: JSON.stringify({
+                    model: 'claude-3-5-sonnet-20241022',
+                    max_tokens: 2000,
+                    temperature: 0.7,
+                    system: systemPrompt,
+                    messages: [
+                        { role: 'user', content: userPrompt }
+                    ]
+                })
+            });
+            console.log('[BoekLog] Fetch succeeded, got response');
+        } catch (fetchError) {
+            console.error('[BoekLog] Fetch failed:', fetchError?.message, fetchError?.stack);
+            throw new Error(`Netwerk-/fetch-fout: ${fetchError?.message || 'Onbekend'}`);
+        }
 
         console.log('[BoekLog] API response received:', { status: response.status });
 
