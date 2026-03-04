@@ -1,4 +1,4 @@
-const CACHE_NAME = 'boeklog-v8';
+const CACHE_NAME = 'boeklog-v9';
 const ASSETS = [
     './',
     './index.html',
@@ -31,7 +31,14 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
     // Anthropic API calls - go straight through without any caching
     if (e.request.url.includes('api.anthropic.com')) {
-        e.respondWith(fetch(e.request));
+        e.respondWith(
+            fetch(e.request).catch(() =>
+                new Response(JSON.stringify({ error: 'Network error' }), {
+                    status: 503,
+                    headers: { 'Content-Type': 'application/json' }
+                })
+            )
+        );
         return;
     }
 
