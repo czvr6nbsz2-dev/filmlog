@@ -2,7 +2,7 @@ import { getAllBooks, getAllBooksIncludingDeleted, saveBook, deleteBook, softDel
 import { searchBooks, getFullBookDetail, enrichBook } from './openlibrary.js';
 import { isSyncEnabled, syncAll } from './github.js';
 import { generatePDF } from './pdf.js';
-import { parseCSV } from './csv.js';
+import { parseCSV, exportCSV } from './csv.js';
 import { isApiKeyConfigured, generateRecommendations } from './recommendations.js';
 
 // ---- State ----
@@ -580,8 +580,12 @@ function initEventListeners() {
     // Settings: PDF
     $('#btn-pdf').addEventListener('click', () => generatePDF(books));
 
-    // Settings: CSV
-    $('#btn-csv').addEventListener('click', () => $('#csv-file').click());
+    // Settings: CSV export/import
+    $('#btn-export-csv').addEventListener('click', async () => {
+        const csv = exportCSV(books);
+        download('boeklog-export.csv', csv, 'text/csv');
+    });
+    $('#btn-import-csv').addEventListener('click', () => $('#csv-file').click());
     $('#csv-file').addEventListener('change', (e) => {
         if (e.target.files[0]) handleCSVImport(e.target.files[0]);
     });

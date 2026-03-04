@@ -75,3 +75,46 @@ function parseCSVLine(line) {
     result.push(current);
     return result;
 }
+
+/**
+ * Export books to CSV format
+ */
+export function exportCSV(books) {
+    if (!books || books.length === 0) {
+        return 'Titel,Auteur,Datum Gelezen,Score,Review\n';
+    }
+
+    const rows = [
+        ['Titel', 'Auteur', 'Datum Gelezen', 'Score', 'Review']
+    ];
+
+    for (const book of books) {
+        const title = book.title || '';
+        const author = book.author || '';
+        const date = book.readDate || '';
+        const rating = book.myRating || '';
+        const review = book.myReview || '';
+
+        rows.push([
+            escapeCSVField(title),
+            escapeCSVField(author),
+            escapeCSVField(date),
+            escapeCSVField(String(rating)),
+            escapeCSVField(review)
+        ]);
+    }
+
+    return rows.map(row => row.join(',')).join('\n');
+}
+
+/**
+ * Escape CSV field (add quotes if needed)
+ */
+function escapeCSVField(field) {
+    if (!field) return '""';
+    const str = String(field);
+    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+        return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+}
