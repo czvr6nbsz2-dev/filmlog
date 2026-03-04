@@ -718,3 +718,113 @@ textarea { resize: vertical; }
 
 #github-status.success { color: var(--green); }
 #github-status.error { color: var(--red); }
+
+/* ---- Recommendations ---- */
+
+.mode-selection {
+    display: grid;
+    gap: 12px;
+    margin: 24px 0;
+}
+
+.btn-mode {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 16px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-mode:active {
+    border-color: var(--accent);
+    background: var(--accent-light);
+}
+
+.mode-icon {
+    font-size: 28px;
+    line-height: 1;
+}
+
+.mode-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text);
+}
+
+.mode-description {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.recommendations-list {
+    display: grid;
+    gap: 12px;
+}
+
+.recommendation-item {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    padding: 12px;
+    border-left: 4px solid var(--accent);
+    background: var(--accent-light);
+    border-radius: var(--radius-sm);
+}
+
+.rec-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-weight: 600;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.rec-content {
+    display: grid;
+    gap: 4px;
+}
+
+.rec-title {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+}
+
+.rec-author {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.rec-why {
+    font-size: 13px;
+    color: var(--text);
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+.rec-genre {
+    display: inline-block;
+    padding: 4px 8px;
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--accent);
+    color: white;
+    border-radius: var(--radius-sm);
+    width: fit-content;
+}
+
+#anthropic-status.success { color: var(--green); }
+#anthropic-status.error { color: var(--red); }

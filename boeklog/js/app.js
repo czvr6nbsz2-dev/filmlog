@@ -3,6 +3,7 @@ import { searchBooks, getFullBookDetail, enrichBook } from './openlibrary.js';
 import { isSyncEnabled, syncAll } from './github.js';
 import { generatePDF } from './pdf.js';
 import { parseCSV } from './csv.js';
+import { isApiKeyConfigured, generateRecommendations } from './recommendations.js';
 
 // ---- State ----
 let books = [];
@@ -10,6 +11,8 @@ let currentBook = {};
 let selectedDetail = null;
 let selectedRating = null;
 let searchQuery = '';
+let currentRecommendationMode = null;
+let currentRecommendationTheme = null;
 
 // ---- DOM refs ----
 const $ = (sel) => document.querySelector(sel);
@@ -22,6 +25,10 @@ const settingsModal = $('#settings-modal');
 
 const searchInput = $('#search-input');
 const searchClear = $('#search-clear');
+
+const recommendationModeModal = $('#recommendation-mode-modal');
+const themeInputModal = $('#theme-input-modal');
+const recommendationsModal = $('#recommendations-modal');
 
 // ---- Init ----
 document.addEventListener('DOMContentLoaded', init);
@@ -485,6 +492,11 @@ function initEventListeners() {
         btn.addEventListener('click', () => {
             const modalId = btn.dataset.close;
             $(`#${modalId}`).hidden = true;
+            // Reset theme input when closing
+            if (modalId === 'theme-input-modal') {
+                $('#theme-input').value = '';
+                $('#btn-generate-with-theme').disabled = true;
+            }
         });
     });
 
@@ -623,6 +635,119 @@ function initEventListeners() {
             alert('Fout bij importeren: ' + err.message);
         }
     });
+
+    // Settings: Recommendations
+    const anthropicTokenInput = $('#anthropic-token');
+    const anthropicStatus = $('#anthropic-status');
+
+    // Load saved API key on init
+    const savedToken = localStorage.getItem('boeklog_anthropic_token');
+    if (savedToken) {
+        anthropicTokenInput.value = savedToken;
+        updateAnthropicStatus();
+    }
+
+    $('#btn-anthropic-save').addEventListener('click', () => {
+        const token = anthropicTokenInput.value.trim();
+        if (token) {
+            localStorage.setItem('boeklog_anthropic_token', token);
+        } else {
+            localStorage.removeItem('boeklog_anthropic_token');
+        }
+        updateAnthropicStatus();
+    });
+
+    $('#btn-generate-recommendations').addEventListener('click', () => {
+        if (books.length === 0) {
+            alert('Voeg eerst wat boeken toe voordat je aanbevelingen kunt genereren.');
+            return;
+        }
+        recommendationModeModal.hidden = false;
+    });
+
+    // Mode selection
+    $('#btn-mode-yolo').addEventListener('click', () => {
+        currentRecommendationMode = 'yolo';
+        recommendationModeModal.hidden = true;
+        generateAndShowRecommendations();
+    });
+
+    $('#btn-mode-theme').addEventListener('click', () => {
+        currentRecommendationMode = 'theme';
+        recommendationModeModal.hidden = true;
+        themeInputModal.hidden = false;
+        $('#theme-input').focus();
+    });
+
+    // Theme input
+    $('#theme-input').addEventListener('input', (e) => {
+        $('#btn-generate-with-theme').disabled = !e.target.value.trim();
+    });
+
+    $('#btn-generate-with-theme').addEventListener('click', () => {
+        const theme = $('#theme-input').value.trim();
+        if (!theme) return;
+        currentRecommendationTheme = theme;
+        themeInputModal.hidden = true;
+        generateAndShowRecommendations();
+    });
+
+    function updateAnthropicStatus() {
+        if (isApiKeyConfigured()) {
+            anthropicStatus.textContent = '✓ API-sleutel opgeslagen';
+            anthropicStatus.className = 'hint success';
+            $('#btn-generate-recommendations').disabled = false;
+        } else {
+            anthropicStatus.textContent = 'Geen API-sleutel opgeslagen';
+            anthropicStatus.className = 'hint';
+            $('#btn-generate-recommendations').disabled = true;
+        }
+    }
+
+    async function generateAndShowRecommendations() {
+        recommendationsModal.hidden = false;
+        const list = $('#recommendations-list');
+        list.innerHTML = '<div class="loading"><div class="spinner"></div><p>Aanbevelingen genereren...</p></div>';
+
+        try {
+            const recommendations = await generateRecommendations(
+                books,
+                currentRecommendationMode,
+                currentRecommendationTheme
+            );
+
+            renderRecommendations(recommendations);
+        } catch (err) {
+            list.innerHTML = `<div style="padding: 20px; text-align: center; color: var(--red);">
+                <p>Fout: ${esc(err.message)}</p>
+            </div>`;
+        }
+    }
+
+    function renderRecommendations(recommendations) {
+        const list = $('#recommendations-list');
+        const title = $('#recommendations-title');
+
+        if (currentRecommendationMode === 'yolo') {
+            title.textContent = 'Aanbevelingen (Yolo)';
+        } else {
+            title.textContent = `Aanbevelingen (${esc(currentRecommendationTheme)})`;
+        }
+
+        list.innerHTML = recommendations
+            .map((rec, idx) => `
+                <div class="recommendation-item">
+                    <div class="rec-number">${idx + 1}</div>
+                    <div class="rec-content">
+                        <div class="rec-title">${esc(rec.title)}</div>
+                        <div class="rec-author">${esc(rec.author)}</div>
+                        <div class="rec-why">${esc(rec.why)}</div>
+                        <div class="rec-genre">${esc(rec.genre)}</div>
+                    </div>
+                </div>
+            `)
+            .join('');
+    }
 }
 
 // ---- Helpers ----

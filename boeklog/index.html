@@ -161,6 +161,17 @@
                     <p id="github-status" class="hint"></p>
                 </div>
                 <div class="settings-section">
+                    <h3>Aanbevelingen</h3>
+                    <p class="hint">Ontvang 10 boeksuggesties op basis van je leesgeschiedenis en waarderingen.</p>
+                    <div class="form-group">
+                        <label>Anthropic API-sleutel</label>
+                        <input type="password" id="anthropic-token" placeholder="sk-ant-..." autocomplete="off">
+                    </div>
+                    <button id="btn-anthropic-save" class="btn-small">Opslaan</button>
+                    <button id="btn-generate-recommendations" class="btn-secondary" disabled>&#x1F4DA; Suggesties genereren</button>
+                    <p id="anthropic-status" class="hint"></p>
+                </div>
+                <div class="settings-section">
                     <h3>Data</h3>
                     <button id="btn-export-json" class="btn-secondary">&#x1F4BE; Backup exporteren (JSON)</button>
                     <input type="file" id="json-file" accept=".json" hidden>
@@ -173,12 +184,64 @@
         </div>
     </div>
 
+    <!-- Recommendation Mode Selection Modal -->
+    <div id="recommendation-mode-modal" class="modal" hidden>
+        <div class="modal-content" style="max-width: 500px">
+            <header class="modal-header">
+                <button class="modal-close" data-close="recommendation-mode-modal">&#x2715;</button>
+                <h2>Boeksuggesties</h2>
+                <div></div>
+            </header>
+            <div class="mode-selection">
+                <button id="btn-mode-yolo" class="btn-mode">
+                    <span class="mode-icon">🎲</span>
+                    <span class="mode-title">Yolo Mode</span>
+                    <span class="mode-description">Willekeurige suggesties op basis van je geschiedenis</span>
+                </button>
+                <button id="btn-mode-theme" class="btn-mode">
+                    <span class="mode-icon">🎯</span>
+                    <span class="mode-title">Thema Mode</span>
+                    <span class="mode-description">Suggesties voor een specifiek genre, auteur of thema</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Input Modal -->
+    <div id="theme-input-modal" class="modal" hidden>
+        <div class="modal-content" style="max-width: 400px">
+            <header class="modal-header">
+                <button class="modal-close" data-close="theme-input-modal">&#x2715;</button>
+                <h2>Wat zoek je?</h2>
+                <div></div>
+            </header>
+            <div class="form-group">
+                <label>Genre, auteur, thema, etc.</label>
+                <input type="text" id="theme-input" placeholder="bijv. Science Fiction, Agatha Christie, Filosofie..." autocomplete="off">
+            </div>
+            <button id="btn-generate-with-theme" class="btn-primary" disabled>Genereren</button>
+        </div>
+    </div>
+
+    <!-- Recommendations Display Modal -->
+    <div id="recommendations-modal" class="modal" hidden>
+        <div class="modal-content">
+            <header class="modal-header">
+                <button class="modal-close" data-close="recommendations-modal">&#x2715;</button>
+                <h2 id="recommendations-title">Aanbevelingen</h2>
+                <div></div>
+            </header>
+            <div id="recommendations-list" class="recommendations-list"></div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
     <script type="module" src="js/db.js"></script>
     <script type="module" src="js/openlibrary.js"></script>
     <script type="module" src="js/pdf.js"></script>
     <script type="module" src="js/csv.js"></script>
     <script type="module" src="js/github.js"></script>
+    <script type="module" src="js/recommendations.js"></script>
     <script type="module" src="js/app.js"></script>
 </body>
 </html>
