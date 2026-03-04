@@ -101,6 +101,8 @@ Consider their reading style and level when making recommendations for this spec
     }
 
     try {
+        console.log('[BoekLog] Generating recommendations...', { mode, theme, booksCount: books.length });
+
         const response = await fetch('https://api.anthropic.com/v1/messages', {
             method: 'POST',
             headers: {
@@ -119,7 +121,11 @@ Consider their reading style and level when making recommendations for this spec
             })
         });
 
+        console.log('[BoekLog] API response received:', { status: response.status });
+
         if (!response.ok) {
+            const errorData = await response.text();
+            console.error('[BoekLog] API error response:', errorData);
             if (response.status === 401) {
                 throw new Error('API-sleutel ongeldig. Controleer je Anthropic-token in Instellingen.');
             } else if (response.status === 429) {
@@ -140,8 +146,12 @@ Consider their reading style and level when making recommendations for this spec
         return parseRecommendationResponse(data.content[0].text);
 
     } catch (err) {
+        console.error('[BoekLog] Recommendation error:', err);
         if (err instanceof SyntaxError) {
             throw new Error('Fout bij verwerken van API-antwoord. Probeer het opnieuw.');
+        }
+        if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
+            throw new Error('Netwerk- of CORS-fout. Controleer je internetverbinding en probeer het opnieuw.');
         }
         throw err;
     }
