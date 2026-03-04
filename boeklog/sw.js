@@ -1,4 +1,4 @@
-const CACHE_NAME = 'boeklog-v10';
+const CACHE_NAME = 'boeklog-v11';
 const ASSETS = [
     './',
     './index.html',
@@ -9,6 +9,7 @@ const ASSETS = [
     './js/github.js',
     './js/pdf.js',
     './js/csv.js',
+    './js/recommendations.js',
     './manifest.json',
 ];
 
@@ -29,16 +30,16 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
+    // Only cache local assets - never intercept ANY external calls
     const url = e.request.url;
+    const isLocal = !url.includes('://') || url.includes(self.location.origin);
 
-    // NEVER cache external API calls - let them go straight through
-    if (url.includes('api.anthropic.com') ||
-        url.includes('openlibrary.org') ||
-        url.includes('api.github.com')) {
+    if (!isLocal) {
+        // External requests bypass service worker completely
         return;
     }
 
-    // Cache-first strategy for local assets only
+    // Local assets only: cache-first
     e.respondWith(
         caches.match(e.request).then(cached => cached || fetch(e.request))
     );
