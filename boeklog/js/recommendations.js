@@ -156,11 +156,11 @@ Consider their reading style and level when making recommendations for this spec
                 headers: {
                     'Content-Type': 'application/json',
                     'x-api-key': apiKey,
-                    'anthropic-version': '2025-01-01',
+                    'anthropic-version': '2024-10-22',
                     'anthropic-dangerous-direct-browser-access': 'true'
                 },
                 body: JSON.stringify({
-                    model: 'claude-haiku-4-5-20251001',
+                    model: 'claude-3-5-haiku-20241022',
                     max_tokens: 2000,
                     temperature: 0.7,
                     system: systemPrompt,
