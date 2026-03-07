@@ -20,27 +20,71 @@ function formatBooksForPrompt(books) {
         return 'No books have been read yet.';
     }
 
-    return books
+    const limited = books.slice(0, 40);
+
+    return limited
         .map((book, idx) => {
             const rating = book.myRating ? ` (Rating: ${book.myRating}/10)` : '';
             const author = book.author ? ` by ${book.author}` : '';
-            const year = book.year ? ` (${book.year})` : '';
+            const yearValue = book.publishYear || book.year || '';
+            const year = yearValue ? ` (${yearValue})` : '';
             return `${idx + 1}. "${book.title}"${author}${year}${rating}`;
         })
         .join('\n');
+}
+
+function extractTextFromResponse(data) {
+    if (!data) return '';
+    if (typeof data === 'string') return data;
+
+    if (typeof data.output_text === 'string') return data.output_text;
+
+    if (Array.isArray(data.content)) {
+        return data.content
+            .map(block => (typeof block?.text === 'string' ? block.text : ''))
+            .join('\n')
+            .trim();
+    }
+
+    if (data.message?.content) {
+        if (Array.isArray(data.message.content)) {
+            return data.message.content
+                .map(block => (typeof block?.text === 'string' ? block.text : ''))
+                .join('\n')
+                .trim();
+        }
+        if (typeof data.message.content === 'string') return data.message.content;
+    }
+
+    if (Array.isArray(data.choices) && data.choices[0]?.message?.content) {
+        return data.choices[0].message.content;
+    }
+
+    return '';
+}
+
+function extractJsonArray(text) {
+    if (!text) throw new Error('Leeg antwoord van API.');
+
+    const trimmed = text.trim();
+    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+        return JSON.parse(trimmed);
+    }
+
+    const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    const candidate = fenced ? fenced[1].trim() : trimmed;
+    const jsonMatch = candidate.match(/\[\s*{[\s\S]*}\s*\]/);
+    if (!jsonMatch) {
+        throw new Error('Kon geen geldige JSON-array vinden in het antwoord.');
+    }
+    return JSON.parse(jsonMatch[0]);
 }
 
 /**
  * Parse recommendation JSON response
  */
 function parseRecommendationResponse(text) {
-    // Try to extract JSON from response
-    const jsonMatch = text.match(/\[\s*{[\s\S]*}\s*\]/);
-    if (!jsonMatch) {
-        throw new Error('Could not parse recommendations from response');
-    }
-
-    const recommendations = JSON.parse(jsonMatch[0]);
+    const recommendations = extractJsonArray(text);
 
     if (!Array.isArray(recommendations) || recommendations.length === 0) {
         throw new Error('Invalid recommendations format');
@@ -112,7 +156,8 @@ Consider their reading style and level when making recommendations for this spec
                 headers: {
                     'Content-Type': 'application/json',
                     'x-api-key': apiKey,
-                    'anthropic-version': '2024-06-01'
+                    'anthropic-version': '2024-06-01',
+                    'anthropic-dangerous-direct-browser-access': 'true'
                 },
                 body: JSON.stringify({
                     model: 'claude-3-5-sonnet-20241022',
@@ -140,27 +185,27 @@ Consider their reading style and level when making recommendations for this spec
                 throw new Error('API-sleutel ongeldig. Controleer je Anthropic-token in Instellingen.');
             } else if (response.status === 429) {
                 throw new Error('Te veel verzoeken. Even geduld en daarna opnieuw proberen.');
-            } else if (response.status >= 500) {
-                // Try to parse error message from Anthropic
-                try {
-                    const errorJson = JSON.parse(errorData);
-                    const message = errorJson.error?.message || errorJson.message || 'Onbekende fout';
-                    throw new Error(`Anthropic API-fout (${response.status}): ${message}`);
-                } catch (e) {
+            }
+
+            // Try to parse error message from Anthropic for any other status
+            try {
+                const errorJson = JSON.parse(errorData);
+                const message = errorJson.error?.message || errorJson.message || 'Onbekende fout';
+                throw new Error(`Anthropic API-fout (${response.status}): ${message}`);
+            } catch (e) {
+                if (response.status >= 500) {
                     throw new Error(`Anthropic API-fout (${response.status}). Probeer het later opnieuw.`);
                 }
-            } else {
-                throw new Error(`API-fout: ${response.status}`);
+                throw new Error(`API-fout (${response.status}).`);
             }
         }
 
         const data = await response.json();
 
-        if (!data.content || !data.content[0] || !data.content[0].text) {
-            throw new Error('Onverwacht API-antwoord');
-        }
+        const text = extractTextFromResponse(data);
+        if (!text) throw new Error('Onverwacht API-antwoord');
 
-        return parseRecommendationResponse(data.content[0].text);
+        return parseRecommendationResponse(text);
 
     } catch (err) {
         console.error('[BoekLog] Recommendation error:', err);
