@@ -1,4 +1,4 @@
-const CACHE_NAME = 'filmlog-v1';
+const CACHE_NAME = 'filmlog-v2';
 const ASSETS = [
     './',
     './index.html',
@@ -8,6 +8,7 @@ const ASSETS = [
     './js/omdb.js',
     './js/pdf.js',
     './js/csv.js',
+    './js/recommendations.js',
     './manifest.json',
 ];
 
@@ -28,12 +29,16 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-    // Network-first for API calls, cache-first for assets
-    if (e.request.url.includes('omdbapi.com')) {
-        e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-    } else {
-        e.respondWith(
-            caches.match(e.request).then(cached => cached || fetch(e.request))
-        );
+    const url = e.request.url;
+    const isLocal = url.includes(self.location.origin);
+
+    if (!isLocal) {
+        // External requests (Anthropic, OMDb) bypass service worker
+        return;
     }
+
+    // Local assets: cache-first
+    e.respondWith(
+        caches.match(e.request).then(cached => cached || fetch(e.request))
+    );
 });

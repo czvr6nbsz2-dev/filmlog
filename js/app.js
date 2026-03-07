@@ -2,12 +2,15 @@ import { getAllFilms, saveFilm, deleteFilm, saveMany, getSetting, setSetting, ex
 import { searchFilms, fetchDetail, enrichFilm, hasApiKey } from './omdb.js';
 import { generatePDF } from './pdf.js';
 import { parseCSV } from './csv.js';
+import { isApiKeyConfigured, generateRecommendations } from './recommendations.js';
 
 // ---- State ----
 let films = [];
 let currentFilm = {}; // film being added
 let selectedDetail = null;
 let selectedRating = null;
+let suggestionTimer = null;
+let suggestionReqId = 0;
 
 // ---- DOM refs ----
 const $ = (sel) => document.querySelector(sel);
@@ -131,6 +134,7 @@ function openAddModal() {
     $$('.seg-btn').forEach(b => b.classList.toggle('active', b.dataset.value === 'bioscoop'));
     $$('.rating-dot').forEach(b => b.classList.remove('active'));
     $('#btn-search').disabled = true;
+    clearSuggestions();
 
     showStep('add-step-input');
     addModal.hidden = false;
@@ -138,6 +142,7 @@ function openAddModal() {
 
 function showStep(stepId) {
     $$('#add-modal .step').forEach(s => s.hidden = s.id !== stepId);
+    if (stepId !== 'add-step-input') clearSuggestions();
 }
 
 async function doSearch() {
@@ -208,6 +213,71 @@ function renderSearchResults(results) {
         `;
         container.appendChild(el);
     }
+}
+
+function renderSuggestions(results) {
+    const container = $('#title-suggestions');
+    container.innerHTML = '';
+
+    if (!results.length) {
+        container.hidden = true;
+        return;
+    }
+
+    for (const r of results.slice(0, 5)) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'suggestion-item';
+        btn.dataset.imdbId = r.imdbID;
+        btn.dataset.title = r.title;
+
+        const posterHTML = r.poster
+            ? `<img class="suggestion-thumb" src="${esc(r.poster)}" alt="" loading="lazy">`
+            : `<div class="film-poster-placeholder" style="width:32px;height:46px;font-size:0.9rem">🎬</div>`;
+
+        btn.innerHTML = `
+            ${posterHTML}
+            <div class="suggestion-info">
+                <h4>${esc(r.title)}</h4>
+                <span>${esc(r.year)}</span>
+            </div>
+        `;
+        container.appendChild(btn);
+    }
+
+    container.hidden = false;
+}
+
+function clearSuggestions() {
+    const container = $('#title-suggestions');
+    container.innerHTML = '';
+    container.hidden = true;
+}
+
+function scheduleSuggestions(query) {
+    if (!hasApiKey()) {
+        clearSuggestions();
+        return;
+    }
+
+    const trimmed = query.trim();
+    if (trimmed.length < 2) {
+        clearSuggestions();
+        return;
+    }
+
+    if (suggestionTimer) clearTimeout(suggestionTimer);
+    const reqId = ++suggestionReqId;
+    suggestionTimer = setTimeout(async () => {
+        try {
+            const results = await searchFilms(trimmed);
+            if (reqId !== suggestionReqId) return;
+            renderSuggestions(results);
+        } catch {
+            if (reqId !== suggestionReqId) return;
+            clearSuggestions();
+        }
+    }, 300);
 }
 
 async function selectSearchResult(imdbID) {
@@ -385,6 +455,14 @@ function openSettings() {
     if (getSetting('importCompleted')) {
         csvSection.innerHTML = '<h3>CSV Import</h3><p style="color:var(--green)">✓ Import voltooid</p>';
     }
+    // Anthropic key status
+    const hasAnthropicKey = isApiKeyConfigured();
+    $('#settings-anthropic-key').value = '';
+    const status = $('#anthropic-status');
+    status.textContent = hasAnthropicKey ? 'Sleutel ingesteld' : '';
+    status.className = hasAnthropicKey ? 'hint anthropic-status success' : 'hint';
+    $('#btn-recommendations').disabled = !hasAnthropicKey || !films.length;
+
     $('#stats').textContent = `${films.length} films in je logboek`;
     settingsModal.hidden = false;
 }
@@ -460,12 +538,34 @@ function initEventListeners() {
 
     // Title input → enable search
     $('#film-title-input').addEventListener('input', (e) => {
-        $('#btn-search').disabled = !e.target.value.trim();
+        const value = e.target.value.trim();
+        $('#btn-search').disabled = !value;
+        scheduleSuggestions(value);
     });
 
     // Enter key to search
     $('#film-title-input').addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && e.target.value.trim()) doSearch();
+    });
+    $('#film-title-input').addEventListener('blur', () => {
+        setTimeout(clearSuggestions, 150);
+    });
+
+    // Suggestion click
+    $('#title-suggestions').addEventListener('click', (e) => {
+        const btn = e.target.closest('.suggestion-item');
+        if (!btn) return;
+        const imdbID = btn.dataset.imdbId;
+        const title = btn.dataset.title;
+        if (!imdbID) return;
+
+        $('#film-title-input').value = title;
+        currentFilm.title = title;
+        currentFilm.watchDate = $('#film-date-input').value || today();
+        clearSuggestions();
+        showStep('add-step-loading');
+        $('#loading-text').textContent = 'Gegevens ophalen...';
+        selectSearchResult(imdbID);
     });
 
     // Segmented control
@@ -510,6 +610,55 @@ function initEventListeners() {
         if (e.target.files[0]) handleCSVImport(e.target.files[0]);
     });
 
+    // Settings: Anthropic API key
+    const anthropicKeyInput = $('#settings-anthropic-key');
+    const anthropicStatus = $('#anthropic-status');
+    const recBtn = $('#btn-recommendations');
+
+    $('#btn-save-anthropic-key').addEventListener('click', () => {
+        const key = anthropicKeyInput.value.trim();
+        localStorage.setItem('filmlog_anthropic_token', key);
+        if (key) {
+            anthropicStatus.textContent = 'Sleutel opgeslagen';
+            anthropicStatus.className = 'hint anthropic-status success';
+            recBtn.disabled = !films.length;
+        } else {
+            anthropicStatus.textContent = 'Sleutel verwijderd';
+            anthropicStatus.className = 'hint anthropic-status error';
+            recBtn.disabled = true;
+        }
+        anthropicKeyInput.value = '';
+    });
+
+    // Recommendations
+    recBtn.addEventListener('click', () => {
+        settingsModal.hidden = true;
+        $('#recommendation-mode-modal').hidden = false;
+    });
+
+    $('#btn-mode-yolo').addEventListener('click', () => {
+        $('#recommendation-mode-modal').hidden = true;
+        generateAndShowRecommendations('yolo');
+    });
+
+    $('#btn-mode-theme').addEventListener('click', () => {
+        $('#recommendation-mode-modal').hidden = true;
+        $('#theme-text-input').value = '';
+        $('#btn-generate-theme').disabled = true;
+        $('#theme-input-modal').hidden = false;
+    });
+
+    $('#theme-text-input').addEventListener('input', (e) => {
+        $('#btn-generate-theme').disabled = !e.target.value.trim();
+    });
+
+    $('#btn-generate-theme').addEventListener('click', () => {
+        const theme = $('#theme-text-input').value.trim();
+        if (!theme) return;
+        $('#theme-input-modal').hidden = true;
+        generateAndShowRecommendations('theme', theme);
+    });
+
     // Settings: JSON export/import
     $('#btn-export-json').addEventListener('click', async () => {
         const json = await exportAll();
@@ -527,6 +676,44 @@ function initEventListeners() {
         } catch (err) {
             alert('Fout bij importeren: ' + err.message);
         }
+    });
+}
+
+// ---- Recommendations ----
+async function generateAndShowRecommendations(mode, theme = null) {
+    const modal = $('#recommendations-modal');
+    const content = $('#recommendations-content');
+    const title = $('#recommendations-title');
+
+    title.textContent = 'Aanbevelingen';
+    content.innerHTML = '<div class="loading"><div class="spinner"></div><p>Films worden gegenereerd...</p></div>';
+    modal.hidden = false;
+
+    try {
+        const recommendations = await generateRecommendations(films, mode, theme);
+        title.textContent = mode === 'theme' ? `Aanbevelingen: ${theme}` : 'Aanbevelingen';
+        renderRecommendations(content, recommendations);
+    } catch (err) {
+        content.innerHTML = `<p style="color:var(--red);padding:16px">Fout: ${esc(err.message)}</p>`;
+    }
+}
+
+function renderRecommendations(container, recommendations) {
+    container.innerHTML = '';
+    recommendations.forEach((rec, i) => {
+        const item = document.createElement('div');
+        item.className = 'recommendation-item';
+        const yearStr = rec.year ? ` (${esc(rec.year)})` : '';
+        item.innerHTML = `
+            <span class="rec-number">${i + 1}</span>
+            <div class="rec-content">
+                <div class="rec-title">${esc(rec.title)}${yearStr}</div>
+                <div class="rec-director">${esc(rec.director)}</div>
+                <div class="rec-why">${esc(rec.why)}</div>
+                <span class="rec-genre">${esc(rec.genre)}</span>
+            </div>
+        `;
+        container.appendChild(item);
     });
 }
 

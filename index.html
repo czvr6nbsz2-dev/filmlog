@@ -56,6 +56,7 @@
                 <div class="form-group">
                     <label>Filmnaam</label>
                     <input type="text" id="film-title-input" placeholder="Bijv. The Shawshank Redemption" autocomplete="off">
+                    <div id="title-suggestions" class="suggestions" hidden></div>
                 </div>
                 <div class="form-group">
                     <label>Waar gekeken</label>
@@ -147,6 +148,16 @@
                     </div>
                 </div>
                 <div class="settings-section">
+                    <h3>Aanbevelingen</h3>
+                    <p class="hint">Genereer filmsuggesties met Claude AI. Vereist een Anthropic API-sleutel.</p>
+                    <div class="form-group">
+                        <input type="password" id="settings-anthropic-key" placeholder="Anthropic API-sleutel">
+                        <button id="btn-save-anthropic-key" class="btn-small">Opslaan</button>
+                    </div>
+                    <span id="anthropic-status" class="hint"></span>
+                    <button id="btn-recommendations" class="btn-secondary" disabled>🎯 Aanbevelingen genereren</button>
+                </div>
+                <div class="settings-section">
                     <h3>PDF Export</h3>
                     <button id="btn-pdf" class="btn-secondary">📄 PDF genereren & downloaden</button>
                 </div>
@@ -173,11 +184,65 @@
         </div>
     </div>
 
+    <!-- Recommendation Mode Modal -->
+    <div id="recommendation-mode-modal" class="modal" hidden>
+        <div class="modal-content">
+            <header class="modal-header">
+                <button class="modal-close" data-close="recommendation-mode-modal">✕</button>
+                <h2>Aanbevelingen</h2>
+                <div></div>
+            </header>
+            <div class="mode-selection">
+                <button id="btn-mode-yolo" class="btn-mode">
+                    <span class="mode-icon">🎲</span>
+                    <span class="mode-title">Yolo</span>
+                    <span class="mode-description">Verras me met diverse suggesties</span>
+                </button>
+                <button id="btn-mode-theme" class="btn-mode">
+                    <span class="mode-icon">🎯</span>
+                    <span class="mode-title">Thema</span>
+                    <span class="mode-description">Geef me een richting mee</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Input Modal -->
+    <div id="theme-input-modal" class="modal" hidden>
+        <div class="modal-content">
+            <header class="modal-header">
+                <button class="modal-close" data-close="theme-input-modal">✕</button>
+                <h2>Thema kiezen</h2>
+                <div></div>
+            </header>
+            <div class="settings-body">
+                <div class="form-group">
+                    <label>Wat voor films zoek je?</label>
+                    <input type="text" id="theme-text-input" placeholder="Bijv. thriller, Tarantino, jaren 80, sci-fi...">
+                </div>
+                <button id="btn-generate-theme" class="btn-primary" disabled>Genereren</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations Result Modal -->
+    <div id="recommendations-modal" class="modal" hidden>
+        <div class="modal-content">
+            <header class="modal-header">
+                <button class="modal-close" data-close="recommendations-modal">✕</button>
+                <h2 id="recommendations-title">Aanbevelingen</h2>
+                <div></div>
+            </header>
+            <div id="recommendations-content"></div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
     <script type="module" src="js/db.js"></script>
     <script type="module" src="js/omdb.js"></script>
     <script type="module" src="js/pdf.js"></script>
     <script type="module" src="js/csv.js"></script>
+    <script type="module" src="js/recommendations.js"></script>
     <script type="module" src="js/app.js"></script>
 </body>
 </html>
