@@ -160,7 +160,7 @@ Consider their reading style and level when making recommendations for this spec
                     'anthropic-dangerous-direct-browser-access': 'true'
                 },
                 body: JSON.stringify({
-                    model: 'claude-3-5-sonnet-20241022',
+                    model: 'claude-sonnet-4-20250514',
                     max_tokens: 2000,
                     temperature: 0.7,
                     system: systemPrompt,
