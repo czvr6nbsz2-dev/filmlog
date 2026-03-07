@@ -160,7 +160,7 @@ Consider their reading style and level when making recommendations for this spec
                     'anthropic-dangerous-direct-browser-access': 'true'
                 },
                 body: JSON.stringify({
-                    model: 'claude-3-5-sonnet-20241022',
+                    model: 'claude-haiku-4-5-20251001',
                     max_tokens: 2000,
                     temperature: 0.7,
                     system: systemPrompt,
@@ -187,17 +187,13 @@ Consider their reading style and level when making recommendations for this spec
                 throw new Error('Te veel verzoeken. Even geduld en daarna opnieuw proberen.');
             }
 
-            // Try to parse error message from Anthropic for any other status
+            // Parse and display actual Anthropic error message
+            let message = `API-fout (${response.status})`;
             try {
                 const errorJson = JSON.parse(errorData);
-                const message = errorJson.error?.message || errorJson.message || 'Onbekende fout';
-                throw new Error(`Anthropic API-fout (${response.status}): ${message}`);
-            } catch (e) {
-                if (response.status >= 500) {
-                    throw new Error(`Anthropic API-fout (${response.status}). Probeer het later opnieuw.`);
-                }
-                throw new Error(`API-fout (${response.status}).`);
-            }
+                message = errorJson.error?.message || errorJson.message || message;
+            } catch (_) { /* not JSON */ }
+            throw new Error(message);
         }
 
         const data = await response.json();
