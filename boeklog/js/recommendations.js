@@ -118,6 +118,8 @@ export async function generateRecommendations(books, mode, theme = null) {
 
     let systemPrompt = `You are an expert book recommendation engine. Your task is to suggest books based on a person's reading history and preferences.
 
+IMPORTANT: Never recommend books that already appear in the person's reading history. All 10 recommendations must be books they have NOT yet read.
+
 Provide exactly 10 book recommendations. Each recommendation must be a real, published book.
 
 Respond ONLY with a valid JSON array containing exactly 10 objects with these fields:

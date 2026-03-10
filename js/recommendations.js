@@ -65,6 +65,8 @@ export async function generateRecommendations(films, mode, theme = null) {
 
     const systemPrompt = `You are an expert film recommendation engine. Your task is to suggest films based on a person's viewing history and preferences.
 
+IMPORTANT: Never recommend films that already appear in the person's viewing history. All 10 recommendations must be films they have NOT yet seen.
+
 Provide exactly 10 film recommendations. Each recommendation must be a real, released film.
 
 Respond ONLY with a valid JSON array containing exactly 10 objects with these fields:
