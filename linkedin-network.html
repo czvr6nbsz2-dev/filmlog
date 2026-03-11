@@ -215,9 +215,10 @@ function buildGraph(connections, inclPersonen) {
     for (const c of connections) {
       const co = c.company || '';
       if (!co || (coCount[co]||0) < BEDRIJF_MIN) continue;
-      if (c.sector && c.sector !== 'Overig')
+      if (c.sector && c.sector !== 'Overig') {
         coSector[co] = coSector[co] || {};
         coSector[co][c.sector] = (coSector[co][c.sector]||0)+1;
+      }
       if (c.connectedOn) {
         const yr = c.connectedOn.split(' ')[2];
         if (yr) {
