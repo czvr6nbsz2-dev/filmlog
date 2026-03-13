@@ -2855,5 +2855,20 @@
     "myRating": 5,
     "id": "a67c49fa-527f-4a08-8cfd-3463f2935601",
     "updatedAt": "2026-03-10T17:41:50.790Z"
+  },
+  {
+    "readDate": "2026-03-13",
+    "title": "De wereld van Sofie",
+    "author": "Jostein Gaarder",
+    "openLibraryKey": "/works/OL24137004W",
+    "publishYear": "2011",
+    "coverURL": "https://covers.openlibrary.org/b/id/10533452-M.jpg",
+    "description": null,
+    "subjects": null,
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 6,
+    "id": "fb5f9328-22da-4a8a-90bb-f57fbbab7717",
+    "updatedAt": "2026-03-13T07:35:21.341Z"
   }
 ]
