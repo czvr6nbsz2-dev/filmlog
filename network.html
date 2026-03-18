@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Filmlog — Netwerk</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Serif+Display:ital@0;1&display=swap');
+
+  :root {
+    --bg: #0d0d0f;
+    --surface: #141416;
+    --surface2: #1a1a1d;
+    --border: #222226;
+    --text: #e8e4dc;
+    --muted: #6b6860;
+    --accent: #c8b87a;
+    --accent2: #7a9fb8;
+
+    --film:     #c8b87a;
+    --director: #7a9fb8;
+    --actor:    #9fb87a;
+    --decade:   #b87a9f;
+    --genre:    #b8967a;
+    --country:  #7ab8b0;
+    --writer:   #a07ab8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; font-size: 13px; overflow: hidden; height: 100vh; width: 100vw; }
+  #canvas { width: 100%; height: 100%; display: block; }
+
+  /* ── HEADER ── */
+  #header {
+    position: fixed; top: 0; left: 0; right: 0; height: 48px;
+    background: rgba(13,13,15,0.94); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 20px; gap: 20px; z-index: 100;
+  }
+  #header h1 { font-family: 'DM Serif Display', serif; font-size: 17px; color: var(--accent); letter-spacing: 0.02em; white-space: nowrap; }
+  #stats { color: var(--muted); font-size: 10px; white-space: nowrap; }
+  #controls { display: flex; gap: 6px; margin-left: auto; align-items: center; flex-wrap: nowrap; }
+
+  #btn-refresh {
+    padding: 3px 9px; border: 1px solid var(--border); background: transparent;
+    color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px;
+    cursor: pointer; border-radius: 2px; transition: all 0.15s; letter-spacing: 0.03em;
+  }
+  #btn-refresh:hover { border-color: var(--accent); color: var(--accent); }
+
+  .filter-btn {
+    padding: 3px 9px; border: 1px solid var(--border); background: transparent;
+    color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px;
+    cursor: pointer; border-radius: 2px; transition: all 0.15s; white-space: nowrap; letter-spacing: 0.03em;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: rgba(255,255,255,0.04); }
+  .filter-btn[data-type="film"].active    { color: var(--film);     border-color: var(--film); }
+  .filter-btn[data-type="director"].active{ color: var(--director); border-color: var(--director); }
+  .filter-btn[data-type="actor"].active   { color: var(--actor);    border-color: var(--actor); }
+  .filter-btn[data-type="decade"].active  { color: var(--decade);   border-color: var(--decade); }
+  .filter-btn[data-type="genre"].active   { color: var(--genre);    border-color: var(--genre); }
+  .filter-btn[data-type="country"].active { color: var(--country);  border-color: var(--country); }
+  .filter-btn[data-type="writer"].active  { color: var(--writer);   border-color: var(--writer); }
+
+  .sep { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
+
+  #search {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); font-family: 'DM Mono', monospace; font-size: 10px;
+    padding: 3px 10px; width: 210px; border-radius: 2px; outline: none;
+  }
+  #search:focus { border-color: var(--accent); }
+  #search::placeholder { color: var(--muted); }
+
+  #search-results {
+    display: none;
+    position: absolute; top: calc(100% + 4px); right: 0;
+    background: var(--surface); border: 1px solid var(--border);
+    min-width: 280px; max-height: 340px; overflow-y: auto;
+    z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  #search-results.open { display: block; }
+  .sr-item {
+    padding: 8px 12px; cursor: pointer; border-bottom: 1px solid var(--border);
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .sr-item:last-child { border-bottom: none; }
+  .sr-item:hover, .sr-item.active { background: var(--surface2); }
+  .sr-label { font-size: 11px; color: var(--text); flex: 1; line-height: 1.4; }
+  .sr-label em { color: var(--accent); font-style: normal; font-weight: 400; }
+  .sr-sub { font-size: 9px; color: var(--muted); margin-top: 1px; }
+  .sr-type { font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; flex-shrink: 0; }
+  .sr-empty { padding: 10px 12px; color: var(--muted); font-size: 10px; }
+
+  /* ── LOAD PANEL ── */
+  #load-panel {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 36px 44px; z-index: 200; min-width: 380px; text-align: center;
+  }
+  #load-panel h2 { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--accent); margin-bottom: 8px; }
+  #load-panel p { color: var(--muted); font-size: 11px; margin-bottom: 24px; line-height: 1.8; }
+  .load-btns { display: flex; flex-direction: column; gap: 10px; }
+  .btn { padding: 10px 20px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; border-radius: 2px; transition: all 0.15s; letter-spacing: 0.05em; }
+  .btn:hover { background: rgba(200,184,122,0.1); }
+  .btn.sec { border-color: var(--border); color: var(--muted); }
+  .btn.sec:hover { border-color: var(--muted); color: var(--text); }
+  #file-input { display: none; }
+
+  /* ── TOOLTIP ── */
+  #tooltip {
+    position: fixed; pointer-events: none; z-index: 300;
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 10px 14px; max-width: 260px; opacity: 0; transition: opacity 0.1s; line-height: 1.5;
+  }
+  #tooltip.vis { opacity: 1; }
+  .tt-title { font-family: 'DM Serif Display', serif; font-size: 14px; color: var(--accent); margin-bottom: 5px; }
+  .tt-row { color: var(--muted); font-size: 10px; margin-top: 2px; }
+  .tt-row span { color: var(--text); }
+  .tt-stars { color: var(--accent); font-size: 12px; margin-top: 4px; letter-spacing: -0.5px; }
+
+  /* ── DETAIL PANEL ── */
+  #detail {
+    position: fixed; right: 0; top: 48px; bottom: 0; width: 320px;
+    background: var(--surface); border-left: 1px solid var(--border);
+    transform: translateX(100%); transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+    z-index: 90; overflow-y: auto;
+  }
+  #detail.open { transform: translateX(0); }
+
+  .detail-inner { padding: 22px 22px 40px; }
+
+  #detail-close {
+    position: sticky; top: 0; left: 100%; display: block; width: 36px;
+    background: var(--surface); border: none; color: var(--muted);
+    cursor: pointer; font-size: 15px; padding: 12px 8px; text-align: center; z-index: 2;
+  }
+  #detail-close:hover { color: var(--text); }
+
+  .d-title { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--accent); line-height: 1.3; margin-bottom: 4px; }
+  .d-subtitle { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+
+  #detail-poster { width: 100%; border: 1px solid var(--border); margin-bottom: 14px; display: none; }
+
+  .d-section { margin-top: 14px; }
+  .d-section-title { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+
+  .d-row { display: flex; gap: 8px; padding: 5px 0; border-bottom: 1px solid rgba(34,34,38,0.6); font-size: 11px; }
+  .d-lbl { color: var(--muted); min-width: 80px; flex-shrink: 0; }
+  .d-val { color: var(--text); line-height: 1.4; }
+
+  .d-stars { color: var(--accent); font-size: 14px; letter-spacing: -1px; margin: 8px 0 4px; }
+  .d-review { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 14px; color: var(--muted); line-height: 1.6; margin-top: 12px; }
+
+  /* Person-specific */
+  .person-photo { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--border); object-fit: cover; margin-bottom: 12px; display: none; background: var(--surface2); }
+  .person-stat { display: inline-block; text-align: center; padding: 8px 12px; border: 1px solid var(--border); margin: 3px; border-radius: 2px; }
+  .person-stat .ps-val { font-size: 16px; color: var(--accent); display: block; font-family: 'DM Serif Display', serif; }
+  .person-stat .ps-lbl { font-size: 9px; color: var(--muted); display: block; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .film-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    border: 1px solid var(--border); border-radius: 2px; padding: 4px 8px;
+    font-size: 10px; color: var(--text); cursor: pointer; margin: 3px;
+    transition: border-color 0.1s; background: var(--surface2);
+  }
+  .film-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .film-chip .chip-rating { color: var(--accent); }
+
+  .genre-tag {
+    display: inline-block; border: 1px solid var(--genre); border-radius: 2px;
+    padding: 2px 7px; font-size: 9px; color: var(--genre); margin: 2px; letter-spacing: 0.05em;
+  }
+
+  .imdb-link {
+    display: inline-block; margin-top: 14px; padding: 7px 14px;
+    border: 1px solid var(--border); color: var(--muted); font-size: 10px;
+    text-decoration: none; border-radius: 2px; letter-spacing: 0.05em;
+    transition: all 0.15s;
+  }
+  .imdb-link:hover { border-color: #f5c518; color: #f5c518; }
+
+  /* ── WIKIPEDIA BLOK ── */
+  #wiki-block {
+    margin-top: 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .wiki-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  }
+  .wiki-header svg { opacity: 0.4; }
+  .wiki-photo {
+    width: 100%; max-height: 180px; object-fit: cover; object-position: top;
+    display: block; border-bottom: 1px solid var(--border);
+  }
+  .wiki-extract {
+    padding: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .wiki-extract em { color: var(--text); font-style: normal; }
+  .wiki-link {
+    display: block; padding: 8px 12px;
+    border-top: 1px solid var(--border);
+    font-size: 10px; color: var(--muted); text-decoration: none; letter-spacing: 0.05em;
+    transition: color 0.1s;
+  }
+  .wiki-link:hover { color: var(--text); }
+
+  /* Loading spinner */
+  .loading { color: var(--muted); font-size: 10px; padding: 12px 0; text-align: center; }
+  .loading::after { content: ''; animation: dots 1.2s infinite; }
+  @keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
+
+  /* ── LEGEND ── */
+  #legend { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 5px; z-index: 80; }
+  .lg-item { display: flex; align-items: center; gap: 7px; font-size: 9px; color: var(--muted); letter-spacing: 0.06em; }
+  .lg-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+  #hint { position: fixed; bottom: 20px; right: 20px; color: var(--muted); font-size: 9px; letter-spacing: 0.05em; line-height: 1.9; text-align: right; }
+
+  /* ── SVG ── */
+  .link { stroke-opacity: 0.2; stroke-width: 1; }
+  .link.hl { stroke-opacity: 0.7 !important; stroke-width: 2 !important; }
+  .node circle { cursor: pointer; }
+  .node.dimmed circle { opacity: 0.15; }
+  .node.dimmed text { opacity: 0 !important; }
+  .node text { pointer-events: none; fill: var(--text); font-family: 'DM Mono', monospace; font-size: 9px; text-anchor: middle; opacity: 0; }
+  .node.labeled text { opacity: 0.8; }
+  .node.hl text { opacity: 1 !important; font-size: 10px; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>Filmlog Netwerk</h1>
+  <span id="stats"></span>
+  <div id="controls">
+    <button id="btn-refresh" title="Herlaad films uit FilmLog">↺ vernieuwen</button>
+    <div class="sep"></div>
+    <button class="filter-btn active" data-type="film">● Films</button>
+    <button class="filter-btn active" data-type="director">● Regisseurs</button>
+    <button class="filter-btn active" data-type="actor">● Acteurs</button>
+    <button class="filter-btn active" data-type="decade">● Decennia</button>
+    <button class="filter-btn active" data-type="genre">● Genre</button>
+    <button class="filter-btn active" data-type="country">● Land</button>
+    <button class="filter-btn active" data-type="writer">● Schrijver</button>
+    <div class="sep"></div>
+    <div style="position:relative">
+      <input id="search" type="text" placeholder="zoek film, acteur, regisseur…" autocomplete="off">
+      <div id="search-results"></div>
+    </div>
+  </div>
+</div>
+
+<div id="load-panel">
+  <h2>Filmlog Netwerk</h2>
+  <p id="load-msg">Films laden uit FilmLog…</p>
+  <div class="load-btns">
+    <div id="load-spinner" class="loading" style="margin-bottom:12px"></div>
+    <label class="btn" for="file-input" id="btn-import" style="display:none">📂 Importeer filmlog-backup.json</label>
+    <input type="file" id="file-input" accept=".json">
+    <div id="load-hint" style="display:none;margin-top:16px;font-size:10px;color:var(--muted);line-height:1.9;text-align:left;border-top:1px solid var(--border);padding-top:14px">
+      <strong style="color:var(--text);letter-spacing:0.05em">LIVE KOPPELING</strong><br>
+      Upload <code style="color:var(--accent)">network.html</code> naar je GitHub repo en open hem op<br>
+      <code style="color:var(--accent)">czvr6nbsz2-dev.github.io/filmlog/network.html</code><br>
+      Dan leest hij automatisch je films uit de FilmLog app.
+    </div>
+  </div>
+</div>
+
+<svg id="canvas"></svg>
+
+<div id="tooltip">
+  <div class="tt-title" id="tt-title"></div>
+  <div class="tt-row" id="tt-r1"></div>
+  <div class="tt-row" id="tt-r2"></div>
+  <div class="tt-stars" id="tt-stars"></div>
+</div>
+
+<div id="detail">
+  <button id="detail-close">✕</button>
+  <div class="detail-inner" id="detail-inner"></div>
+</div>
+
+<div id="legend">
+  <div class="lg-item"><div class="lg-dot" style="background:var(--film)"></div>Film</div>
+  <div class="lg-item"><div class="lg-dot" style="background:var(--director)"></div>Regisseur</div>
+  <div class="lg-item"><div class="lg-dot" style="background:var(--actor)"></div>Acteur (2+ films)</div>
+  <div class="lg-item"><div class="lg-dot" style="background:var(--decade)"></div>Decennium</div>
+  <div class="lg-item"><div class="lg-dot" style="background:var(--genre)"></div>Genre (3+ films)</div>
+  <div class="lg-item"><div class="lg-dot" style="background:var(--country)"></div>Land (3+ films)</div>
+  <div class="lg-item"><div class="lg-dot" style="background:var(--writer)"></div>Schrijver (2+ films)</div>
+</div>
+
+<div id="hint">scroll → zoom<br>sleep → bewegen<br>klik node → detail</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════
+const OMDB_KEY   = '9c012bd6';
+const TMDB_KEY   = '8bc1a2ab5515aaf8b9dda4fa487105c8';
+const TMDB_IMG   = 'https://image.tmdb.org/t/p/w185';
+const ACTOR_MIN   = 2;
+const GENRE_MIN   = 3;
+const COUNTRY_MIN = 3;
+const WRITER_MIN  = 2;
+
+const C = {
+  film:     '#c8b87a',
+  director: '#7a9fb8',
+  actor:    '#9fb87a',
+  decade:   '#b87a9f',
+  genre:    '#b8967a',
+  country:  '#7ab8b0',
+  writer:   '#a07ab8',
+};
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let allNodes = [], allLinks = [], filmMap = {};
+let activeTypes = new Set(['film','director','actor','decade','genre','country','writer']);
+let simulation, svg, g, linkLayer, nodeLayer;
+let W = window.innerWidth, H = window.innerHeight;
+const omdbCache  = {};     // imdbID → enriched OMDb data
+const tmdbCast   = {};     // imdbID → [naam, naam, naam, naam] (top 4 via TMDb)
+const personCache = {};    // "Name::type" → computed person profile
+
+// Top-4 acteurs: TMDb (rijker) → film.actors (fallback)
+function getActors(film) {
+  if (film.imdbID && tmdbCast[film.imdbID]?.length)
+    return tmdbCast[film.imdbID];
+  return (film.actors || '').split(',').map(a => a.trim()).filter(Boolean).slice(0, 4);
+}
+
+// ═══════════════════════════════════════════════════════════
+// DATA LOADING — GitHub JSON (primair) → IndexedDB → import
+// ═══════════════════════════════════════════════════════════
+const IDB_NAME  = 'filmlog';
+const IDB_STORE = 'films';
+
+const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/czvr6nbsz2-dev/filmlog/main/data/films.json';
+
+async function loadFromGitHub() {
+  // Cache busting zodat we altijd de laatste versie krijgen
+  const url = GITHUB_JSON_URL + '?t=' + Date.now();
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`GitHub ${res.status}`);
+  const films = await res.json();
+  return Array.isArray(films) ? films : [];
+}
+
+function loadFromIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(IDB_STORE)) { db.close(); return resolve([]); }
+      const store = db.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE);
+      const all = store.getAll();
+      all.onsuccess = () => { db.close(); resolve(all.result || []); };
+      all.onerror   = () => { db.close(); reject(all.error); };
+    };
+  });
+}
+
+async function autoLoad() {
+  if (window.__OMDB_ENRICHED__) Object.assign(omdbCache, window.__OMDB_ENRICHED__);
+
+  // 1. Probeer GitHub JSON (werkt altijd, ook buiten github.io origin)
+  try {
+    const films = await loadFromGitHub();
+    if (films.length > 0) {
+      updateStatus('github');
+      init(films);
+      return;
+    }
+  } catch(e) {
+    console.log('GitHub JSON niet beschikbaar, probeer IndexedDB…', e.message);
+  }
+
+  // 2. Fallback: IndexedDB (werkt alleen op github.io origin)
+  try {
+    const films = await loadFromIndexedDB();
+    if (films.length > 0) {
+      updateStatus('idb');
+      init(films);
+      return;
+    }
+  } catch(e) {
+    console.log('IndexedDB niet bereikbaar:', e.message);
+  }
+
+  // 3. Toon import knop
+  showImportFallback(
+    'Nog geen gesynchroniseerde filmdata gevonden. ' +
+    'Stel GitHub sync in via de FilmLog app (Instellingen → Netwerk sync), ' +
+    'of importeer je backup hier.'
+  );
+}
+
+function updateStatus(source) {
+  const el = document.getElementById('stats');
+  if (el) {
+    const suffix = source === 'github' ? ' · live via GitHub' : ' · via IndexedDB';
+    el.dataset.source = suffix;
+  }
+}
+
+function showImportFallback(msg) {
+  document.getElementById('load-msg').textContent = msg;
+  document.getElementById('load-spinner').style.display = 'none';
+  document.getElementById('btn-import').style.display = 'block';
+  const hint = document.getElementById('load-hint');
+  if (hint) hint.style.display = 'block';
+}
+
+// JSON backup import (fallback)
+document.getElementById('file-input').onchange = e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      const raw = JSON.parse(ev.target.result);
+      const films = Array.isArray(raw) ? raw : (raw.films || raw.movies || []);
+      if (!films.length) throw new Error('Geen films gevonden');
+      init(films);
+    } catch(err) { alert('Kon JSON niet laden: ' + err.message); }
+  };
+  r.readAsText(file);
+};
+
+autoLoad();
+
+// ═══════════════════════════════════════════════════════════
+// GRAPH BUILDER
+// ═══════════════════════════════════════════════════════════
+function buildGraph(films) {
+  const nodes = new Map();
+  const links = [];
+
+  function node(id, label, type, extra = {}) {
+    if (!nodes.has(id)) nodes.set(id, { id, label, type, connections: 0, filmIds: [], ...extra });
+    return nodes.get(id);
+  }
+
+  // Pre-count actors, genres, countries, writers
+  const actorCount = {}, genreCount = {}, countryCount = {}, writerCount = {};
+
+  for (const f of films) {
+    getActors(f).forEach(a => { actorCount[a] = (actorCount[a]||0)+1; });
+    const enriched = omdbCache[f.imdbID];
+    if (enriched?.Genre)   enriched.Genre.split(',').forEach(g => { g = g.trim(); if (g && g !== 'N/A') genreCount[g] = (genreCount[g]||0)+1; });
+    if (enriched?.Country) {
+      const c = enriched.Country.split(',')[0].trim();
+      if (c && c !== 'N/A') countryCount[c] = (countryCount[c]||0)+1;
+    }
+    if (enriched?.Writer) enriched.Writer.split(',').forEach(w => {
+      w = w.split('(')[0].trim();
+      if (w && w !== 'N/A' && w.length > 3) writerCount[w] = (writerCount[w]||0)+1;
+    });
+  }
+
+  for (const film of films) {
+    if (!film.title) continue;
+
+    filmMap[film.id || film.title] = film;
+
+    const fid = `film:${film.id || film.title}`;
+    const fn = node(fid, film.title, 'film', {
+      filmRef: film,
+      r: film.myRating ? 4 + film.myRating * 0.55 : 5,
+    });
+
+    const link = (target, type) => {
+      fn.connections++;
+      target.connections++;
+      target.filmIds.push(fid);
+      links.push({ source: fid, target: target.id, type });
+    };
+
+    // Director(s)
+    if (film.directors) {
+      film.directors.split(',').map(d => d.trim()).filter(Boolean).forEach(d => {
+        link(node(`dir:${d}`, d, 'director', { personName: d, personRole: 'director' }), 'director');
+      });
+    }
+
+    // Actors: top-1 altijd zichtbaar, acteurs in 2+ films ook
+    const actors = getActors(film);
+    actors.forEach((a, idx) => {
+      const count = actorCount[a] || 0;
+      if (idx === 0 || count >= ACTOR_MIN) {
+        link(node(`act:${a}`, a, 'actor', { personName: a, personRole: 'actor' }), 'actor');
+      }
+    });
+
+    // Decade
+    if (film.year) {
+      const dec = Math.floor(parseInt(film.year)/10)*10;
+      if (!isNaN(dec)) link(node(`dec:${dec}`, `${dec}s`, 'decade'), 'decade');
+    }
+
+    const enriched = omdbCache[film.imdbID];
+
+    // Genres (≥ GENRE_MIN films)
+    if (enriched?.Genre) {
+      enriched.Genre.split(',').map(g => g.trim()).filter(g => g && g !== 'N/A' && (genreCount[g]||0) >= GENRE_MIN).forEach(g => {
+        link(node(`genre:${g}`, g, 'genre'), 'genre');
+      });
+    }
+
+    // Country (eerste productie-land, ≥ COUNTRY_MIN films)
+    if (enriched?.Country) {
+      const c = enriched.Country.split(',')[0].trim();
+      if (c && c !== 'N/A' && (countryCount[c]||0) >= COUNTRY_MIN) {
+        link(node(`country:${c}`, c, 'country'), 'country');
+      }
+    }
+
+    // Writers (≥ WRITER_MIN films)
+    if (enriched?.Writer) {
+      enriched.Writer.split(',').forEach(w => {
+        w = w.split('(')[0].trim();
+        if (w && w !== 'N/A' && w.length > 3 && (writerCount[w]||0) >= WRITER_MIN) {
+          link(node(`writer:${w}`, w, 'writer', { personName: w, personRole: 'writer' }), 'writer');
+        }
+      });
+    }
+  }
+
+  // Scale non-film nodes by connections
+  for (const [,n] of nodes) {
+    if (n.type !== 'film') {
+      const base = { director:9, actor:6, decade:12, genre:10, country:11, writer:7 }[n.type] || 7;
+      n.r = base + Math.min(n.connections * 0.8, 7);
+    }
+  }
+
+  return { nodes: [...nodes.values()], links };
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+function init(films) {
+  document.getElementById('load-panel').style.display = 'none';
+
+  // If we have embedded OMDb data, use it; otherwise graph renders without genres first
+  const graph = buildGraph(films);
+  allNodes = graph.nodes;
+  allLinks = graph.links;
+
+  const filmCount = films.length;
+  const nodeCount = allNodes.length;
+  document.getElementById('stats').textContent =
+    `${filmCount} films · ${nodeCount} nodes · ${allLinks.length} relaties`;
+
+  setupSVG();
+  initClickHandlers();
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// SVG SETUP
+// ═══════════════════════════════════════════════════════════
+function setupSVG() {
+  svg = d3.select('#canvas').attr('width', W).attr('height', H);
+  const zoom = d3.zoom().scaleExtent([0.1, 8]).on('zoom', e => g.attr('transform', e.transform));
+  svg.call(zoom);
+  g = svg.append('g');
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════
+function render() {
+  const vis = new Set(allNodes
+    .filter(n => activeTypes.has(n.type))
+    .map(n => n.id)
+  );
+
+  const vNodes = allNodes.filter(n => vis.has(n.id));
+  const vLinks = allLinks.filter(l => {
+    const s = typeof l.source === 'object' ? l.source.id : l.source;
+    const t = typeof l.target === 'object' ? l.target.id : l.target;
+    return vis.has(s) && vis.has(t);
+  });
+
+  g.selectAll('*').remove();
+
+  // Links
+  linkLayer = g.append('g').selectAll('line')
+    .data(vLinks).join('line')
+    .attr('class','link')
+    .style('stroke', d => C[d.type] || '#444');
+
+  // Nodes
+  const nodeG = g.append('g').selectAll('g')
+    .data(vNodes, d => d.id).join('g')
+    .attr('class', d => `node${['decade','genre','director','country','writer'].includes(d.type) || d.connections > 2 ? ' labeled' : ''}`)
+    .call(d3.drag().on('start', ds).on('drag', dd).on('end', de))
+    .on('mouseover', ttShow)
+    .on('mousemove', ttMove)
+    .on('mouseout', ttHide)
+    .on('click', onNodeClick);
+
+  nodeG.append('circle')
+    .attr('r', d => d.r || 6)
+    .attr('fill', d => C[d.type] || '#888')
+    .attr('fill-opacity', 0.82)
+    .attr('stroke', d => C[d.type] || '#888')
+    .attr('stroke-width', 1.5)
+    .attr('stroke-opacity', 0.45);
+
+  nodeG.append('text')
+    .text(d => d.label)
+    .attr('dy', d => -(d.r||6) - 4)
+    .style('font-size', d => ['decade','location','genre'].includes(d.type) ? '10px' : '9px')
+    .style('fill', d => C[d.type]);
+
+  nodeLayer = nodeG;
+
+  if (simulation) simulation.stop();
+
+  simulation = d3.forceSimulation(vNodes)
+    .force('link', d3.forceLink(vLinks).id(d => d.id)
+      .distance(d => ({ decade:130, location:120, genre:110, director:85, actor:65, film:55 }[d.type] || 70))
+      .strength(0.35))
+    .force('charge', d3.forceManyBody()
+      .strength(d => ({ decade:-350, location:-300, genre:-280, director:-120, actor:-60, film:-50 }[d.type] || -70)))
+    .force('center', d3.forceCenter(W/2, H/2 - 24))
+    .force('collide', d3.forceCollide().radius(d => (d.r||8) + 3))
+    .on('tick', () => {
+      linkLayer
+        .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+        .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+      nodeLayer.attr('transform', d => `translate(${d.x},${d.y})`);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════
+// DRAG
+// ═══════════════════════════════════════════════════════════
+function ds(e,d) { if(!e.active) simulation.alphaTarget(0.3).restart(); d.fx=d.x; d.fy=d.y; }
+function dd(e,d) { d.fx=e.x; d.fy=e.y; }
+function de(e,d) { if(!e.active) simulation.alphaTarget(0); d.fx=null; d.fy=null; }
+
+// ═══════════════════════════════════════════════════════════
+// TOOLTIP
+// ═══════════════════════════════════════════════════════════
+const tt = document.getElementById('tooltip');
+
+function ttShow(event, d) {
+  document.getElementById('tt-title').textContent = d.label;
+  document.getElementById('tt-r1').innerHTML = `type <span>${d.type}</span>`;
+  if (d.type === 'film') {
+    const f = d.filmRef;
+    const e = omdbCache[f?.imdbID];
+    document.getElementById('tt-r2').innerHTML = `${f?.year||'?'}${e?.Country ? ' · ' + e.Country.split(',')[0].trim() : ''}`;
+    const r = f?.myRating;
+    document.getElementById('tt-stars').textContent = r ? '★'.repeat(Math.round(r/2))+'☆'.repeat(5-Math.round(r/2))+` ${r}/10` : '';
+  } else {
+    document.getElementById('tt-r2').innerHTML = `relaties <span>${d.connections}</span>`;
+    document.getElementById('tt-stars').textContent = '';
+  }
+  tt.classList.add('vis');
+  ttMove(event);
+}
+
+function ttMove(e) {
+  tt.style.left = Math.min(e.clientX+14, W-270)+'px';
+  tt.style.top  = Math.min(e.clientY-10, H-120)+'px';
+}
+function ttHide() { tt.classList.remove('vis'); }
+
+// ═══════════════════════════════════════════════════════════
+// NODE CLICK → DETAIL PANEL
+// ═══════════════════════════════════════════════════════════
+async function onNodeClick(event, d) {
+  event.stopPropagation();
+  openDetail();
+
+  // Highlight connected nodes
+  highlight(d);
+
+  if (d.type === 'film') {
+    renderFilmDetail(d.filmRef);
+  } else if (d.type === 'director' || d.type === 'actor' || d.type === 'writer') {
+    renderPersonDetail(d);
+  } else {
+    renderGroupDetail(d);
+  }
+}
+
+function highlight(d) {
+  const connected = new Set([d.id]);
+  allLinks.forEach(l => {
+    const s = typeof l.source === 'object' ? l.source.id : l.source;
+    const t = typeof l.target === 'object' ? l.target.id : l.target;
+    if (s === d.id) connected.add(t);
+    if (t === d.id) connected.add(s);
+  });
+
+  nodeLayer.classed('dimmed', n => !connected.has(n.id));
+  nodeLayer.classed('hl', n => connected.has(n.id));
+  linkLayer.classed('hl', l => {
+    const s = typeof l.source === 'object' ? l.source.id : l.source;
+    const t = typeof l.target === 'object' ? l.target.id : l.target;
+    return s === d.id || t === d.id;
+  });
+}
+
+function clearHighlight() {
+  nodeLayer?.classed('dimmed', false).classed('hl', false);
+  linkLayer?.classed('hl', false);
+}
+
+function initClickHandlers() {
+  svg.on('click', () => {
+    document.getElementById('detail').classList.remove('open');
+    clearHighlight();
+    searchResults.classList.remove('open');
+  });
+  document.getElementById('detail-close').onclick = () => {
+    document.getElementById('detail').classList.remove('open');
+    clearHighlight();
+  };
+}
+
+function openDetail() { document.getElementById('detail').classList.add('open'); }
+
+// ── FILM DETAIL ─────────────────────────────────────────────
+async function renderFilmDetail(film) {
+  const el = document.getElementById('detail-inner');
+
+  // Basic layout immediately
+  el.innerHTML = `
+    <div class="d-title">${film.title}</div>
+    <div class="d-subtitle">film · ${film.year||'?'}</div>
+    ${film.posterURL ? `<img id="detail-poster" src="${film.posterURL}" style="display:block;width:100%;border:1px solid var(--border);margin-bottom:14px;">` : ''}
+    <div class="d-stars">${film.myRating ? '★'.repeat(film.myRating)+'☆'.repeat(10-film.myRating) : ''}</div>
+    ${film.myRating ? `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">jouw score ${film.myRating}/10</div>` : ''}
+    ${film.myReview ? `<div class="d-review">"${film.myReview}"</div>` : ''}
+    <div class="d-section">
+      <div class="d-section-title">Gegevens</div>
+      ${drow('Gekeken', film.watchDate)}
+      ${drow('Locatie', film.location)}
+      ${film.imdbRating ? drow('IMDb', `${film.imdbRating}/10`) : ''}
+      ${drow('Regisseur', film.directors)}
+      ${drow('Acteurs', getActors(film).join(', ') || film.actors)}
+    </div>
+    <div id="omdb-extra"><div class="loading">OMDb laden</div></div>
+    ${film.imdbID ? `<a class="imdb-link" href="https://www.imdb.com/title/${film.imdbID}/" target="_blank">→ IMDb pagina</a>` : ''}
+  `;
+
+  // Fetch/use OMDb enrichment
+  if (film.imdbID) {
+    const enriched = await fetchOMDb(film.imdbID);
+    const ex = document.getElementById('omdb-extra');
+    if (ex && enriched) {
+      ex.innerHTML = `
+        <div class="d-section">
+          <div class="d-section-title">OMDb details</div>
+          ${drow('Genre', enriched.Genre)}
+          ${drow('Land', enriched.Country)}
+          ${drow('Speelduur', enriched.Runtime)}
+          ${drow('Taal', enriched.Language)}
+          ${drow('Metascore', enriched.Metascore ? enriched.Metascore+'/100' : '')}
+          ${drow('Awards', enriched.Awards)}
+          ${drow('Box office', enriched.BoxOffice)}
+          ${drow('Kijkwijzer', enriched.Rated)}
+        </div>
+      `;
+    } else if (ex) { ex.innerHTML = ''; }
+  }
+}
+
+// ── PERSON DETAIL ────────────────────────────────────────────
+async function renderPersonDetail(d) {
+  const el = document.getElementById('detail-inner');
+  const name = d.personName;
+  const role = d.personRole;
+
+  // Collect this person's films from the graph
+  const myFilmNodes = allNodes.filter(n => {
+    if (n.type !== 'film') return false;
+    return allLinks.some(l => {
+      const s = typeof l.source === 'object' ? l.source.id : l.source;
+      const t = typeof l.target === 'object' ? l.target.id : l.target;
+      return ((s === d.id && t === n.id) || (t === d.id && s === n.id));
+    });
+  });
+
+  const films = myFilmNodes.map(n => n.filmRef).filter(Boolean).sort((a,b) => (b.watchDate||'').localeCompare(a.watchDate||''));
+  const ratings = films.map(f => f.myRating).filter(Boolean);
+  const avgRating = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1) : '—';
+  const imdbRatings = films.map(f => parseFloat(f.imdbRating)).filter(r => !isNaN(r));
+  const avgImdb = imdbRatings.length ? (imdbRatings.reduce((a,b)=>a+b,0)/imdbRatings.length).toFixed(1) : '—';
+
+  // Collect genres across their films
+  const genreMap = {};
+  for (const f of films) {
+    const enriched = omdbCache[f.imdbID];
+    if (enriched?.Genre) enriched.Genre.split(',').forEach(g => { g = g.trim(); if(g) genreMap[g] = (genreMap[g]||0)+1; });
+  }
+  const topGenres = Object.entries(genreMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([g])=>g);
+
+  el.innerHTML = `
+    <div id="person-photo-wrap" style="width:100%;margin-bottom:14px;display:none">
+      <img id="person-photo" src="" alt="${name}"
+        style="width:100%;max-height:220px;object-fit:cover;object-position:top;display:block;border-bottom:1px solid var(--border)"
+        onerror="this.parentElement.style.display='none'">
+    </div>
+    <div class="d-title">${name}</div>
+    <div class="d-subtitle">${role === 'director' ? 'regisseur' : role === 'writer' ? 'scenarioschrijver' : 'acteur/actrice'}</div>
+    <div id="person-wiki"><div class="loading">Bio laden</div></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin:12px 0">
+      <div class="person-stat"><span class="ps-val">${films.length}</span><span class="ps-lbl">Films</span></div>
+      <div class="person-stat"><span class="ps-val">${avgRating}</span><span class="ps-lbl">Jouw gem.</span></div>
+      <div class="person-stat"><span class="ps-val">${avgImdb}</span><span class="ps-lbl">IMDb gem.</span></div>
+    </div>
+    ${topGenres.length ? `<div style="margin-bottom:12px">${topGenres.map(g=>`<span class="genre-tag">${g}</span>`).join('')}</div>` : ''}
+    <div class="d-section">
+      <div class="d-section-title">Films in jouw log</div>
+      <div id="person-films">
+        ${films.map(f => `
+          <span class="film-chip" onclick="clickFilmChip('${(f.id||f.title).replace(/'/g,"\\'")}')">
+            <span>${f.title}</span>
+            <span style="color:var(--muted)">${f.year||''}</span>
+            ${f.myRating ? `<span class="chip-rating">${f.myRating}★</span>` : ''}
+          </span>
+        `).join('')}
+      </div>
+    </div>
+    <div id="person-omdb"><div class="loading">Carrière laden</div></div>
+    <a class="imdb-link" href="https://www.imdb.com/search/title/?${role==='director'?'director':'cast'}=${encodeURIComponent(name)}" target="_blank">→ Zoek op IMDb</a>
+  `;
+
+  // Foto: TMDb eerst, Wikipedia als fallback
+  (async () => {
+    let photoUrl = await fetchTMDbPhoto(name).catch(() => null);
+    if (!photoUrl) photoUrl = await fetchWikiPhoto(name).catch(() => null);
+    if (photoUrl) {
+      const wrap = document.getElementById('person-photo-wrap');
+      const img  = document.getElementById('person-photo');
+      if (wrap && img) { img.src = photoUrl; wrap.style.display = 'block'; }
+    }
+  })();
+
+  // Wikipedia bio parallel
+  fetchWikipedia(name)
+    .then(wiki => {
+      const el = document.getElementById('person-wiki');
+      if (el) el.innerHTML = renderWikiBlock(wiki);
+    })
+    .catch(() => {
+      const el = document.getElementById('person-wiki');
+      if (el) el.innerHTML = renderWikiBlock(null);
+    });
+
+  // Enrich each film if not cached, then show career summary
+  await enrichFilms(films);
+
+  const pOmdb = document.getElementById('person-omdb');
+  if (!pOmdb) return;
+
+  // Collect enriched data
+  const allAwards = films.map(f => omdbCache[f.imdbID]?.Awards).filter(a => a && a !== 'N/A');
+  const nominated = allAwards.filter(a => a.includes('nomination')).length;
+  const won = allAwards.filter(a => /\d+ win/.test(a)).length;
+
+  // Countries
+  const countries = {};
+  films.forEach(f => {
+    const e = omdbCache[f.imdbID];
+    if (e?.Country) e.Country.split(',').forEach(c => { c=c.trim(); if(c) countries[c]=(countries[c]||0)+1; });
+  });
+  const topCountries = Object.entries(countries).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([c])=>c).join(', ');
+
+  pOmdb.innerHTML = `
+    <div class="d-section">
+      <div class="d-section-title">Carrière profiel (uit jouw log)</div>
+      ${drow('Landen', topCountries || '—')}
+      ${drow('Films met awards', `${won} gewonnen · ${nominated} genomineerd`)}
+      ${drow('Periode', films.length ? `${Math.min(...films.map(f=>parseInt(f.year)||9999))} – ${Math.max(...films.map(f=>parseInt(f.year)||0))}` : '—')}
+    </div>
+  `;
+}
+
+// ── GROUP DETAIL ─────────────────────────────────────────────
+function renderGroupDetail(d) {
+  const el = document.getElementById('detail-inner');
+
+  // Find all connected films
+  const filmNodes = allNodes.filter(n => {
+    if (n.type !== 'film') return false;
+    return allLinks.some(l => {
+      const s = typeof l.source === 'object' ? l.source.id : l.source;
+      const t = typeof l.target === 'object' ? l.target.id : l.target;
+      return (s === d.id && t === n.id) || (t === d.id && s === n.id);
+    });
+  });
+
+  const films = filmNodes.map(n => n.filmRef).filter(Boolean).sort((a,b) => b.myRating - a.myRating);
+  const ratings = films.map(f=>f.myRating).filter(Boolean);
+  const avg = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1) : '—';
+
+  el.innerHTML = `
+    <div class="d-title">${d.label}</div>
+    <div class="d-subtitle">${d.type} · ${films.length} films</div>
+    <div style="display:flex;gap:6px;margin:12px 0">
+      <div class="person-stat"><span class="ps-val">${films.length}</span><span class="ps-lbl">Films</span></div>
+      <div class="person-stat"><span class="ps-val">${avg}</span><span class="ps-lbl">Gem. score</span></div>
+    </div>
+    <div class="d-section">
+      <div class="d-section-title">Films</div>
+      ${films.map(f => `
+        <span class="film-chip" onclick="clickFilmChip('${f.id||f.title}')">
+          <span>${f.title}</span>
+          <span style="color:var(--muted)">${f.year||''}</span>
+          ${f.myRating ? `<span class="chip-rating">${f.myRating}★</span>` : ''}
+        </span>
+      `).join('')}
+    </div>
+  `;
+}
+
+// Click on film chip in person/group panel → switch to film detail
+function clickFilmChip(filmKey) {
+  const film = filmMap[filmKey] || Object.values(filmMap).find(f => f.title === filmKey);
+  if (film) renderFilmDetail(film);
+}
+
+// ═══════════════════════════════════════════════════════════
+// OMDB FETCH
+// ═══════════════════════════════════════════════════════════
+async function fetchOMDb(imdbID) {
+  if (!imdbID || imdbID === 'N/A') return null;
+  if (omdbCache[imdbID]) return omdbCache[imdbID];
+
+  try {
+    const url = `https://www.omdbapi.com/?apikey=${OMDB_KEY}&i=${imdbID}&plot=short`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.Response === 'True') {
+      const enriched = {
+        Genre: data.Genre, Country: data.Country, Runtime: data.Runtime,
+        Awards: data.Awards, Rated: data.Rated, Language: data.Language,
+        Writer: data.Writer, Metascore: data.Metascore, BoxOffice: data.BoxOffice,
+      };
+      omdbCache[imdbID] = enriched;
+      return enriched;
+    }
+  } catch(e) {}
+  return null;
+}
+
+async function enrichFilms(films) {
+  await Promise.all(films.filter(f => f.imdbID && !omdbCache[f.imdbID]).map(f => fetchOMDb(f.imdbID)));
+}
+
+// ═══════════════════════════════════════════════════════════
+// TMDB — persoonsfoto's
+// ═══════════════════════════════════════════════════════════
+const tmdbCache = {};
+
+async function fetchTMDbPhoto(name) {
+  if (tmdbCache[name] !== undefined) return tmdbCache[name];
+  try {
+    const q = encodeURIComponent(name);
+    // Gebruik JSONP-achtige aanpak via script tag om CSP te omzeilen
+    const url = `https://api.themoviedb.org/3/search/person?api_key=${TMDB_KEY}&query=${q}&language=en-US`;
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      const hit = data.results?.[0];
+      if (hit?.profile_path) {
+        const photoUrl = `https://image.tmdb.org/t/p/w185${hit.profile_path}`;
+        tmdbCache[name] = photoUrl;
+        return photoUrl;
+      }
+    }
+  } catch(e) {
+    // Fallback: probeer via Wikipedia thumbnail als TMDb geblokkeerd is
+    console.warn('TMDb geblokkeerd, probeer Wikipedia foto:', name);
+  }
+  tmdbCache[name] = null;
+  return null;
+}
+
+// Haal foto op via Wikipedia als TMDb faalt
+async function fetchWikiPhoto(name) {
+  try {
+    const slug = encodeURIComponent(name.replace(/ /g,'_'));
+    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${slug}`,
+      { headers: { 'Accept': 'application/json' } });
+    if (res.ok) {
+      const d = await res.json();
+      if (d.thumbnail?.source) return d.thumbnail.source;
+    }
+    // Probeer NL
+    const res2 = await fetch(`https://nl.wikipedia.org/api/rest_v1/page/summary/${slug}`,
+      { headers: { 'Accept': 'application/json' } });
+    if (res2.ok) {
+      const d2 = await res2.json();
+      if (d2.thumbnail?.source) return d2.thumbnail.source;
+    }
+  } catch(e) {}
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════
+// WIKIPEDIA
+// ═══════════════════════════════════════════════════════════
+const wikiCache = {};
+
+async function fetchWikipedia(name) {
+  const key = `wiki:${name}`;
+  if (wikiCache[key] !== undefined) return wikiCache[key];
+
+  // Hulpfunctie: fetch met timeout
+  async function fetchWithTimeout(url, options = {}, ms = 5000) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), ms);
+    try {
+      const res = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(id);
+      return res;
+    } catch(e) {
+      clearTimeout(id);
+      throw e;
+    }
+  }
+
+  // Stap 1: directe paginanaam
+  const slug = encodeURIComponent(name.replace(/ /g, '_'));
+  for (const lang of ['en', 'nl']) {
+    try {
+      const res = await fetchWithTimeout(
+        `https://${lang}.wikipedia.org/api/rest_v1/page/summary/${slug}`,
+        { headers: { 'Accept': 'application/json' } }
+      );
+      if (res.ok) {
+        const d = await res.json();
+        if (d.type !== 'disambiguation' && d.extract?.length > 60) {
+          const r = {
+            title: d.title, extract: d.extract,
+            thumb: d.thumbnail?.source || null,
+            url:   d.content_urls?.desktop?.page || `https://${lang}.wikipedia.org/wiki/${slug}`,
+            lang,
+          };
+          wikiCache[key] = r;
+          return r;
+        }
+      }
+    } catch(e) { /* timeout of netwerk */ }
+  }
+
+  // Stap 2: Wikipedia search API
+  try {
+    const q = encodeURIComponent(name + ' film');
+    const res = await fetchWithTimeout(
+      `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${q}&format=json&origin=*&srlimit=1`
+    );
+    const data = await res.json();
+    const hit = data?.query?.search?.[0];
+    if (hit) {
+      const ps = encodeURIComponent(hit.title.replace(/ /g, '_'));
+      const r2 = await fetchWithTimeout(
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${ps}`,
+        { headers: { 'Accept': 'application/json' } }
+      );
+      if (r2.ok) {
+        const d2 = await r2.json();
+        if (d2.extract?.length > 60) {
+          const r = {
+            title: d2.title, extract: d2.extract,
+            thumb: d2.thumbnail?.source || null,
+            url:   d2.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${ps}`,
+            lang:  'en',
+          };
+          wikiCache[key] = r;
+          return r;
+        }
+      }
+    }
+  } catch(e) { /* timeout of netwerk */ }
+
+  wikiCache[key] = null;
+  return null;
+}
+
+function renderWikiBlock(wiki) {
+  if (!wiki) return `<div style="font-size:10px;color:var(--muted);padding:6px 0">Geen Wikipedia-pagina gevonden.</div>`;
+
+  // Max ~280 tekens, afkappen op zinsgrens
+  let ex = wiki.extract;
+  if (ex.length > 300) {
+    ex = ex.substring(0, 300);
+    const dot = ex.lastIndexOf('.');
+    ex = dot > 180 ? ex.substring(0, dot + 1) : ex + '…';
+  }
+
+  return `
+    <div id="wiki-block">
+      <div class="wiki-header">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+        </svg>
+        Wikipedia${wiki.lang === 'nl' ? ' · NL' : ''}
+      </div>
+      ${wiki.thumb ? `<img class="wiki-photo" src="${wiki.thumb}" alt="${wiki.title}" onerror="this.style.display='none'">` : ''}
+      <div class="wiki-extract">${ex}</div>
+      <a class="wiki-link" href="${wiki.url}" target="_blank">→ Lees verder op Wikipedia</a>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+function drow(label, val) {
+  if (!val || val === 'N/A') return '';
+  return `<div class="d-row"><span class="d-lbl">${label}</span><span class="d-val">${val}</span></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// FILTERS & SEARCH
+// ═══════════════════════════════════════════════════════════
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const t = btn.dataset.type;
+    if (activeTypes.has(t)) { if (activeTypes.size > 1) { activeTypes.delete(t); btn.classList.remove('active'); } }
+    else { activeTypes.add(t); btn.classList.add('active'); }
+    render();
+  });
+});
+
+// ═══════════════════════════════════════════════════════════
+// ZOEK — suggesties + navigatie naar node
+// ═══════════════════════════════════════════════════════════
+const searchEl      = document.getElementById('search');
+const searchResults = document.getElementById('search-results');
+let activeIdx = -1;
+
+function hilite(str, q) {
+  if (!q) return escHtml(str);
+  const i = str.toLowerCase().indexOf(q.toLowerCase());
+  if (i < 0) return escHtml(str);
+  return escHtml(str.slice(0,i)) + '<em>' + escHtml(str.slice(i,i+q.length)) + '</em>' + escHtml(str.slice(i+q.length));
+}
+
+function escHtml(s) {
+  const el = document.createElement('span');
+  el.textContent = s;
+  return el.innerHTML;
+}
+
+const TYPE_NL = { film:'film', director:'regisseur', actor:'acteur', decade:'decennium', genre:'genre', country:'land', writer:'schrijver' };
+
+function getSub(n) {
+  if (n.type === 'film' && n.filmRef) {
+    return [n.filmRef.director, n.filmRef.year].filter(Boolean).join(' · ');
+  }
+  if (n.type === 'actor' || n.type === 'director' || n.type === 'writer') {
+    return `${n.connections || 0} film${n.connections !== 1 ? 's' : ''}`;
+  }
+  return '';
+}
+
+function updateResults(q) {
+  activeIdx = -1;
+  if (q.length < 2) { searchResults.classList.remove('open'); return; }
+  const ql = q.toLowerCase();
+
+  // Sorteer: exacte match eerst, dan films/personen voor meta-nodes
+  const typeOrder = { film:0, actor:1, director:1, writer:1, genre:2, decade:3, country:3 };
+  const hits = allNodes
+    .filter(n => activeTypes.has(n.type) && n.label?.toLowerCase().includes(ql))
+    .sort((a,b) => {
+      const ao = typeOrder[a.type] ?? 9, bo = typeOrder[b.type] ?? 9;
+      if (ao !== bo) return ao - bo;
+      // exacte match eerst
+      const ae = a.label.toLowerCase() === ql ? 0 : 1;
+      const be = b.label.toLowerCase() === ql ? 0 : 1;
+      return ae - be;
+    })
+    .slice(0, 14);
+
+  if (!hits.length) {
+    searchResults.innerHTML = `<div class="sr-empty">Geen resultaten voor "${escHtml(q)}"</div>`;
+    searchResults.classList.add('open');
+    return;
+  }
+
+  searchResults.innerHTML = hits.map((n,i) => {
+    const sub = getSub(n);
+    return `<div class="sr-item" data-idx="${i}">
+      <div style="flex:1;min-width:0">
+        <div class="sr-label">${hilite(n.label, q)}</div>
+        ${sub ? `<div class="sr-sub">${escHtml(sub)}</div>` : ''}
+      </div>
+      <span class="sr-type">${TYPE_NL[n.type]||n.type}</span>
+    </div>`;
+  }).join('');
+  searchResults.classList.add('open');
+
+  searchResults.querySelectorAll('.sr-item').forEach((el, i) => {
+    el.addEventListener('mouseenter', () => setActive(i));
+    el.addEventListener('click', () => selectHit(hits[i]));
+  });
+}
+
+function setActive(i) {
+  activeIdx = i;
+  searchResults.querySelectorAll('.sr-item').forEach((el,j) => el.classList.toggle('active', j===i));
+}
+
+function selectHit(node) {
+  searchEl.value = node.label;
+  searchResults.classList.remove('open');
+  navigeerNaarNode(node);
+}
+
+searchEl.addEventListener('input', () => updateResults(searchEl.value.trim()));
+
+searchEl.addEventListener('keydown', e => {
+  const items = searchResults.querySelectorAll('.sr-item');
+  if (e.key === 'ArrowDown') { e.preventDefault(); setActive(Math.min(activeIdx+1, items.length-1)); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(activeIdx-1, 0)); }
+  else if (e.key === 'Enter') {
+    e.preventDefault();
+    const idx = activeIdx >= 0 ? activeIdx : 0;
+    const node = allNodes.filter(n => activeTypes.has(n.type) && n.label?.toLowerCase().includes(searchEl.value.trim().toLowerCase()))[idx];
+    if (node) selectHit(node);
+  }
+  else if (e.key === 'Escape') { searchResults.classList.remove('open'); searchEl.blur(); }
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#search') && !e.target.closest('#search-results')) {
+    searchResults.classList.remove('open');
+  }
+});
+
+function navigeerNaarNode(node) {
+  if (node.x == null || node.y == null) return;
+  const scale = 2;
+  const tx = W/2 - node.x * scale;
+  const ty = H/2 - node.y * scale;
+  d3.select('#canvas')
+    .transition().duration(600)
+    .call(d3.zoom().transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+  onNodeClick({ stopPropagation: ()=>{} }, node);
+}
+
+// ═══════════════════════════════════════════════════════════
+// REFRESH KNOP
+// ═══════════════════════════════════════════════════════════
+document.getElementById('btn-refresh').onclick = async () => {
+  const btn = document.getElementById('btn-refresh');
+  btn.textContent = '↺ laden…';
+  btn.style.color = 'var(--accent)';
+  try {
+    let films = [];
+    try {
+      films = await loadFromGitHub();
+    } catch(e) {
+      films = await loadFromIndexedDB();
+    }
+    if (films.length > 0) {
+      allNodes = []; allLinks = []; filmMap = {};
+      init(films);
+      btn.textContent = '↺ vernieuwen';
+      btn.style.color = '';
+    } else {
+      btn.textContent = '↺ leeg';
+      setTimeout(() => { btn.textContent = '↺ vernieuwen'; btn.style.color = ''; }, 2000);
+    }
+  } catch(e) {
+    btn.textContent = '↺ fout';
+    setTimeout(() => { btn.textContent = '↺ vernieuwen'; btn.style.color = ''; }, 2000);
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
+// RESIZE
+// ═══════════════════════════════════════════════════════════
+window.addEventListener('resize', () => {
+  W = window.innerWidth; H = window.innerHeight;
+  d3.select('#canvas').attr('width', W).attr('height', H);
+  if (simulation) { simulation.force('center', d3.forceCenter(W/2, H/2)); simulation.alpha(0.3).restart(); }
+});
+</script>
+
+<script>
+window.__OMDB_ENRICHED__ = {"tt11196036": {"Genre": "Crime, Drama, Thriller", "Country": "United States, United Kingdom, China, Sweden", "Runtime": "111 min", "Awards": "3 wins & 22 nominations total", "Rated": "R", "Language": "English", "Writer": "Paul Schrader", "Metascore": "78", "BoxOffice": "$2,657,850"}, "tt32916440": {"Genre": "Drama, Sport", "Country": "Finland, United States", "Runtime": "149 min", "Awards": "Nominated for 9 Oscars. 30 wins & 254 nominations total", "Rated": "R", "Language": "English, Japanese, French", "Writer": "Josh Safdie, Ronald Bronstein", "Metascore": "89", "BoxOffice": "$90,879,866"}, "tt4048272": {"Genre": "Comedy, Drama", "Country": "Germany, Austria, Monaco, Romania, France, Switzerland, Belgium", "Runtime": "162 min", "Awards": "Nominated for 1 Oscar. 59 wins & 85 nominations total", "Rated": "R", "Language": "French, German, English, Romanian", "Writer": "Maren Ade", "Metascore": "93", "BoxOffice": "$1,479,387"}, "tt14200884": {"Genre": "N/A", "Country": "Netherlands", "Runtime": "75 min", "Awards": "N/A", "Rated": "N/A", "Language": "Dutch", "Writer": "N/A", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt34378234": {"Genre": "Drama, Mystery, Romance", "Country": "Netherlands, Belgium, Ireland", "Runtime": "103 min", "Awards": "N/A", "Rated": "N/A", "Language": "English", "Writer": "Nanouk Leopold", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt6752992": {"Genre": "Drama, Fantasy, Mystery", "Country": "Italy, Switzerland, France, Germany", "Runtime": "128 min", "Awards": "18 wins & 52 nominations total", "Rated": "PG-13", "Language": "Italian", "Writer": "Alice Rohrwacher, Carmela Covino", "Metascore": "87", "BoxOffice": "N/A"}, "tt34965515": {"Genre": "Documentary", "Country": "Denmark, Czech Republic, Germany", "Runtime": "90 min", "Awards": "9 wins & 9 nominations total", "Rated": "N/A", "Language": "Russian, English", "Writer": "David Borenstein", "Metascore": "79", "BoxOffice": "N/A"}, "tt6543652": {"Genre": "Drama, Music, Romance", "Country": "Poland, United Kingdom, France, Belgium, India", "Runtime": "89 min", "Awards": "Nominated for 3 Oscars. 52 wins & 126 nominations total", "Rated": "R", "Language": "Polish, French, Croatian, German, Russian, Serbian, Italian", "Writer": "Pawel Pawlikowski, Janusz Glowacki, Piotr Borkowski", "Metascore": "90", "BoxOffice": "$4,580,048"}, "tt36243564": {"Genre": "Crime, Drama", "Country": "France", "Runtime": "122 min", "Awards": "3 wins & 12 nominations total", "Rated": "N/A", "Language": "French, Arabic, Latin", "Writer": "Albert Camus, François Ozon, Philippe Piazzo", "Metascore": "79", "BoxOffice": "N/A"}, "tt7775622": {"Genre": "Documentary, Adventure, Sport", "Country": "United States", "Runtime": "100 min", "Awards": "Won 1 Oscar. 31 wins & 54 nominations total", "Rated": "PG-13", "Language": "English", "Writer": "N/A", "Metascore": "83", "BoxOffice": "$17,541,090"}, "tt8535968": {"Genre": "Drama", "Country": "Germany", "Runtime": "125 min", "Awards": "37 wins & 27 nominations total", "Rated": "N/A", "Language": "German, English", "Writer": "Nora Fingscheidt", "Metascore": "89", "BoxOffice": "N/A"}, "tt27847051": {"Genre": "Crime, Drama, Mystery", "Country": "Brazil, France, Netherlands, Germany", "Runtime": "161 min", "Awards": "Nominated for 4 Oscars. 76 wins & 149 nominations total", "Rated": "R", "Language": "Portuguese, German, English", "Writer": "Kleber Mendonça Filho", "Metascore": "92", "BoxOffice": "$3,797,281"}, "tt11777738": {"Genre": "Drama", "Country": "Iran, France", "Runtime": "127 min", "Awards": "18 wins & 42 nominations total", "Rated": "PG-13", "Language": "Persian", "Writer": "Asghar Farhadi", "Metascore": "82", "BoxOffice": "N/A"}, "tt0082437": {"Genre": "Short", "Country": "United States", "Runtime": "3 min", "Awards": "N/A", "Rated": "G", "Language": "N/A", "Writer": "N/A", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt7339248": {"Genre": "Action, Comedy, Crime", "Country": "United States", "Runtime": "104 min", "Awards": "5 nominations total", "Rated": "R", "Language": "English, French, German", "Writer": "Riley Stearns", "Metascore": "65", "BoxOffice": "$2,410,914"}, "tt2368254": {"Genre": "Biography, Drama, War", "Country": "United Kingdom, United States", "Runtime": "110 min", "Awards": "2 wins & 10 nominations total", "Rated": "R", "Language": "English", "Writer": "Arash Amel, Marie Brenner", "Metascore": "75", "BoxOffice": "$1,633,208"}, "tt9421570": {"Genre": "Crime, Drama, Thriller", "Country": "United States", "Runtime": "90 min", "Awards": "N/A", "Rated": "R", "Language": "English, Spanish", "Writer": "Nic Pizzolatto, Gustav Möller, Emil Nygaard Albertsen", "Metascore": "63", "BoxOffice": "N/A"}, "tt24082438": {"Genre": "Documentary, War", "Country": "Ukraine, United States", "Runtime": "97 min", "Awards": "Won 1 Oscar. 34 wins & 51 nominations total", "Rated": "TV-PG", "Language": "Ukrainian, English, Russian", "Writer": "Mstyslav Chernov", "Metascore": "83", "BoxOffice": "N/A"}, "tt4698684": {"Genre": "Adventure, Comedy, Drama", "Country": "New Zealand", "Runtime": "101 min", "Awards": "24 wins & 26 nominations total", "Rated": "PG-13", "Language": "English", "Writer": "Taika Waititi, Barry Crump, Tearepa Kahi", "Metascore": "81", "BoxOffice": "$5,205,468"}, "tt13204490": {"Genre": "Drama, Fantasy", "Country": "France", "Runtime": "73 min", "Awards": "Nominated for 1 BAFTA Award9 wins & 37 nominations total", "Rated": "PG", "Language": "French", "Writer": "Céline Sciamma", "Metascore": "93", "BoxOffice": "$829,065"}, "tt14114802": {"Genre": "Crime, Drama, Mystery", "Country": "United Kingdom", "Runtime": "105 min", "Awards": "1 win & 5 nominations total", "Rated": "R", "Language": "English, French", "Writer": "Graham Moore, Johnathan McClain", "Metascore": "69", "BoxOffice": "$3,344,040"}, "tt0000417": {"Genre": "Short, Adventure, Comedy", "Country": "France", "Runtime": "13 min", "Awards": "1 win total", "Rated": "TV-Y", "Language": "French, English", "Writer": "Jules Verne, H.G. Wells, Georges Méliès", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt14641542": {"Genre": "Drama", "Country": "Italy, Belgium, France, United Kingdom", "Runtime": "147 min", "Awards": "18 wins & 29 nominations total", "Rated": "Not Rated", "Language": "Italian, English, Nepali", "Writer": "Paolo Cognetti, Charlotte Vandermeersch, Felix van Groeningen", "Metascore": "78", "BoxOffice": "$302,456"}, "tt3892172": {"Genre": "Adventure, Drama", "Country": "United States, Canada", "Runtime": "109 min", "Awards": "18 wins & 92 nominations total", "Rated": "PG", "Language": "English", "Writer": "Debra Granik, Anne Rosellini, Peter Rock", "Metascore": "88", "BoxOffice": "$6,046,104"}, "tt11563598": {"Genre": "Biography, Drama, Music", "Country": "United States", "Runtime": "141 min", "Awards": "Nominated for 8 Oscars. 26 wins & 129 nominations total", "Rated": "R", "Language": "English", "Writer": "James Mangold, Jay Cocks, Elijah Wald", "Metascore": "70", "BoxOffice": "$75,001,720"}, "tt34966650": {"Genre": "Documentary", "Country": "United States", "Runtime": "106 min", "Awards": "N/A", "Rated": "N/A", "Language": "English", "Writer": "N/A", "Metascore": "72", "BoxOffice": "$1,409,172"}, "tt14846026": {"Genre": "Action, Thriller, War", "Country": "Finland, United States, United Kingdom", "Runtime": "91 min", "Awards": "10 wins & 10 nominations total", "Rated": "R", "Language": "English, Finnish, German", "Writer": "Jalmari Helander", "Metascore": "70", "BoxOffice": "$7,265,622"}, "tt0478927": {"Genre": "Drama", "Country": "France, Portugal", "Runtime": "75 min", "Awards": "1 nomination", "Rated": "N/A", "Language": "French", "Writer": "Henry James, Mehdi Ben Attia, Zina Modiano", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt21823606": {"Genre": "Comedy, Drama", "Country": "United States, Poland", "Runtime": "90 min", "Awards": "Won 1 Oscar. 69 wins & 96 nominations total", "Rated": "R", "Language": "English, Polish", "Writer": "Jesse Eisenberg", "Metascore": "85", "BoxOffice": "$8,344,978"}, "tt10370710": {"Genre": "Comedy, Drama, Romance", "Country": "Norway, France, Sweden, Denmark", "Runtime": "128 min", "Awards": "Nominated for 2 Oscars. 42 wins & 110 nominations total", "Rated": "R", "Language": "Norwegian", "Writer": "Eskil Vogt, Joachim Trier", "Metascore": "91", "BoxOffice": "$3,034,775"}, "tt10272386": {"Genre": "Drama, Mystery", "Country": "United Kingdom, France, United States", "Runtime": "97 min", "Awards": "Won 2 Oscars. 39 wins & 171 nominations total", "Rated": "PG-13", "Language": "English", "Writer": "Christopher Hampton, Florian Zeller", "Metascore": "88", "BoxOffice": "$2,122,771"}, "tt16315948": {"Genre": "Drama, War", "Country": "Ukraine, Turkey", "Runtime": "100 min", "Awards": "50 wins & 29 nominations", "Rated": "N/A", "Language": "Ukrainian, Russian, Chechen, Dutch", "Writer": "Maryna Er Gorbach", "Metascore": "74", "BoxOffice": "N/A"}, "tt1832382": {"Genre": "Drama", "Country": "Iran, France, Australia", "Runtime": "123 min", "Awards": "Won 1 Oscar. 89 wins & 52 nominations total", "Rated": "PG-13", "Language": "Persian", "Writer": "Asghar Farhadi", "Metascore": "95", "BoxOffice": "$7,099,055"}, "tt1285016": {"Genre": "Biography, Drama", "Country": "United States", "Runtime": "120 min", "Awards": "Won 3 Oscars. 174 wins & 188 nominations total", "Rated": "PG-13", "Language": "English, French", "Writer": "Aaron Sorkin, Ben Mezrich", "Metascore": "95", "BoxOffice": "$96,962,694"}, "tt7160372": {"Genre": "Drama, History, War", "Country": "United Kingdom, Poland, United States", "Runtime": "105 min", "Awards": "Won 2 Oscars. 71 wins & 186 nominations total", "Rated": "PG-13", "Language": "German, Yiddish, Polish", "Writer": "Jonathan Glazer, Martin Amis", "Metascore": "92", "BoxOffice": "$8,659,464"}, "tt15109082": {"Genre": "Drama", "Country": "Ireland", "Runtime": "95 min", "Awards": "Nominated for 1 Oscar. 33 wins & 43 nominations total", "Rated": "PG-13", "Language": "Irish Gaelic, English, Gaelic", "Writer": "Claire Keegan, Colm Bairéad", "Metascore": "89", "BoxOffice": "$1,500,014"}, "tt0382330": {"Genre": "Comedy, Drama, Music", "Country": "Sweden", "Runtime": "133 min", "Awards": "Nominated for 1 Oscar. 2 wins & 12 nominations total", "Rated": "Not Rated", "Language": "Swedish, English, Italian", "Writer": "Anders Nyberg, Ola Olsson, Carin Pollak", "Metascore": "N/A", "BoxOffice": "$10,236"}, "tt2402927": {"Genre": "Drama, Romance", "Country": "United Kingdom, France, Australia, United States", "Runtime": "118 min", "Awards": "Nominated for 6 Oscars. 76 wins & 255 nominations total", "Rated": "R", "Language": "English", "Writer": "Patricia Highsmith, Phyllis Nagy", "Metascore": "94", "BoxOffice": "$12,711,491"}, "tt29344894": {"Genre": "N/A", "Country": "Cyprus, Germany", "Runtime": "145 min", "Awards": "N/A", "Rated": "N/A", "Language": "N/A", "Writer": "Cherien Dabis", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt4686844": {"Genre": "Comedy, Drama, History", "Country": "France, United Kingdom, Belgium, Canada", "Runtime": "107 min", "Awards": "Nominated for 2 BAFTA 18 wins & 40 nominations total", "Rated": "R", "Language": "English", "Writer": "Fabien Nury, Thierry Robin, Armando Iannucci", "Metascore": "88", "BoxOffice": "$8,047,856"}, "tt17009710": {"Genre": "Crime, Drama, Mystery", "Country": "France", "Runtime": "151 min", "Awards": "Won 1 Oscar. 131 wins & 191 nominations total", "Rated": "R", "Language": "French, English", "Writer": "Justine Triet, Arthur Harari", "Metascore": "86", "BoxOffice": "$5,076,369"}, "tt36943034": {"Genre": "Drama", "Country": "Tunisia, France, United States, United Kingdom, Italy, Saudi Arabia, Cyprus", "Runtime": "89 min", "Awards": "Nominated for 1 Oscar. 16 wins & 18 nominations total", "Rated": "N/A", "Language": "Arabic, English", "Writer": "N/A", "Metascore": "81", "BoxOffice": "$848,567"}, "tt14561712": {"Genre": "Adventure, Comedy, Drama", "Country": "Italy, France, Switzerland, Turkey", "Runtime": "131 min", "Awards": "14 wins & 53 nominations total", "Rated": "Not Rated", "Language": "Italian, English, French, Portuguese, German, Sign ", "Writer": "Alice Rohrwacher, Carmela Covino, Marco Pettenello", "Metascore": "91", "BoxOffice": "$1,004,503"}, "tt10702148": {"Genre": "Drama", "Country": "United States", "Runtime": "85 min", "Awards": "1 win & 12 nominations total", "Rated": "R", "Language": "English", "Writer": "Robert Machoian", "Metascore": "82", "BoxOffice": "$71,162"}, "tt1971399": {"Genre": "Documentary, Short, Biography", "Country": "USA", "Runtime": "10 min", "Awards": "N/A", "Rated": "N/A", "Language": "English", "Writer": "N/A", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt36543850": {"Genre": "Drama", "Country": "Netherlands", "Runtime": "105 min", "Awards": "2 nominations total", "Rated": "N/A", "Language": "Dutch", "Writer": "Sven Bresser", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt0102593": {"Genre": "Action, Crime, Drama", "Country": "United States", "Runtime": "114 min", "Awards": "1 nomination", "Rated": "R", "Language": "English", "Writer": "Heywood Gould", "Metascore": "N/A", "BoxOffice": "$11,276,846"}, "tt29575732": {"Genre": "Documentary", "Country": "France", "Runtime": "N/A", "Awards": "1 win & 1 nomination", "Rated": "N/A", "Language": "Italian", "Writer": "Chloé Lecci López", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt37731277": {"Genre": "N/A", "Country": "United Kingdom", "Runtime": "150 min", "Awards": "N/A", "Rated": "N/A", "Language": "N/A", "Writer": "N/A", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt4995790": {"Genre": "Comedy, Drama", "Country": "Sweden, Germany, France, Denmark, United States", "Runtime": "151 min", "Awards": "Nominated for 1 Oscar. 33 wins & 46 nominations total", "Rated": "R", "Language": "Swedish, English, Danish", "Writer": "Ruben Östlund", "Metascore": "73", "BoxOffice": "$1,502,347"}, "tt0055031": {"Genre": "Drama, History, War", "Country": "United States", "Runtime": "179 min", "Awards": "Won 2 Oscars. 16 wins & 26 nominations total", "Rated": "Approved", "Language": "English, German", "Writer": "Abby Mann, Montgomery Clift", "Metascore": "60", "BoxOffice": "N/A"}, "tt31923069": {"Genre": "Biography, Drama, Music", "Country": "United States", "Runtime": "119 min", "Awards": "1 win & 11 nominations total", "Rated": "PG-13", "Language": "English", "Writer": "Scott Cooper, Warren Zanes", "Metascore": "59", "BoxOffice": "$22,638,297"}, "tt13923084": {"Genre": "Action, Comedy, Crime", "Country": "United States, Germany, South Africa", "Runtime": "111 min", "Awards": "1 win & 4 nominations total", "Rated": "R", "Language": "English", "Writer": "Tyler Burton Smith, Arend Remmers, Moritz Mohr", "Metascore": "47", "BoxOffice": "$2,626,127"}, "tt35504398": {"Genre": "Drama", "Country": "Belgium", "Runtime": "78 min", "Awards": "1 win & 1 nomination total", "Rated": "N/A", "Language": "French", "Writer": "Charlotte Deville, Arnaud Dufeys", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt12300742": {"Genre": "Comedy, Crime, Sci-Fi", "Country": "Ireland, United Kingdom, Canada, South Korea, United States", "Runtime": "118 min", "Awards": "Nominated for 4 Oscars. 9 wins & 120 nominations total", "Rated": "R", "Language": "English", "Writer": "Will Tracy, Jang Joon-hwan", "Metascore": "72", "BoxOffice": "$17,692,390"}, "tt6217608": {"Genre": "Drama, Western", "Country": "United States", "Runtime": "104 min", "Awards": "25 wins & 59 nominations total", "Rated": "R", "Language": "English, Sioux, Spanish", "Writer": "Chloé Zhao", "Metascore": "85", "BoxOffice": "$2,419,031"}, "tt5363618": {"Genre": "Drama, Music", "Country": "United States", "Runtime": "120 min", "Awards": "Won 2 Oscars. 90 wins & 179 nominations total", "Rated": "R", "Language": "English, American Sign , French, Persian", "Writer": "Darius Marder, Abraham Marder, Derek Cianfrance", "Metascore": "82", "BoxOffice": "N/A"}, "tt7888964": {"Genre": "Action, Crime, Drama", "Country": "United States, China, Japan", "Runtime": "92 min", "Awards": "5 wins & 18 nominations total", "Rated": "R", "Language": "English, Russian, Spanish", "Writer": "Derek Kolstad", "Metascore": "64", "BoxOffice": "$27,568,035"}, "tt15574270": {"Genre": "Drama, Horror, Mystery", "Country": "United States, United Kingdom", "Runtime": "100 min", "Awards": "12 wins & 92 nominations total", "Rated": "PG-13", "Language": "English", "Writer": "Jane Schoenbrun", "Metascore": "86", "BoxOffice": "$5,017,817"}, "tt13412252": {"Genre": "Action, Drama, Fantasy", "Country": "South Korea", "Runtime": "92 min", "Awards": "1 win & 1 nomination total", "Rated": "TV-MA", "Language": "Korean, Japanese, More", "Writer": "Kim Eun-hee", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt6436726": {"Genre": "Action, Drama, Thriller", "Country": "Germany, Austria, United States, France", "Runtime": "93 min", "Awards": "2 wins & 8 nominations", "Rated": "R", "Language": "English, German, Turkish, Arabic", "Writer": "Patrick Vollrath, Senad Halilbasic", "Metascore": "58", "BoxOffice": "N/A"}, "tt0057058": {"Genre": "Drama", "Country": "France", "Runtime": "108 min", "Awards": "2 wins & 2 nominations", "Rated": "Not Rated", "Language": "French", "Writer": "Pierre Drieu La Rochelle, Louis Malle", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt9362736": {"Genre": "Drama, Thriller", "Country": "United Kingdom, Canada, United States", "Runtime": "119 min", "Awards": "2 wins & 29 nominations total", "Rated": "R", "Language": "English", "Writer": "Enda Walsh, Lynne Ramsay, Alice Birch", "Metascore": "72", "BoxOffice": "$5,515,263"}, "tt15301048": {"Genre": "Biography, Crime, Drama", "Country": "Argentina, United Kingdom, United States", "Runtime": "140 min", "Awards": "Nominated for 1 Oscar. 49 wins & 45 nominations total", "Rated": "R", "Language": "Spanish, English", "Writer": "Santiago Mitre, Mariano Llinás, Martín Mauregui", "Metascore": "78", "BoxOffice": "N/A"}, "tt0405094": {"Genre": "Drama, Mystery, Thriller", "Country": "Germany, France", "Runtime": "137 min", "Awards": "Won 1 Oscar. 80 wins & 38 nominations total", "Rated": "R", "Language": "German", "Writer": "Florian Henckel von Donnersmarck", "Metascore": "89", "BoxOffice": "$11,286,112"}, "tt8999762": {"Genre": "Drama", "Country": "United States, United Kingdom, Canada", "Runtime": "216 min", "Awards": "Won 3 Oscars. 137 wins & 356 nominations total", "Rated": "R", "Language": "English, Hungarian, Italian, Hebrew, Yiddish, Russian, French", "Writer": "Brady Corbet, Mona Fastvold", "Metascore": "90", "BoxOffice": "$16,279,129"}, "tt7322224": {"Genre": "Comedy, Drama", "Country": "United Kingdom, Sweden, Germany, Mexico, France, Turkey, Denmark, United States, Switzerland, Greece", "Runtime": "147 min", "Awards": "Nominated for 3 Oscars. 24 wins & 83 nominations total", "Rated": "R", "Language": "English, Swedish, German, French, Greek, Tagalog, Akan", "Writer": "Ruben Östlund", "Metascore": "63", "BoxOffice": "$4,608,096"}, "tt11813216": {"Genre": "Comedy, Drama", "Country": "Ireland, United Kingdom, United States", "Runtime": "114 min", "Awards": "Nominated for 9 Oscars. 150 wins & 374 nominations total", "Rated": "R", "Language": "English, Latin", "Writer": "Martin McDonagh", "Metascore": "87", "BoxOffice": "$10,582,266"}, "tt11382384": {"Genre": "Documentary, Crime, Thriller", "Country": "United States", "Runtime": "119 min", "Awards": "Nominated for 1 BAFTA Award19 wins & 17 nominations total", "Rated": "PG-13", "Language": "Arabic, Turkish, English", "Writer": "Mark Monroe, Bryan Fogel", "Metascore": "81", "BoxOffice": "$57,000"}, "tt0117645": {"Genre": "Action, Drama", "Country": "Denmark, Sweden, Estonia", "Runtime": "88 min", "Awards": "N/A", "Rated": "N/A", "Language": "Danish, Norwegian, Swedish, German", "Writer": "Mikael Olsen", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt9252468": {"Genre": "Action, Drama, Thriller", "Country": "United States, Germany, Canada, United Arab Emirates", "Runtime": "101 min", "Awards": "N/A", "Rated": "TV-MA", "Language": "Arabic, English", "Writer": "Matthew Michael Carnahan", "Metascore": "71", "BoxOffice": "N/A"}, "tt2106476": {"Genre": "Drama", "Country": "Denmark, Sweden, Belgium, France", "Runtime": "115 min", "Awards": "Nominated for 1 Oscar. 38 wins & 74 nominations total", "Rated": "R", "Language": "Danish, English, Polish", "Writer": "Thomas Vinterberg, Tobias Lindholm", "Metascore": "77", "BoxOffice": "$613,308"}, "tt8649186": {"Genre": "Drama", "Country": "Poland, France", "Runtime": "115 min", "Awards": "Nominated for 1 Oscar. 56 wins & 39 nominations total", "Rated": "Unrated", "Language": "Polish", "Writer": "Mateusz Pacewicz", "Metascore": "77", "BoxOffice": "$127,240"}, "tt4016934": {"Genre": "Drama, Romance, Thriller", "Country": "South Korea", "Runtime": "145 min", "Awards": "Won 1 BAFTA Award69 wins & 104 nominations total", "Rated": "Not Rated", "Language": "Korean, Japanese", "Writer": "Chung Seo-kyung, Sarah Waters, Park Chan-wook", "Metascore": "85", "BoxOffice": "$2,006,788"}, "tt0073486": {"Genre": "Drama", "Country": "United States", "Runtime": "133 min", "Awards": "Won 5 Oscars. 38 wins & 15 nominations total", "Rated": "R", "Language": "English", "Writer": "Lawrence Hauben, Bo Goldman, Ken Kesey", "Metascore": "84", "BoxOffice": "$108,981,275"}, "tt0095647": {"Genre": "Crime, Drama, Mystery", "Country": "United States", "Runtime": "128 min", "Awards": "Won 1 Oscar. 17 wins & 25 nominations total", "Rated": "R", "Language": "English", "Writer": "Chris Gerolmo", "Metascore": "65", "BoxOffice": "$34,603,943"}, "tt0110622": {"Genre": "Comedy, Crime", "Country": "United States", "Runtime": "83 min", "Awards": "3 wins total", "Rated": "PG-13", "Language": "English", "Writer": "Pat Proft, David Zucker, Robert LoCash", "Metascore": "63", "BoxOffice": "$51,132,598"}, "tt32536315": {"Genre": "Biography, Comedy, Drama", "Country": "United States, Ireland", "Runtime": "100 min", "Awards": "Nominated for 2 Oscars. 15 wins & 73 nominations total", "Rated": "R", "Language": "English, Hebrew", "Writer": "Robert Kaplow, Lorenz Hart, Elizabeth Weiland", "Metascore": "78", "BoxOffice": "$2,152,494"}, "tt2582782": {"Genre": "Crime, Drama, Thriller", "Country": "United States", "Runtime": "102 min", "Awards": "Nominated for 4 Oscars. 47 wins & 174 nominations total", "Rated": "R", "Language": "English", "Writer": "Taylor Sheridan", "Metascore": "88", "BoxOffice": "$27,007,844"}, "tt0780536": {"Genre": "Comedy, Crime, Drama", "Country": "United Kingdom, United States", "Runtime": "107 min", "Awards": "Nominated for 1 Oscar. 25 wins & 55 nominations total", "Rated": "R", "Language": "English", "Writer": "Martin McDonagh", "Metascore": "67", "BoxOffice": "$7,800,824"}, "tt30144839": {"Genre": "Action, Crime, Drama", "Country": "United States", "Runtime": "161 min", "Awards": "Nominated for 13 Oscars. 234 wins & 478 nominations total", "Rated": "R", "Language": "English, Spanish", "Writer": "Paul Thomas Anderson, Thomas Pynchon", "Metascore": "95", "BoxOffice": "$72,172,051"}, "tt17041964": {"Genre": "Documentary, Biography", "Country": "United States", "Runtime": "99 min", "Awards": "Won 1 Oscar. 17 wins & 35 nominations total", "Rated": "R", "Language": "English, Russian, German", "Writer": "N/A", "Metascore": "82", "BoxOffice": "N/A"}, "tt14905854": {"Genre": "Biography, Drama, History", "Country": "United Kingdom, United States", "Runtime": "125 min", "Awards": "Nominated for 8 Oscars. 60 wins & 278 nominations total", "Rated": "PG-13", "Language": "English", "Writer": "Chloé Zhao, Maggie O'Farrell", "Metascore": "84", "BoxOffice": "$20,215,030"}, "tt21027780": {"Genre": "Comedy, Drama, Romance", "Country": "Finland, Germany", "Runtime": "81 min", "Awards": "12 wins & 61 nominations total", "Rated": "Unrated", "Language": "Finnish, Arabic", "Writer": "Aki Kaurismäki", "Metascore": "86", "BoxOffice": "$954,307"}, "tt0319262": {"Genre": "Action, Adventure, Sci-Fi", "Country": "United States", "Runtime": "124 min", "Awards": "Won 1 BAFTA Award6 wins & 12 nominations total", "Rated": "PG-13", "Language": "English, Japanese, French, Arabic", "Writer": "Roland Emmerich, Jeffrey Nachmanoff", "Metascore": "47", "BoxOffice": "$186,740,799"}, "tt27714581": {"Genre": "Drama", "Country": "Norway, Germany, Denmark, France, Sweden, United Kingdom, Turkey", "Runtime": "133 min", "Awards": "Nominated for 9 Oscars. 52 wins & 261 nominations total", "Rated": "R", "Language": "Norwegian, English, French", "Writer": "Eskil Vogt, Joachim Trier", "Metascore": "86", "BoxOffice": "$4,566,065"}, "tt31176520": {"Genre": "Comedy, Drama, Western", "Country": "United States, United Kingdom, Finland", "Runtime": "148 min", "Awards": "1 win & 10 nominations total", "Rated": "R", "Language": "English", "Writer": "Ari Aster", "Metascore": "65", "BoxOffice": "$10,223,277"}, "tt36491653": {"Genre": "Crime, Drama, Mystery", "Country": "Iran, France, Luxembourg, United States", "Runtime": "103 min", "Awards": "Nominated for 2 Oscars. 39 wins & 130 nominations total", "Rated": "PG-13", "Language": "Persian, Azerbaijani", "Writer": "Jafar Panahi, Nader Saeivar, Shadmehr Rastin", "Metascore": "91", "BoxOffice": "$1,773,664"}, "tt13238346": {"Genre": "Drama, Romance", "Country": "United States, South Korea", "Runtime": "105 min", "Awards": "Nominated for 2 Oscars. 83 wins & 240 nominations total", "Rated": "PG-13", "Language": "Korean, English, Mandarin, French", "Writer": "Celine Song", "Metascore": "94", "BoxOffice": "$11,331,983"}, "tt2582802": {"Genre": "Drama, Music", "Country": "United States", "Runtime": "106 min", "Awards": "Won 3 Oscars. 100 wins & 144 nominations total", "Rated": "R", "Language": "English", "Writer": "Damien Chazelle", "Metascore": "89", "BoxOffice": "$14,003,391"}, "tt20414360": {"Genre": "Biography, Drama, Music", "Country": "Germany, Poland, Belgium", "Runtime": "112 min", "Awards": "4 wins & 5 nominations total", "Rated": "N/A", "Language": "German, English", "Writer": "Ido Fluk", "Metascore": "62", "BoxOffice": "$44,691"}, "tt30645201": {"Genre": "Comedy, Crime, Mystery", "Country": "United Kingdom, United States", "Runtime": "89 min", "Awards": "N/A", "Rated": "R", "Language": "English", "Writer": "Ethan Coen, Tricia Cooke", "Metascore": "46", "BoxOffice": "$5,810,510"}, "tt33055004": {"Genre": "Documentary", "Country": "United States, Switzerland", "Runtime": "90 min", "Awards": "1 win & 1 nomination total", "Rated": "Not Rated", "Language": "English", "Writer": "Philip Delaquis, Barbara Miller", "Metascore": "N/A", "BoxOffice": "$105,654"}, "tt32386654": {"Genre": "Drama, History, Thriller", "Country": "France, United States", "Runtime": "152 min", "Awards": "2 nominations total", "Rated": "N/A", "Language": "English", "Writer": "Olivier Assayas, Emmanuel Carrère, Giuliano Da Empoli", "Metascore": "54", "BoxOffice": "N/A"}, "tt15181326": {"Genre": "Biography, Crime, Drama", "Country": "United States", "Runtime": "105 min", "Awards": "2 wins & 3 nominations total", "Rated": "R", "Language": "English", "Writer": "Austin Kolodney", "Metascore": "68", "BoxOffice": "$2,236,813"}, "tt32204858": {"Genre": "Drama, Thriller", "Country": "Switzerland, Germany", "Runtime": "92 min", "Awards": "6 wins & 10 nominations total", "Rated": "N/A", "Language": "German, Turkish, French", "Writer": "Petra Biondina Volpe", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt35513027": {"Genre": "Drama", "Country": "N/A", "Runtime": "N/A", "Awards": "N/A", "Rated": "N/A", "Language": "N/A", "Writer": "Alauda Ruiz de Azúa", "Metascore": "N/A", "BoxOffice": "N/A"}, "tt16227014": {"Genre": "Documentary, Biography", "Country": "Canada, United States", "Runtime": "98 min", "Awards": "Nominated for 1 Oscar. 35 wins & 70 nominations total", "Rated": "PG", "Language": "French, English", "Writer": "Sara Dosa, Erin Casper, Jocelyne Chaput", "Metascore": "84", "BoxOffice": "$1,120,412"}};
+window.__FILM_FALLBACK__ = [{"location": "thuis", "watchDate": "2026-03-05", "title": "The card counter", "imdbID": "tt11196036", "year": "2021", "directors": "Paul Schrader", "actors": "Oscar Isaac, Tiffany Haddish, Tye Sheridan", "plot": "William Tell is an ex-military interrogator living under the radar as a low-stakes gambler. When he encounters a young man looking to commit revenge against a mutual enemy, he takes him on the casino circuit to set him on a new path.", "imdbRating": "6.2", "posterURL": "https://m.media-amazon.com/images/M/MV5BMWQzMWNkOGQtN2EwYi00YmVjLWFlMDktY2E1ZTI2YWM4ZDcxXkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Medium interessant", "myRating": 5, "id": "7e910436-48fd-41b6-86a2-98cd4a3191ba", "updatedAt": "2026-03-05T20:37:56.321Z"}, {"location": "bioscoop", "watchDate": "2026-02-28", "title": "Marty supreme", "imdbID": "tt32916440", "year": "2025", "directors": "Josh Safdie", "actors": "Timothée Chalamet, Gwyneth Paltrow, Odessa A'zion", "plot": "Marty Mauser, a young man with a dream no one respects, goes to hell and back in pursuit of greatness.", "imdbRating": "8.1", "posterURL": "https://m.media-amazon.com/images/M/MV5BZTRhYjI1MTItMWYwMi00MjY5LWI1OTktMzQwNzA3MWJlN2QyXkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Origineel, actiefilm over tafeltennis ?!?", "myRating": 8, "id": "20500f1f-6eb4-464e-8e0b-61bc1a65ee88", "updatedAt": "2026-02-28T22:32:21.360Z"}, {"location": "thuis", "watchDate": "2026-02-27", "title": "Toni erdmann", "imdbID": "tt4048272", "year": "2016", "directors": "Maren Ade", "actors": "Sandra Hüller, Peter Simonischek, Michael Wittenborn", "plot": "A practical joking father tries to reconnect with his hard working daughter by creating an outrageous alter ego and posing as her CEO's life coach.", "imdbRating": "7.3", "posterURL": "https://m.media-amazon.com/images/M/MV5BODNiNmE5OWMtNDAxMy00YTQzLThjMGItMTAwOTNlNGM2ZDlhXkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Raar", "myRating": 4, "id": "4b84ed62-e0f6-400f-bc55-6a6d371571f8", "updatedAt": "2026-03-01T14:13:08.477Z"}, {"location": "bioscoop", "watchDate": "2026-02-25", "title": "Meer dan babi pangang", "imdbID": "tt14200884", "year": "2025", "directors": null, "actors": "", "plot": null, "imdbRating": "7.3", "posterURL": null, "myReview": "Prima docu , interessant!", "myRating": 7, "id": "5ed86270-418e-410c-9e6f-97a49c345f71", "updatedAt": "2026-02-25T18:53:13.116Z"}, {"location": "bioscoop", "watchDate": "2026-02-23", "title": "Whitetail", "imdbID": "tt34378234", "year": "2025", "directors": "Nanouk Leopold", "actors": "Natasha O'Keeffe, Andrew Bennett, Aaron McCusker", "plot": "Jen has carried the guilt of a tragic accident since her teens - now, the past catches up, forcing her to find a way forward.", "imdbRating": null, "posterURL": "https://m.media-amazon.com/images/M/MV5BMTcyMGJiNTMtNDBiNS00NjQ5LTkwMmUtZTc4MTA1MzM1YzU3XkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Emoties, knap in beeld gebracht.", "myRating": 7, "id": "df0dcfe4-4f95-4ab9-a358-4ac4e74d6f5e", "updatedAt": "2026-02-23T21:07:52.497Z"}, {"location": "thuis", "watchDate": "2026-02-20", "title": "Happy as lazzaro", "imdbID": "tt6752992", "year": "2018", "directors": "Alice Rohrwacher", "actors": "Adriano Tardiolo, Agnese Graziani, Alba Rohrwacher", "plot": "An unceasingly kind Italian peasant and his family are blatantly exploited by a tobacco baroness.", "imdbRating": "7.5", "posterURL": "https://m.media-amazon.com/images/M/MV5BZGRhNWJjNDUtNTJmYi00NDY3LTgyMGEtMjMyOGE5MDE5ZDMyXkEyXkFqcGc@._V1_SX300.jpg", "myReview": null, "myRating": 6, "id": "6cb5a56e-ec13-4ada-9776-216e9693daa4", "updatedAt": "2026-03-01T14:13:23.579Z"}, {"location": "bioscoop", "watchDate": "2026-02-18", "title": "Mr nobody against putin", "imdbID": "tt34965515", "year": "2025", "directors": "David Borenstein, Pavel Ilyich Talankin", "actors": "", "plot": "A Russian teacher secretly documents his small town school's transformation into a war recruitment center during the Ukraine invasion, revealing the ethical dilemmas educators face amid propaganda and militarization.", "imdbRating": "7.9", "posterURL": "https://m.media-amazon.com/images/M/MV5BYWVjNGQ5NjYtZDk2My00NzgxLWE1NDMtOGEzYTQzMjAxODIxXkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Heldhaftige daad van hele gewone schoolleraar", "myRating": 8, "id": "e1cd0e93-f91e-4016-b45a-6db0013db188", "updatedAt": "2026-02-18T20:13:22.118Z"}, {"location": "thuis", "watchDate": "2026-02-17", "title": "Cold war", "imdbID": "tt6543652", "year": "2018", "directors": "Pawel Pawlikowski", "actors": "Joanna Kulig, Tomasz Kot, Borys Szyc", "plot": "In the 1950s, a music director falls in love with a singer and tries to persuade her to flee communist Poland for France.", "imdbRating": "7.5", "posterURL": "https://m.media-amazon.com/images/M/MV5BMWQ5ZjYyMjAtNzBkMS00ZDJkLThmMmQtYTBjOTRiMjhkNGNkXkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Origineel!", "myRating": 8, "id": "8ae8bd72-be0c-4945-b680-0f1c32da2deb", "updatedAt": "2026-02-17T19:13:35.464Z"}, {"location": "bioscoop", "watchDate": "2026-02-16", "title": "The Stranger", "imdbID": "tt36243564", "year": "2025", "directors": "François Ozon", "actors": "Benjamin Voisin, Swann Arlaud, Pierre Lottin", "plot": "In 1930s Algeria, apathetic Frenchman Meursault shows total indifference to life. His emotional detachment leads to a murder, followed by a trial that scrutinizes both the crime and his character.", "imdbRating": null, "posterURL": "https://m.media-amazon.com/images/M/MV5BMGM1OWMyMzktZjY3OS00Njg1LThhNTUtODdmNzQwZGJhZDU4XkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Boek van Albert Camus, niet mijn favoriet. Wat een zwartgallig wereldbeeld.", "myRating": 4, "id": "17e72786-62a7-4bb9-b96c-d422c14d5f3b", "updatedAt": "2026-02-17T08:13:49.186Z"}, {"location": "thuis", "watchDate": "2026-02-13", "title": "Free solo", "imdbID": "tt7775622", "year": "2018", "directors": "Jimmy Chin, Elizabeth Chai Vasarhelyi", "actors": "Alex Honnold, Tommy Caldwell, Jimmy Chin", "plot": "Alex Honnold faces the biggest challenge of his career, climbing El Capitan in Yosemite National Park. He pursues it Free Solo, which means climbing without a rope and alone.", "imdbRating": "8.1", "posterURL": "https://m.media-amazon.com/images/M/MV5BMjA2YTAxMzMtNzA2Mi00NTcyLTg4NzUtODIxYzFiYzdiNWNlXkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Mooie klimdocu, wel heel Amerikaans", "myRating": 6, "id": "9a6eecf9-48e7-4d04-8f3f-b95fc27ff4b0", "updatedAt": "2026-02-13T18:41:11.705Z"}, {"location": "thuis", "watchDate": "2026-02-10", "title": "System crasher", "imdbID": "tt8535968", "year": "2019", "directors": "Nora Fingscheidt", "actors": "Helena Zengel, Albrecht Schuch, Gabriela Maria Schmeide", "plot": "Benni, age 9, bounces among institutions that cannot tackle her outbursts. She wants to move in with her mother--who cannot handle her wild daughter. After Micha is hired, Benni slowly opens up and attaches herself to him.", "imdbRating": "7.8", "posterURL": "https://m.media-amazon.com/images/M/MV5BODY4ZmI0MDgtYzBiYy00NjM1LTgyMDEtYjU1NWYwNjFlZTk1XkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Heftig, rauw verhaal", "myRating": 8, "id": "f451c689-dcee-4404-a547-63d5bf402934", "updatedAt": "2026-02-13T17:54:49.035Z"}, {"location": "bioscoop", "watchDate": "2026-02-09", "title": "The secret agent", "imdbID": "tt27847051", "year": "2025", "directors": "Kleber Mendonça Filho", "actors": "Robson Andrade, Rubens Santos, Licínio Januário", "plot": "In 1977, a technology expert flees from a mysterious past and returns to his hometown of Recife in search of peace. He soon realizes that the city is far from being the refuge he seeks.", "imdbRating": "8.0", "posterURL": "https://m.media-amazon.com/images/M/MV5BODliMTdhOTYtYThjMy00OWVhLWFlMjEtYzZlMDhkMjczYjc5XkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Lange film. Wel goed, maar duurde echt te lang. Een beetje Braziliaans traag tempo is prima, maar het werd te veel.", "myRating": 5, "id": "01061baa-6595-4dc5-ba4a-0e9f709e5c17", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "A Hero", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Moreel complex — Top", "imdbID": "tt11777738", "year": "2021", "directors": "Asghar Farhadi", "actors": "Amir Jadidi, Mohsen Tanabandeh, Sahar Goldoost", "plot": "Rahim is in prison because of a debt he was unable to repay. During a two-day leave, he tries to convince his creditor to withdraw his complaint against the payment of part of the sum. But things don't go as planned.", "imdbRating": "7.5", "posterURL": "https://m.media-amazon.com/images/M/MV5BYjMxNDFjN2ItYTllOC00ZDA1LTg4MDUtMjY5ZmE0ZjQ4Y2E2XkEyXkFqcGc@._V1_SX300.jpg", "id": "04300574-bc60-4157-a4c4-ad9f9358e79d", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "The Garden of Earthly Delights", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Heftig — disturbing", "imdbID": "tt0082437", "year": "1981", "directors": "Stan Brakhage", "actors": "", "plot": "A collage of two-dimensional images of vegetation, each appearing only for a moment, sometimes as a single image, more often with other bits of stem, leaf, bud, or petal. Often we see only the outline of objects against a black ba...", "imdbRating": "6.4", "posterURL": "https://m.media-amazon.com/images/M/MV5BMjAwMTA2NTQzOV5BMl5BanBnXkFtZTcwNTg1NTIyMQ@@._V1_SX300.jpg", "id": "0660c19a-b9c2-4e8d-b40d-78bc674154cc", "updatedAt": "2026-02-13T18:41:55.798Z", "myRating": 4}, {"title": "Voor de meisjes", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Heftig moreel dilemma — Goed", "id": "0a804fdd-3bdf-48ed-b3d9-649f69fd411c", "updatedAt": "2026-02-13T18:42:06.309Z", "myRating": 8}, {"title": "The Art of Self-Defense", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Absurd — Lekker gek", "imdbID": "tt7339248", "year": "2019", "directors": "Riley Stearns", "actors": "Jesse Eisenberg, Alessandro Nivola, Imogen Poots", "plot": "After being attacked on the street, a young man enlists at a local dojo, led by a charismatic and mysterious sensei, in an effort to learn how to defend himself from future threats.", "imdbRating": "6.6", "posterURL": "https://m.media-amazon.com/images/M/MV5BNzVjYjU2NDAtODljZS00OGE0LTllZDAtNDYzOWQ4N2EzZTk0XkEyXkFqcGc@._V1_SX300.jpg", "id": "0eaab6f0-752e-4186-8588-f39c4a0d02e0", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "A Private War", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Oorlogsjournalistiek — Topper", "imdbID": "tt2368254", "year": "2018", "directors": "Matthew Heineman", "actors": "Rosamund Pike, Alexandra Moen, Tom Hollander", "plot": "One of the most celebrated war correspondents of our time, Marie Colvin is an utterly fearless and rebellious spirit, driven to the frontline of conflicts across the globe to give voice to the voiceless.", "imdbRating": "6.7", "posterURL": "https://m.media-amazon.com/images/M/MV5BMDQzOTUxZGUtMjU5MS00OTY0LWI5ZDUtYzgyMTRjNGRhYWM1XkEyXkFqcGc@._V1_SX300.jpg", "id": "114b39e2-f296-4967-a4df-0acab9738887", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "The Guilty", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Compacte spanning — Topper", "imdbID": "tt9421570", "year": "2021", "directors": "Antoine Fuqua", "actors": "Jake Gyllenhaal, Riley Keough, Peter Sarsgaard", "plot": "A demoted police officer assigned to a call dispatch desk is conflicted when he receives an emergency phone call from a kidnapped woman.", "imdbRating": "6.3", "posterURL": "https://m.media-amazon.com/images/M/MV5BZmVjNzM0YmItZGQwYy00MzA4LTkwYjAtMmJkNWVmOTRkZGRkXkEyXkFqcGc@._V1_SX300.jpg", "id": "16288988-41f8-4d11-969c-bfeaa8d81c81", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "20 Days in Mariupol", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Oorlogsdocu — Heftig", "imdbID": "tt24082438", "year": "2023", "directors": "Mstyslav Chernov", "actors": "Liudmyla Amelkina, Mstyslav Chernov, Roman Golovanov", "plot": "An AP team of Ukrainian journalists trapped in the besieged city of Mariupol struggle to continue their work documenting atrocities of the Russian invasion.", "imdbRating": "8.6", "posterURL": "https://m.media-amazon.com/images/M/MV5BZmY2ODlmNmQtODQ2MS00OTlkLWIyNTEtNzhhNTEyNjNjMjdjXkEyXkFqcGc@._V1_SX300.jpg", "id": "1764a80a-1716-45cd-bd99-632ed9e6fe3d", "updatedAt": "2026-02-13T18:42:17.044Z", "myRating": 9}, {"title": "Winter in Sokcho", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Koreaans/Frans — sterk verhaal", "id": "1a78971f-1e70-4807-aec6-6c59779e0b84", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "Hunt for the Wilderpeople", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Humor en avontuur — Charmant", "imdbID": "tt4698684", "year": "2016", "directors": "Taika Waititi", "actors": "Sam Neill, Julian Dennison, Rima Te Wiata", "plot": "A national manhunt is ordered for a rebellious kid and his foster uncle who go missing in the wild New Zealand bush.", "imdbRating": "7.8", "posterURL": "https://m.media-amazon.com/images/M/MV5BMjI1MDQ2MDg5Ml5BMl5BanBnXkFtZTgwMjc2NjM5ODE@._V1_SX300.jpg", "id": "1b0fd2c3-1a52-4364-b726-a99855739ab5", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "Petite Maman", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Subtiel en rustig — Mooi", "imdbID": "tt13204490", "year": "2021", "directors": "Céline Sciamma", "actors": "Joséphine Sanz, Gabrielle Sanz, Nina Meurisse", "plot": "Nelly has just lost her grandmother and is helping her parents clean out her mother's childhood home. She explores the house and the surrounding woods. One day she meets a girl her age building a tree-house.", "imdbRating": "7.4", "posterURL": "https://m.media-amazon.com/images/M/MV5BMjkxMTE3M2ItNjhiZC00YmEwLWI1MDYtZjY2MTEwZjAxNGE3XkEyXkFqcGc@._V1_SX300.jpg", "id": "1ca4a54b-1182-4ef9-a7a3-0fb46ecb0db6", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "The Outfit", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Strak misdaaddrama — Prima", "imdbID": "tt14114802", "year": "2022", "directors": "Graham Moore", "actors": "Mark Rylance, Zoey Deutch, John Gumley-Mason", "plot": "An expert cutter must outwit a dangerous group of mobsters in order to survive a fateful night.", "imdbRating": "7.2", "posterURL": "https://m.media-amazon.com/images/M/MV5BZTY2M2U5OTEtNDljYS00MGQwLWI4YzQtOGJiMzUxM2IyYjRhXkEyXkFqcGc@._V1_SX300.jpg", "id": "2b114598-f2c5-45e0-a06c-6ac27ac32c0f", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "The Trip", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Chaos en geweld — Oké", "imdbID": "tt0000417", "year": "1902", "directors": "Georges Méliès", "actors": "Georges Méliès, Victor André, Bleuette Bernon", "plot": "A group of astronomers go on an expedition to the Moon.", "imdbRating": "8.1", "posterURL": "https://m.media-amazon.com/images/M/MV5BODM2ODk2OTgtYzEwMy00MDVlLWE0Y2ItMDFjNGEwNjYzZWViXkEyXkFqcGc@._V1_SX300.jpg", "id": "33379798-6bb3-49b3-98bc-33fe01eb966a", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "The Eight Mountains", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Vriendschap — natuur", "imdbID": "tt14641542", "year": "2022", "directors": "Felix van Groeningen, Charlotte Vandermeersch", "actors": "Lupo Barbiero, Cristiano Sassella, Elena Lietti", "plot": "An epic journey of friendship and self-discovery set in the breathtaking Italian Alps, The Eight Mountains follows over four decades the profound, complex relationship between Pietro and Bruno.", "imdbRating": "7.7", "posterURL": "https://m.media-amazon.com/images/M/MV5BOTMyYWRlN2QtMzgwYi00OTNlLTlhZDQtMjg1ZDMzMDUzZGExXkEyXkFqcGc@._V1_SX300.jpg", "id": "347716d8-ea55-4b0d-a6ce-d05969994d27", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "Leave No Trace", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Menselijk drama — Mooi", "imdbID": "tt3892172", "year": "2018", "directors": "Debra Granik", "actors": "Thomasin McKenzie, Ben Foster, Jeffery Rifflard", "plot": "A father and his seventeen-year-old daughter are living an ideal existence in a vast urban park in Portland, Oregon when a small mistake derails their lives forever.", "imdbRating": "7.1", "posterURL": "https://m.media-amazon.com/images/M/MV5BMjE3OTI1MTU0OV5BMl5BanBnXkFtZTgwNTg1MzkzNTM@._V1_SX300.jpg", "id": "37559e5a-6bca-4264-aea9-18932fbe5f05", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "A complete unknown", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Bob Dylan — Goed", "imdbID": "tt11563598", "year": "2024", "directors": "James Mangold", "actors": "Timothée Chalamet, Edward Norton, Elle Fanning", "plot": "In 1961, an unknown 19-year-old Bob Dylan arrives in New York City with his guitar and forges relationships with musical icons on his meteoric rise, culminating in a groundbreaking performance that reverberates around the world.", "imdbRating": "7.3", "posterURL": "https://m.media-amazon.com/images/M/MV5BYTA2NTA5NDYtMzlkOC00MTQxLWI0NDQtMzk2M2YzMGE4MTkxXkEyXkFqcGc@._V1_SX300.jpg", "id": "37ca864c-ecd1-444e-9f76-4b5f263da995", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "It's Never Over", "watchDate": "2026-02-08", "location": "thuis", "myReview": "bioscoop — Muziekfim. Erg Amerikaans.", "imdbID": "tt34966650", "year": "2025", "directors": "Amy Berg", "actors": "Jeff Buckley, Mary Guibert, Ben Harper", "plot": "Never-before-seen footage, exclusive voice messages, and accounts from Jeff Buckley's inner circle paint a captivating portrait of the gifted musician who died tragically in 1997, having only released one album.", "imdbRating": "8.0", "posterURL": "https://m.media-amazon.com/images/M/MV5BNWMxOGMwYmEtMjQ3Ny00YTMzLTllYjktNGUyMTljNDkwYTE5XkEyXkFqcGc@._V1_SX300.jpg", "id": "3d26c578-8169-4fb8-bbe0-6318f5c83146", "updatedAt": "2026-02-11T07:17:04.391Z", "myRating": 6}, {"title": "Sisu", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Extreme wraakfilm — Top", "imdbID": "tt14846026", "year": "2022", "directors": "Jalmari Helander", "actors": "Jorma Tommila, Aksel Hennie, Jack Doolan", "plot": "When an ex-soldier who discovers gold in the Lapland wilderness tries to take the loot into the city, German soldiers led by a brutal SS officer battle him.", "imdbRating": "6.9", "posterURL": "https://m.media-amazon.com/images/M/MV5BYjAxN2RmYjktMDE2OS00MWM5LThlZTQtZDY4YzAxMWQyZWY4XkEyXkFqcGc@._V1_SX300.jpg", "id": "40c7acdf-33f8-44a5-a175-70c659eb0941", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "Vie privée", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Jody Foster als Frans/Amerikaanse psychiater — Goed", "imdbID": "tt0478927", "year": "2006", "directors": "Zina Modiano", "actors": "Ouassini Embarek, Marie Modiano, Claire Nadeau", "plot": null, "imdbRating": "3.9", "posterURL": "https://m.media-amazon.com/images/M/MV5BNzIyZjkxNDYtOTVhNS00OWM3LTg1MjItMGIzZDUxNDg2OTY1XkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg", "id": "418667e2-f424-4cdd-855e-576499823daa", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "A real pain", "watchDate": "2026-02-08", "location": "thuis", "myReview": "2 Amerikaanse neven in Polen — Flauw. Nee.", "imdbID": "tt21823606", "year": "2024", "directors": "Jesse Eisenberg", "actors": "Kieran Culkin, Jesse Eisenberg, Olha Bosova", "plot": "Mismatched cousins reunite for a tour through Poland to honor their beloved grandmother, but their old tensions resurface against the backdrop of their family history.", "imdbRating": "7.0", "posterURL": "https://m.media-amazon.com/images/M/MV5BODY2YWYwM2YtZTVlNC00MjgyLTgzYTgtNmFmYWE5ZmY1MDM5XkEyXkFqcGc@._V1_SX300.jpg", "id": "46baf188-29c1-46d3-925a-4590fae2c404", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "The Worst Person in the World", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Menselijk — wow!", "imdbID": "tt10370710", "year": "2021", "directors": "Joachim Trier", "actors": "Renate Reinsve, Anders Danielsen Lie, Herbert Nordrum", "plot": "The chronicles of four years in the life of Julie, a young woman who navigates the troubled waters of her love life and struggles to find her career path, leading her to take a realistic look at who she really is.", "imdbRating": "7.7", "posterURL": "https://m.media-amazon.com/images/M/MV5BZGEyYzBiYmItZDM4OC00NTdmLWJlYzctODdiM2E2MjZmYTU2XkEyXkFqcGc@._V1_SX300.jpg", "id": "46c2a11b-58b6-4135-ae8d-c1ff0ba5cb0c", "updatedAt": "2026-02-13T18:43:04.259Z", "myRating": 9}, {"title": "The Father", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Psychologisch drama — Prachtig", "imdbID": "tt10272386", "year": "2020", "directors": "Florian Zeller", "actors": "Anthony Hopkins, Olivia Colman, Mark Gatiss", "plot": "A man refuses all assistance from his daughter as he ages. When he tries to understand what is happening around him, he begins to doubt his loved ones, his own mind and even the fabric of his reality.", "imdbRating": "8.2", "posterURL": "https://m.media-amazon.com/images/M/MV5BYzUxMDAyMDAtNzIyZi00OGQ1LTllMjEtYzRjOThkZTUxNTliXkEyXkFqcGc@._V1_SX300.jpg", "id": "47244589-aa4a-4eba-90d7-2981e274a64a", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "Klondike", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Oekraïne — burgers", "imdbID": "tt16315948", "year": "2022", "directors": "Maryna Er Gorbach", "actors": "Oksana Cherkashyna, Sergey Shadrin, Oleg Shcherbina", "plot": "After flight MH17 crashes in eastern Ukraine, violent tensions disrupt the lives of an expecting couple living in Donetsk.", "imdbRating": "6.9", "posterURL": "https://m.media-amazon.com/images/M/MV5BYjk1YjczOTgtYzdlOS00NTk1LWEzNTktMTczNDVjZWE2NzBhXkEyXkFqcGc@._V1_SX300.jpg", "id": "47904473-02b4-468f-a869-aa7cdc25d2ce", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "A Separation", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Menselijk en scherp — Uitstekend", "imdbID": "tt1832382", "year": "2011", "directors": "Asghar Farhadi", "actors": "Leila Hatami, Payman Maadi, Shahab Hosseini", "plot": "A married couple are faced with a difficult decision - to improve the life of their child by moving to another country or to stay in Iran and look after a deteriorating parent who has Alzheimer's disease.", "imdbRating": "8.3", "posterURL": "https://m.media-amazon.com/images/M/MV5BMDM0ZWRmMzctM2M5ZS00ZjU0LWIxN2MtNWNlNGY1ZDhjMDVhXkEyXkFqcGc@._V1_SX300.jpg", "id": "4a55e0fd-7973-4131-9d26-3e645df7c68e", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "Network", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Media en macht — Klassieker", "imdbID": "tt1285016", "year": "2010", "directors": "David Fincher", "actors": "Jesse Eisenberg, Andrew Garfield, Justin Timberlake", "plot": "As Harvard student Mark Zuckerberg creates the social networking site that would become known as Facebook, he is sued by the twins who claimed he stole their idea and by the co-founder who was later squeezed out of the business.", "imdbRating": "7.8", "posterURL": "https://m.media-amazon.com/images/M/MV5BMjlkNTE5ZTUtNGEwNy00MGVhLThmZjMtZjU1NDE5Zjk1NDZkXkEyXkFqcGc@._V1_SX300.jpg", "id": "4bdaad28-cf26-4996-b469-b7c707ca1f2f", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "The Tale of Silyan", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Ooievaar en boer in Macedonië — Mooi!", "id": "4edcdef2-303f-461a-b4d3-6936393f5d16", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "The Zone of Interest", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Bijzondere stijl — onderhuidse horror", "imdbID": "tt7160372", "year": "2023", "directors": "Jonathan Glazer", "actors": "Christian Friedel, Sandra Hüller, Johann Karthaus", "plot": "The commandant of Auschwitz and his wife strive to build a dream life for their family in a house next to the camp.", "imdbRating": "7.3", "posterURL": "https://m.media-amazon.com/images/M/MV5BNjk4MTQ3MGEtZmI4OS00N2NhLWI5ZjgtYWE5ZWVkZGExYTQ1XkEyXkFqcGc@._V1_SX300.jpg", "id": "5605f97a-6009-4c02-a12b-8a2a8c1d3326", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "The Quiet Girl", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Klassiek filmhuis — mooi gefilmd", "imdbID": "tt15109082", "year": "2022", "directors": "Colm Bairéad", "actors": "Carrie Crowley, Andrew Bennett, Catherine Clinch", "plot": "In rural Ireland, a quiet, neglected girl is sent away from her dysfunctional family to live with relatives for the summer where she blossoms and learns what it is to be loved.", "imdbRating": "7.7", "posterURL": "https://m.media-amazon.com/images/M/MV5BM2EwMjM2MzktZWE3Yy00ZTE2LTgyNTMtZmU2MGI0ZGY0MDQ5XkEyXkFqcGc@._V1_SX300.jpg", "id": "5a9fdaeb-399e-4482-a64c-526542b34752", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "As It Is in Heaven", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Menselijk — muziek", "imdbID": "tt0382330", "year": "2004", "directors": "Kay Pollak", "actors": "Michael Nyqvist, Frida Hallgren, Helen Sjöholm", "plot": "A famous international conductor returns to his small childhood town in Sweden for early retirement. He's asked to help with the church choir. He affects the lives of all in the choir.", "imdbRating": "7.5", "posterURL": "https://m.media-amazon.com/images/M/MV5BYjE1ZWFhZTMtZDI3Ny00OTBmLWFkNzgtZDhlZDJiZDJjYjIyXkEyXkFqcGc@._V1_SX300.jpg", "id": "5d39090c-db7a-4282-9292-cbc1255bc955", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "Carol", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Jaren 50 — liefde", "imdbID": "tt2402927", "year": "2015", "directors": "Todd Haynes", "actors": "Cate Blanchett, Rooney Mara, Sarah Paulson", "plot": "An aspiring photographer develops an intimate relationship with an older woman in 1950s New York.", "imdbRating": "7.3", "posterURL": "https://m.media-amazon.com/images/M/MV5BMTczNTQ4OTEyNV5BMl5BanBnXkFtZTgwNDgyMDI3NjE@._V1_SX300.jpg", "id": "64afed51-3485-4d0e-8d25-7edc99da0c2f", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "All That's Left of You", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Familieverhaal in woelige tijden — Goed", "imdbID": "tt29344894", "year": "2025", "directors": "Cherien Dabis", "actors": "Cherien Dabis, Adam Bakri, Maria Zreik", "plot": "Palestinian family's life across generations, starting from grandfather's displacement, leading to teen confronting Israeli soldiers at West Bank protest, told from mother's perspective.", "imdbRating": null, "posterURL": "https://m.media-amazon.com/images/M/MV5BNzUxYWVjYWQtMDM4Ni00ZGM4LWFlMmEtNzBkNzI4YWU4ZTUzXkEyXkFqcGc@._V1_SX300.jpg", "id": "678090db-8eca-45f9-8654-89a26d5482c0", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "The Death of Stalin", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Historische satire — Redelijk", "imdbID": "tt4686844", "year": "2017", "directors": "Armando Iannucci", "actors": "Steve Buscemi, Simon Russell Beale, Jeffrey Tambor", "plot": "Moscow, 1953. After being in power for nearly 30 years, Soviet dictator, Joseph Vissarionovich Stalin, takes ill and quickly dies. Now the members of the Council of Ministers scramble for power.", "imdbRating": "7.3", "posterURL": "https://m.media-amazon.com/images/M/MV5BMTcxMDc1NjcyNl5BMl5BanBnXkFtZTgwNDU0NDYxMzI@._V1_SX300.jpg", "id": "68f61515-3e61-4b65-ae54-8bfe5e2a228c", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "Anatomy of a Fall", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Beklemmend — moreel", "imdbID": "tt17009710", "year": "2023", "directors": "Justine Triet", "actors": "Sandra Hüller, Swann Arlaud, Milo Machado-Graner", "plot": "A woman is suspected of murder after her husband's death; their half-blind son faces a moral dilemma as the main witness.", "imdbRating": "7.6", "posterURL": "https://m.media-amazon.com/images/M/MV5BYTk3MjFkZmQtMThiYi00N2JhLTk2YzItZTE5ZGUxZTIyZDVkXkEyXkFqcGc@._V1_SX300.jpg", "id": "693941e0-53ff-4aab-9a70-ea1808bc2d71", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "The voice of Hind Rajab", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Reddingsactie meisje in Gaza — Heftig en prachtig", "imdbID": "tt36943034", "year": "2025", "directors": "Kaouther Ben Hania", "actors": "Saja Kilani, Motaz Malhees, Clara Khoury", "plot": "Red Crescent volunteers receive an emergency call. A 6-year old girl is trapped in a car under IDF fire in Gaza, pleading for rescue. While trying to keep her on the line, they do everything they can to get an ambulance to her.", "imdbRating": "8.5", "posterURL": "https://m.media-amazon.com/images/M/MV5BZWVlM2RjYTctODU4Mi00NTQzLWEzMDktZGVmYTQ2NTEwOWFiXkEyXkFqcGc@._V1_SX300.jpg", "id": "69793b46-78b0-4132-aeb3-4deb6326a209", "updatedAt": "2026-02-11T07:17:04.391Z", "myRating": 9}, {"title": "La Chimera", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Italiaanse sfeer — origineel", "imdbID": "tt14561712", "year": "2023", "directors": "Alice Rohrwacher", "actors": "Josh O'Connor, Carol Duarte, Vincenzo Nemolato", "plot": "Just out of jail, crumpled English archaeologist Arthur reconnects with his wayward crew of accomplices - a happy-go-lucky collective of grave-robbers who survive by looting Etruscan tombs and fencing the ancient treasures they di...", "imdbRating": "7.3", "posterURL": "https://m.media-amazon.com/images/M/MV5BMjk5ZDRjNjAtZTgwYi00NzE5LWEzMTItODM3Y2NmNGFmYTdiXkEyXkFqcGc@._V1_SX300.jpg", "id": "6c83ed2e-08f8-4487-b86d-b6064e94c6dc", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "The Killing of Two Lovers", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Intens drama — Top", "imdbID": "tt10702148", "year": "2020", "directors": "Robert Machoian", "actors": "Clayne Crawford, Sepideh Moafi, Chris Coy", "plot": "David desperately tries to keep his family of six together during a separation from his wife. They both agree to see other people but David struggles to grapple with his wife's new relationship.", "imdbRating": "6.8", "posterURL": "https://m.media-amazon.com/images/M/MV5BZmU0NjljOWQtMGJmZi00YjIxLWE0YTEtYzI5NGJmMjkwN2RjXkEyXkFqcGc@._V1_SX300.jpg", "id": "6c8701a4-6983-4412-9721-943309df7cb9", "updatedAt": "2026-02-11T07:17:04.391Z"}, {"title": "Folktales", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Docu — tussenjaar boven poolcirkel", "imdbID": "tt1971399", "year": "2011", "directors": "Peter Salomone", "actors": "", "plot": "Ben Towle is a North Carolina-based cartoonist whose highly stylized approach to historical fiction has earned him wide acclaim. Folktales and Airships is a short documentary profile of ...", "imdbRating": null, "posterURL": null, "id": "703bb059-8b50-4204-942d-868d8fa609b0", "updatedAt": "2026-02-13T18:43:27.153Z", "myRating": 8}, {"title": "Rietland", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Veel open eindes — arty", "imdbID": "tt36543850", "year": "2025", "directors": "Sven Bresser", "actors": "Lola van Zoggel, Loïs Reinders, Gerrit Knobbe", "plot": "When reed cutter Johan discovers the lifeless body of a girl on his land, he is overcome by an ambiguous sense of guilt. While taking care of his granddaughter, he sets out on a quest to track down evil.", "imdbRating": null, "posterURL": "https://m.media-amazon.com/images/M/MV5BNjU0NDc3M2MtMjRjNi00OWY0LWI3NDEtZjE2MDViYWY0YWY5XkEyXkFqcGc@._V1_SX300.jpg", "id": "70f1736f-fbb4-4ca0-8957-c883029dfe17", "updatedAt": "2026-02-11T07:17:04.391Z", "myRating": 5}, {"title": "Good One", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Wandelfilm — Mooi", "imdbID": "tt0102593", "year": "1991", "directors": "Heywood Gould", "actors": "Michael Keaton, Rene Russo, Anthony LaPaglia", "plot": "An NYPD Detective (Michael Keaton) and his struggle for justice, while taking care of his late partner's three little girls after he is killed in the line of duty.", "imdbRating": "5.8", "posterURL": "https://m.media-amazon.com/images/M/MV5BOTY1ZGI4YjEtY2E3Mi00ZTU4LWJmY2ItYjcwNGEwYzZlMTc3XkEyXkFqcGc@._V1_SX300.jpg", "id": "73ff8f4c-8e6b-4e13-8ed5-81cc39976437", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Gioia Mia", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Italiaanse logeerpartij — Ahhhh, Italië!!", "imdbID": "tt29575732", "year": "2022", "directors": "Chloé Lecci López", "actors": "Guilio Catania", "plot": null, "imdbRating": null, "posterURL": "https://m.media-amazon.com/images/M/MV5BNTQ4YWIzYTAtYTQ5My00MzZhLWE1ZjMtZjg5NzNkNmY3NmM4XkEyXkFqcGdeQXVyMjQxODkxNDA@._V1_SX300.jpg", "id": "75ed0be4-4a4d-43b9-9616-840bc0abb7e7", "updatedAt": "2026-02-11T07:17:04.392Z", "myRating": 8}, {"title": "David Gilmour: Circus Maximus", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Concertfilm — Mooi", "imdbID": "tt37731277", "year": "2025", "directors": "Gavin Elder", "actors": "David Gilmour", "plot": "David Gilmour's 2024 Rome concert film at Circus Maximus features songs from his new album and Pink Floyd classics.", "imdbRating": null, "posterURL": "https://m.media-amazon.com/images/M/MV5BNjlhODY3NjItOWY0My00YWI3LThhODAtODY3NmNmMzQ4OGE0XkEyXkFqcGc@._V1_SX300.jpg", "id": "7ab45022-8d72-4809-a7a9-a0a491cdf94e", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "The Square", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Satirisch absurd — Oké", "imdbID": "tt4995790", "year": "2017", "directors": "Ruben Östlund", "actors": "Claes Bang, Elisabeth Moss, Dominic West", "plot": "A prestigious Stockholm museum's chief art curator finds himself in times of both professional and personal crisis as he attempts to set up a controversial new exhibit.", "imdbRating": "7.1", "posterURL": "https://m.media-amazon.com/images/M/MV5BNTQ3NzJhYjktYmRkYy00ODMxLThhMGItYWQyODJmZjEyMTgzXkEyXkFqcGc@._V1_SX300.jpg", "id": "7bb47b3c-18bb-45a0-9e40-c28325652d5d", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Nuremberg", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Historisch — psychologisch dilemma", "imdbID": "tt0055031", "year": "1961", "directors": "Stanley Kramer", "actors": "Spencer Tracy, Burt Lancaster, Richard Widmark", "plot": "Fictionalized depiction of the 1947 Judges' Trial, the third of 12 trials of Nazi war criminals conducted by the American occupying forces in Nuremberg, Germany, in which former judges of Nazi Germany were tried for their actions.", "imdbRating": "8.3", "posterURL": "https://m.media-amazon.com/images/M/MV5BNDc2ODQ5NTE2MV5BMl5BanBnXkFtZTcwODExMjUyNA@@._V1_SX300.jpg", "id": "7cc48df5-fb52-44b3-9ff6-9b700a3c3111", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Springsteen: Deliver Me From Nowhere", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Biografisch — muziek", "imdbID": "tt31923069", "year": "2025", "directors": "Scott Cooper", "actors": "Jeremy Allen White, Jeremy Strong, Paul Walter Hauser", "plot": "Bruce Springsteen's journey crafting his 1982 album Nebraska, which emerged as he recorded Born in the USA with the E Street Band. Based on Warren Zanes' book.", "imdbRating": "6.7", "posterURL": "https://m.media-amazon.com/images/M/MV5BZGE4NzJiNTUtNWQ3Mi00ZGE5LWI3NmUtMjQwNWIxMWMyZDA2XkEyXkFqcGc@._V1_SX300.jpg", "id": "7d6aa1a7-1666-4074-b2f0-8c6c432b2d10", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Boy Kills World", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Stijl boven inhoud — Raar", "imdbID": "tt13923084", "year": "2023", "directors": "Moritz Mohr", "actors": "Bill Skarsgård, Jessica Rothe, Michelle Dockery", "plot": "A fever dream action film that follows Boy, a deaf person with a vibrant imagination. When his family is murdered, he is trained by a mysterious shaman to repress his childish imagination and become an instrument of death.", "imdbRating": "6.4", "posterURL": "https://m.media-amazon.com/images/M/MV5BODMxNjFlMzYtYjg4NC00ZjIxLWIxODgtMDMxY2ViNTI1NDFlXkEyXkFqcGc@._V1_SX300.jpg", "id": "87680dd0-daa1-4196-bb2f-6d308266c0ac", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "On Vous Croit", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "In your face — sterk gefilmd", "imdbID": "tt35504398", "year": "2025", "directors": "Charlotte Deville, Arnaud Dufeys", "actors": "Myriem Akheddiou, Natali Broods, Laurent Capelluto", "plot": "Alice faces a judge, knowing she can't go wrong. She must defend her children, as their custody is at stake. Will she be able to protect them from their father before it is too late?", "imdbRating": null, "posterURL": "https://m.media-amazon.com/images/M/MV5BNDAyZDY5N2EtMzFhNC00NTAyLWEzZDctYTZjZTI3ZWE0ZDkwXkEyXkFqcGc@._V1_SX300.jpg", "id": "87800ac0-9780-4b2b-9f07-1194ee21d6df", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Bugonia", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Absurd — origineel", "imdbID": "tt12300742", "year": "2025", "directors": "Yorgos Lanthimos", "actors": "Emma Stone, Jesse Plemons, Aidan Delbis", "plot": "Two conspiracy-obsessed young men kidnap the high-powered CEO of a major company, convinced that she is an alien intent on destroying planet Earth.", "imdbRating": "7.4", "posterURL": "https://m.media-amazon.com/images/M/MV5BNzIzNWQxMjEtZmQ3MS00OTk2LWFlZjktZDUyYWRkM2M3NWVlXkEyXkFqcGc@._V1_SX300.jpg", "id": "8c341695-84d9-49f5-9e76-730d653a7e6a", "updatedAt": "2026-02-13T18:43:42.914Z", "myRating": 8}, {"title": "The Rider", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Omgaan met tegenslag — Mooi", "imdbID": "tt6217608", "year": "2017", "directors": "Chloé Zhao", "actors": "Brady Jandreau, Mooney, Tim Jandreau", "plot": "After suffering a near-fatal head injury, a young cowboy undertakes a search for new identity and what it means to be a man in the heartland of America.", "imdbRating": "7.4", "posterURL": "https://m.media-amazon.com/images/M/MV5BMjQ3ODM5MjY2N15BMl5BanBnXkFtZTgwOTU5MjM4NDM@._V1_SX300.jpg", "id": "8e7e3525-e35e-44bd-bab4-943b1b2440b1", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Sound of Metal", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Menselijk en intens — Topper", "imdbID": "tt5363618", "year": "2019", "directors": "Darius Marder", "actors": "Riz Ahmed, Olivia Cooke, Paul Raci", "plot": "During a series of adrenaline-fueled gigs, itinerant punk-metal drummer Ruben begins to experience hearing loss. When a specialist tells him his condition will rapidly worsen, he thinks his music career - and with it his life - is...", "imdbRating": "7.7", "posterURL": "https://m.media-amazon.com/images/M/MV5BMWE5ZmYwNDEtYTYwMS00MTc0LTk2ZWItZTM1MjQ1ZDYzZGUzXkEyXkFqcGc@._V1_SX300.jpg", "id": "94c17dc9-2786-4cd9-9617-9f03b88ced38", "updatedAt": "2026-02-13T18:43:52.881Z", "myRating": 9}, {"title": "Nobody", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Strakke actie — Leuk", "imdbID": "tt7888964", "year": "2021", "directors": "Ilya Naishuller", "actors": "Bob Odenkirk, Aleksey Serebryakov, Connie Nielsen", "plot": "A docile family man slowly reveals his true character after his house gets burgled by two petty thieves, which, coincidentally, leads him into a bloody war with a Russian crime boss.", "imdbRating": "7.4", "posterURL": "https://m.media-amazon.com/images/M/MV5BYmIzOWViNDEtOWRiZS00ZWM4LWFiMmEtNGJjMmQ3NTIxN2U0XkEyXkFqcGc@._V1_SX300.jpg", "id": "98bcef52-ce80-49cf-844c-7cff038e535a", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "I Saw the TV Glow", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Vreemd — roze cult", "imdbID": "tt15574270", "year": "2024", "directors": "Jane Schoenbrun", "actors": "Justice Smith, Jack Haven, Ian Foreman", "plot": "A teenager just trying to make it through life in the suburbs is introduced by a classmate to a mysterious late-night TV show.", "imdbRating": "5.8", "posterURL": "https://m.media-amazon.com/images/M/MV5BZTA2MGM5M2ItNDBjYi00OWJhLTk1MTMtMGIzMDZlYzg1N2Q3XkEyXkFqcGc@._V1_SX300.jpg", "id": "9a422029-3b87-4865-8570-8171b0ba1e94", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "The North", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Natuur — wandeling", "imdbID": "tt13412252", "year": "2021", "directors": "Kim Seong-hun", "actors": "Jun Ji-hyun, Kim Si-Ah, Park Byeong-eun", "plot": "Tragedy, betrayal and a mysterious discovery fuel a woman's vengeance for the loss of her tribe and family in this special episode of \"Kingdom.\"", "imdbRating": "6.9", "posterURL": "https://m.media-amazon.com/images/M/MV5BYzc5ZDMzNzItODY2MC00MzBiLWJjODgtNmVmMGM5ZWYyYmM3XkEyXkFqcGc@._V1_SX300.jpg", "id": "9b486bd1-a883-4d70-86da-829abeabf131", "updatedAt": "2026-02-13T18:44:01.019Z", "myRating": 9}, {"title": "7500", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Compacte spanning — Zeer goed", "imdbID": "tt6436726", "year": "2019", "directors": "Patrick Vollrath", "actors": "Joseph Gordon-Levitt, Omid Memar, Aylin Tezel", "plot": "When terrorists try to seize control of a Berlin-Paris flight, a soft-spoken American co-pilot struggles to save the lives of the passengers and crew while forging a surprising connection with one of the hijackers.", "imdbRating": "6.3", "posterURL": "https://m.media-amazon.com/images/M/MV5BNGM1MTljMmUtMmJhYi00Y2M0LThmYjYtNGExZmJkZjNjMWIxXkEyXkFqcGc@._V1_SX300.jpg", "id": "9ba64c5c-5b77-4145-8afd-5aa7c5cb5ee4", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "The Fire Within", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Vulkanologen — Indrukwekkend", "imdbID": "tt0057058", "year": "1963", "directors": "Louis Malle", "actors": "Maurice Ronet, Léna Skerla, Yvonne Clech", "plot": "Depressed Alain Leroy leaves the clinic where he was detoxified. He meets friends, acquaintances and women, trying to find a reason to continue living. Will this help him?", "imdbRating": "7.8", "posterURL": "https://m.media-amazon.com/images/M/MV5BYjQyMTEzYzYtOTdlMy00NjNiLTk3NzMtNWJlZWIzNzJhNTI1XkEyXkFqcGc@._V1_SX300.jpg", "id": "a0f65a18-7922-4f34-9f07-c479e6a8c785", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Die My Love", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Vrouw wordt gek van verveling — Goed", "imdbID": "tt9362736", "year": "2025", "directors": "Lynne Ramsay", "actors": "Jennifer Lawrence, Robert Pattinson, Sissy Spacek", "plot": "Grace, a writer and young mother, is slowly slipping into madness. Locked away in an old house in and around Montana, we see her acting increasingly agitated and erratic, leaving her companion, Jackson, increasingly worried and he...", "imdbRating": "6.1", "posterURL": "https://m.media-amazon.com/images/M/MV5BYjc5OWZlZmYtMTg3Yy00YzFmLTg0YTgtNjVjN2M2ZWJjOWM1XkEyXkFqcGc@._V1_SX300.jpg", "id": "a3d8f006-27c6-4cc2-bbc1-18e4dd0bdc51", "updatedAt": "2026-02-13T18:44:15.749Z", "myRating": 6}, {"title": "Argentina", "watchDate": "2026-02-08", "location": "thuis", "myReview": "thuis — Rechtszaak", "imdbID": "tt15301048", "year": "2022", "directors": "Santiago Mitre", "actors": "Ricardo Darín, Gina Mastronicola, Francisco Bertín", "plot": "A team of lawyers takes on the heads of Argentina's bloody military dictatorship during the 1980s in a battle against odds and a race against time.", "imdbRating": "7.6", "posterURL": "https://m.media-amazon.com/images/M/MV5BMGQxYTQyNDUtNmZkMi00MzQ4LWFhMTktNTYzOGQ1ZGMzYjQ2XkEyXkFqcGc@._V1_SX300.jpg", "id": "a4b44717-9337-4274-8573-c2506c5027d6", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "The Lives of Others", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Stasi — moraal", "imdbID": "tt0405094", "year": "2006", "directors": "Florian Henckel von Donnersmarck", "actors": "Ulrich Mühe, Martina Gedeck, Sebastian Koch", "plot": "In 1984 East Berlin, an agent of the secret police conducting surveillance on a writer and his lover finds himself becoming increasingly absorbed by their lives.", "imdbRating": "8.4", "posterURL": "https://m.media-amazon.com/images/M/MV5BYjM1N2Q0YWEtN2E5MC00NDM3LTk2NTEtMTc1NTk5OTA5ZGIzXkEyXkFqcGc@._V1_SX300.jpg", "id": "a923998c-af1a-40dc-8d9e-fe7d8f4b33d7", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "The Brutalist", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Familieverhaal — Te lang", "imdbID": "tt8999762", "year": "2024", "directors": "Brady Corbet", "actors": "Adrien Brody, Felicity Jones, Guy Pearce", "plot": "A visionary architect flees post-war Europe in 1947 for a brighter future in the United States and finds his life forever changed by a wealthy client.", "imdbRating": "7.3", "posterURL": "https://m.media-amazon.com/images/M/MV5BM2U0MWRjZTMtMDVhNC00MzY4LTgwOTktZGQ2MDdiYTI4OWMxXkEyXkFqcGc@._V1_SX300.jpg", "id": "aaf62038-1da1-4f0a-b545-6fb4b9a796e8", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Triangle of Sadness", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Satire over consumptie — Blijft hangen", "imdbID": "tt7322224", "year": "2022", "directors": "Ruben Östlund", "actors": "Thobias Thorwid, Harris Dickinson, Charlbi Dean", "plot": "A fashion model celebrity couple join an eventful cruise for the super-rich.", "imdbRating": "7.2", "posterURL": "https://m.media-amazon.com/images/M/MV5BYTViNzUyNDUtZTg3Yy00OTY4LWEyMTYtMmUzYjE3ZmZjYzUwXkEyXkFqcGc@._V1_SX300.jpg", "id": "ab932a1b-53b8-4cb9-8e07-572dd8501dea", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "The Banshees of Inisherin", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Menselijkheid en conflict — Sterk", "imdbID": "tt11813216", "year": "2022", "directors": "Martin McDonagh", "actors": "Colin Farrell, Brendan Gleeson, Kerry Condon", "plot": "Two lifelong friends find themselves at an impasse when one abruptly ends their relationship, with alarming consequences for both of them.", "imdbRating": "7.6", "posterURL": "https://m.media-amazon.com/images/M/MV5BOTkzMWI4OTEtMTk0MS00MTUxLWI4NTYtYmRiNWM4Zjc1MGRhXkEyXkFqcGc@._V1_SX300.jpg", "id": "ac212926-afc3-4525-9c7d-3ccac9faa2ff", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "The Dissident", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Politiek en urgent — Top", "imdbID": "tt11382384", "year": "2020", "directors": "Bryan Fogel", "actors": "Jamal Khashoggi, Omar Abdulaziz, Irfan Fidan", "plot": "When Washington Post journalist Jamal Khashoggi disappears in Istanbul, his fiancée and dissidents around the world piece together the clues to a murder and expose a global cover up.", "imdbRating": "7.8", "posterURL": "https://m.media-amazon.com/images/M/MV5BOGFiZWJmYmUtZjM3NC00ODM0LTlkOGEtYWFlZDg3YTM4MzExXkEyXkFqcGc@._V1_SX300.jpg", "id": "ae80119a-0993-4ff0-b33c-8503c1cf008d", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "EO", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Visueel en origineel — Geweldig", "id": "b27ea727-3219-4af8-a5a9-2ac693bbdac8", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Den Sidste Viking", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Komedie met serieuze onderlaag — Prima", "imdbID": "tt0117645", "year": "1997", "directors": "Jesper W. Nielsen", "actors": "Holger Thaarup, René Hansen, Moa Lagercrantz", "plot": "The son of Viking Harald is left behind in his village with women and children, when his father joins a group of rebels. They are revolving against the king, but the king takes revenge by overtaking the village and tyrannizing the...", "imdbRating": "5.5", "posterURL": "https://m.media-amazon.com/images/M/MV5BOTc2MDcxMjI1OV5BMl5BanBnXkFtZTcwNTY2MDY4MQ@@._V1_SX300.jpg", "id": "b356096b-791e-4773-abb1-aed92fffbe70", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Mosul", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Rauw oorlogsdrama — Goed", "imdbID": "tt9252468", "year": "2019", "directors": "Matthew Michael Carnahan", "actors": "Waleed Elgadi, Suhail Dabbach, Adam Bessa", "plot": "A police unit from Mosul fight to liberate the Iraqi city from thousands of ISIS militants.", "imdbRating": "7.1", "posterURL": "https://m.media-amazon.com/images/M/MV5BOGM4N2E5NDAtMWZjNC00ZWNjLTk4YjgtYTU0OGVjM2JmZDc3XkEyXkFqcGc@._V1_SX300.jpg", "id": "b5e9f040-a81e-440b-889e-6e9c3e1b0b90", "updatedAt": "2026-02-13T18:44:32.208Z", "myRating": 8}, {"title": "The Hunt", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Morele spanning — Zeer goed", "imdbID": "tt2106476", "year": "2012", "directors": "Thomas Vinterberg", "actors": "Mads Mikkelsen, Thomas Bo Larsen, Annika Wedderkopp", "plot": "A teacher lives a lonely life, all the while struggling over his son's custody. His life slowly gets better as he finds love and receives good news from his son, but his new luck is about to be brutally shattered by an innocent li...", "imdbRating": "8.3", "posterURL": "https://m.media-amazon.com/images/M/MV5BMTg2NDg3ODg4NF5BMl5BanBnXkFtZTcwNzk3NTc3Nw@@._V1_SX300.jpg", "id": "b938af4f-2368-4aa0-bbbe-98ca22261e06", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Corpus Christi", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Rauw moreel drama — Goed", "imdbID": "tt8649186", "year": "2019", "directors": "Jan Komasa", "actors": "Bartosz Bielenia, Aleksandra Konieczna, Eliza Rycembel", "plot": "Daniel experiences a spiritual transformation in a detention center. Although his criminal record prevents him from applying to the seminary, he has no intention of giving up his dream and decides to minister a small-town parish.", "imdbRating": "7.7", "posterURL": "https://m.media-amazon.com/images/M/MV5BZWRmNDM1ZTEtNjE1ZC00MGJkLWJhNzYtYWFiNTIwNjdjN2VmXkEyXkFqcGc@._V1_SX300.jpg", "id": "bc875bab-f7cd-4455-aacf-401d763349ea", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "The Handmaiden", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Japanse intrige — Te lang", "imdbID": "tt4016934", "year": "2016", "directors": "Park Chan-wook", "actors": "Kim Min-hee, Ha Jung-woo, Cho Jin-woong", "plot": "In 1930s Korea, a girl is hired as a handmaiden to a Japanese heiress who lives a secluded life on a countryside estate. But the maid has a secret: She is a pickpocket recruited by a swindler to help seduce the Lady and steal her ...", "imdbRating": "8.1", "posterURL": "https://m.media-amazon.com/images/M/MV5BOTllZDI1OGItOGUxNS00OGZhLWIzMjAtYzllZTY1YTA0ZmYwXkEyXkFqcGc@._V1_SX300.jpg", "id": "c690082c-37d2-42af-a900-f052b2dcbb93", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "One Flew Over the Cuckoo's Nest", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Klassieker — Top", "imdbID": "tt0073486", "year": "1975", "directors": "Milos Forman", "actors": "Jack Nicholson, Louise Fletcher, Michael Berryman", "plot": "A rebellious convict is sent to a psychiatric hospital for evaluation in 1963 Oregon, and encourages his docile companions to take more control of their lives and defy the tyrannical head nurse.", "imdbRating": "8.6", "posterURL": "https://m.media-amazon.com/images/M/MV5BYjBkMjgzMzYtNzRiMS00NDc3LWE4YTUtZjYxYjZhNjNhYzhhXkEyXkFqcGc@._V1_SX300.jpg", "id": "c71fa082-d4be-4b71-b015-6d4f37345768", "updatedAt": "2026-02-13T18:44:44.721Z", "myRating": 8}, {"title": "Burning", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Subtiele spanning — jaloezie", "imdbID": "tt0095647", "year": "1988", "directors": "Alan Parker", "actors": "Gene Hackman, Willem Dafoe, Frances McDormand", "plot": "Two FBI agents with wildly different styles arrive in Mississippi to investigate the disappearance of three civil rights activists.", "imdbRating": "7.8", "posterURL": "https://m.media-amazon.com/images/M/MV5BZDgwNTljYmMtYmQyNi00MmEwLTk0NzMtZDJmZDIzZmQ4MzQ2XkEyXkFqcGc@._V1_SX300.jpg", "id": "c9e3beb2-65e8-48c2-b262-9c3c26cb9bfb", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "The Correolis Effect", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Langdradig — natuur viel tegen", "id": "cc9924d7-6a6e-4dcd-bad1-c00b844acbc1", "updatedAt": "2026-02-13T18:44:54.389Z", "myRating": 4}, {"title": "The Insult", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Van klein conflict naar tragedie — Prachtig", "imdbID": "tt0110622", "year": "1994", "directors": "Peter Segal", "actors": "Leslie Nielsen, Priscilla Presley, George Kennedy", "plot": "Frank Drebin comes out of retirement to help Police Squad infiltrate a gang of terrorists planning to detonate a bomb at the Academy Awards.", "imdbRating": "6.5", "posterURL": "https://m.media-amazon.com/images/M/MV5BM2ViYTFhMTktMjU0OC00ZWY3LWEzZDItMTExNDc2NDNjN2I3XkEyXkFqcGc@._V1_SX300.jpg", "id": "d018759f-2ffd-4985-b23f-ef982bb4481d", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Blue moon", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Monoloog musicalschrijver — Superslecht", "imdbID": "tt32536315", "year": "2025", "directors": "Richard Linklater", "actors": "Ethan Hawke, Margaret Qualley, Bobby Cannavale", "plot": "Tells the story of Lorenz Hart's struggles with alcoholism and mental health as he tries to save face during the opening of \"Oklahoma!\".", "imdbRating": "7.1", "posterURL": "https://m.media-amazon.com/images/M/MV5BODQ0NjNlN2MtNGRmZi00OGYzLWFjNGYtMjkyMTlmMWFkNTQ2XkEyXkFqcGc@._V1_SX300.jpg", "id": "d09b0d2b-97c5-4789-a242-144e6027db3a", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Hell or High Water", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Modern western — Goed", "imdbID": "tt2582782", "year": "2016", "directors": "David Mackenzie", "actors": "Chris Pine, Ben Foster, Jeff Bridges", "plot": "Toby is a divorced father who's trying to make a better life. His brother is an ex-con with a short temper and a loose trigger finger. Together, they plan a series of heists against the bank that's about to foreclose on their fami...", "imdbRating": "7.6", "posterURL": "https://m.media-amazon.com/images/M/MV5BMTg4NDA1OTA5NF5BMl5BanBnXkFtZTgwMDQ2MDM5ODE@._V1_SX300.jpg", "id": "d17b39b2-0cc2-4be2-b775-db98929aacd4", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "In Bruges", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Zwartkomisch — Oké", "imdbID": "tt0780536", "year": "2008", "directors": "Martin McDonagh", "actors": "Colin Farrell, Brendan Gleeson, Ciarán Hinds", "plot": "After a job gone wrong, hitman Ray and his partner await orders from their ruthless boss in Bruges, Belgium, the last place in the world Ray wants to be.", "imdbRating": "7.9", "posterURL": "https://m.media-amazon.com/images/M/MV5BNjliZjBlNDItOWUyZC00ZTExLTg5NmUtNzE5ZmQyZWVmZmE5XkEyXkFqcGc@._V1_SX300.jpg", "id": "d1d66d97-1c41-46eb-a27a-287fe19aa47b", "updatedAt": "2026-02-13T18:45:06.124Z", "myRating": 5}, {"title": "One Battle After Another", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Intelligente actiefilm — Erg leuk", "imdbID": "tt30144839", "year": "2025", "directors": "Paul Thomas Anderson", "actors": "Leonardo DiCaprio, Sean Penn, Benicio Del Toro", "plot": "When their evil enemy resurfaces after 16 years, a group of ex-revolutionaries reunite to rescue the daughter of one of their own.", "imdbRating": "7.9", "posterURL": "https://m.media-amazon.com/images/M/MV5BMzBkZmQ0NjMtNTZlMy00ZjdlLTg5ODUtYWFlNGM0YzE3MTg0XkEyXkFqcGc@._V1_SX300.jpg", "id": "d2368bb3-d392-4336-8417-43bc3292900f", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Navalny", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Politieke docu — Top", "imdbID": "tt17041964", "year": "2022", "directors": "Daniel Roher", "actors": "Alexei Navalny, Yulia Navalnaya, Christo Grozev", "plot": "Follows the man who survived an assassination attempt by poisoning with a lethal nerve agent in August 2020. During his months-long recovery he makes shocking discoveries about the attempt on his life and decides to return home.", "imdbRating": "7.8", "posterURL": "https://m.media-amazon.com/images/M/MV5BZjEzNTdlYzEtMGVkZi00ZWFhLWIzOTUtNjBiZjQyYWRmMGQyXkEyXkFqcGc@._V1_SX300.jpg", "id": "d4edd01a-5782-4bde-9af1-8ac6ab388a79", "updatedAt": "2026-02-13T18:45:18.488Z", "myRating": 8}, {"title": "Hamnet", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "William Shakespeare — Prima", "imdbID": "tt14905854", "year": "2025", "directors": "Chloé Zhao", "actors": "Jessie Buckley, Paul Mescal, Zac Wishart", "plot": "After losing their son Hamnet to plague, Agnes and William Shakespeare grapple with grief in 16th-century England. A healer, Agnes must find strength to care for her surviving children while processing her devastating loss.", "imdbRating": "8.1", "posterURL": "https://m.media-amazon.com/images/M/MV5BMDQ5ZmY0OWYtOTYzZi00Mzg5LWE3N2EtMjYwZTAzZmJhYjkyXkEyXkFqcGc@._V1_SX300.jpg", "id": "d60c31fa-2318-4790-82c7-fb5d765145f2", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Fallen Leaves", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Poëtisch — traag", "imdbID": "tt21027780", "year": "2023", "directors": "Aki Kaurismäki", "actors": "Alma Pöysti, Jussi Vatanen, Janne Hyytiäinen", "plot": "In modern-day Helsinki, two lonely souls in search of love meet by chance in a karaoke bar. However, their path to happiness is beset by obstacles - from lost phone numbers to mistaken addresses, alcoholism, and a charming stray dog.", "imdbRating": "7.3", "posterURL": "https://m.media-amazon.com/images/M/MV5BZjNkY2M5NWMtZjJiMy00YTZmLWI2NWEtZTI0MjhmNDc4ZThmXkEyXkFqcGc@._V1_SX300.jpg", "id": "d956cc70-48c9-4cb0-8091-2ff4947f6381", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "The day after tomorrow", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Rampenfilm met plotselinge ijstijd — Erg Amerikaans", "imdbID": "tt0319262", "year": "2004", "directors": "Roland Emmerich", "actors": "Dennis Quaid, Jake Gyllenhaal, Emmy Rossum", "plot": "Jack Hall, paleoclimatologist, must make a daring trek from Washington, D.C. to New York City to reach his son, trapped in the cross-hairs of a sudden international storm which plunges the planet into a new Ice Age.", "imdbRating": "6.5", "posterURL": "https://m.media-amazon.com/images/M/MV5BOGZmNDYyNmMtNDQyNy00OTkzLTg1OGUtYWJiNmQ5Y2Q5ZGU3XkEyXkFqcGc@._V1_SX300.jpg", "id": "e11e5ef9-b687-4f98-84cf-9163bfee6923", "updatedAt": "2026-02-11T07:17:04.392Z", "myRating": 5}, {"title": "Sentimental Value", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Sterk acteerwerk — rommelig verhaal", "imdbID": "tt27714581", "year": "2025", "directors": "Joachim Trier", "actors": "Renate Reinsve, Stellan Skarsgård, Inga Ibsdotter Lilleaas", "plot": "An intimate exploration of family, memories, and the reconciliatory power of art.", "imdbRating": "7.8", "posterURL": "https://m.media-amazon.com/images/M/MV5BNTMwMTk0Y2QtY2VhNy00OGYwLThkMjMtZjkwMGI3MTJiMjAyXkEyXkFqcGc@._V1_SX300.jpg", "id": "e58f7b57-6f81-49a5-9de1-532f1898c6d2", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Eddington", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Absurd en te lang — Negatief", "imdbID": "tt31176520", "year": "2025", "directors": "Ari Aster", "actors": "Joaquin Phoenix, Deirdre O'Connell, Emma Stone", "plot": "In May of 2020, a standoff between a small-town sheriff and mayor sparks a powder keg as neighbor is pitted against neighbor in Eddington, New Mexico.", "imdbRating": "6.6", "posterURL": "https://m.media-amazon.com/images/M/MV5BNmM0Yzc1ZjAtZTg4My00NDI3LWEwMzAtY2ZkNzMxMWMwOTFlXkEyXkFqcGc@._V1_SX300.jpg", "id": "e6818b05-b99b-4362-bc67-c162304ab7a7", "updatedAt": "2026-02-13T18:45:30.655Z", "myRating": 1}, {"title": "It Was Just an Accident", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Ethisch dilemma met humor — Knap", "imdbID": "tt36491653", "year": "2025", "directors": "Jafar Panahi", "actors": "Vahid Mobasseri, Mariam Afshari, Ebrahim Azizi", "plot": null, "imdbRating": null, "posterURL": "https://m.media-amazon.com/images/M/MV5BODM2NTUxOGMtM2ZkYS00MjM3LTkzYzEtZjdkNmQ1ZTBhMWY3XkEyXkFqcGc@._V1_SX300.jpg", "id": "eaffa61e-373f-4c6f-8ec4-eaddb636fdbd", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "The Penguin Stories", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Humor en dictatuur Argentinië — Top", "id": "f1f4349f-b7f7-4832-8ed9-9dfa4688df81", "updatedAt": "2026-02-11T07:17:04.392Z", "myRating": 9}, {"title": "Past Lives", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Relaties — levenslopen", "imdbID": "tt13238346", "year": "2023", "directors": "Celine Song", "actors": "Greta Lee, Teo Yoo, John Magaro", "plot": "Nora and Hae Sung, two deeply connected childhood friends, are wrested apart after Nora's family emigrates from South Korea. Twenty years later, they are reunited for one fateful week as they confront notions of love and destiny.", "imdbRating": "7.8", "posterURL": "https://m.media-amazon.com/images/M/MV5BYjQyMTNhNjUtN2VmYy00NWRhLTkwOTctMGVmNTBmNDIxYjZhXkEyXkFqcGc@._V1_SX300.jpg", "id": "f1fed35e-fb07-4dc6-944f-6bc61fb0d414", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Whiplash", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Ritme en intensiteit — Fantastisch", "imdbID": "tt2582802", "year": "2014", "directors": "Damien Chazelle", "actors": "Miles Teller, J.K. Simmons, Melissa Benoist", "plot": "A promising young drummer enrolls at a cut-throat music conservatory where his dreams of greatness are mentored by an instructor who will stop at nothing to realize a student's potential.", "imdbRating": "8.5", "posterURL": "https://m.media-amazon.com/images/M/MV5BMDFjOWFkYzktYzhhMC00NmYyLTkwY2EtYjViMDhmNzg0OGFkXkEyXkFqcGc@._V1_SX300.jpg", "id": "f5cf4f29-792c-4097-a1aa-d57c4b2bde0f", "updatedAt": "2026-02-11T07:37:07.562Z", "myRating": 9}, {"title": "Köln 75", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Snel — humor", "imdbID": "tt20414360", "year": "2025", "directors": "Ido Fluk", "actors": "Mala Emde, Susanne Wolff, John Magaro", "plot": "Vera Brandes, who, in 1975 and at the age of 18, staged the famous Köln Concert by jazz musician Keith Jarrett.", "imdbRating": "7.2", "posterURL": "https://m.media-amazon.com/images/M/MV5BNDk4YzUwZGQtNWViMi00ZmRkLTlhYjAtOTVhNTY1MWYxNDEzXkEyXkFqcGc@._V1_SX300.jpg", "id": "f6233d11-3297-4c20-9fcc-21f93bdd38ca", "updatedAt": "2026-02-13T18:45:39.725Z", "myRating": 10}, {"title": "Honey Don't!", "watchDate": "2026-02-08", "location": "thuis", "myReview": "Queer noir — absurd", "imdbID": "tt30645201", "year": "2025", "directors": "Ethan Coen", "actors": "Margaret Qualley, Aubrey Plaza, Chris Evans", "plot": "A small-town private investigator delves into a series of strange deaths tied to a mysterious church.", "imdbRating": "5.2", "posterURL": "https://m.media-amazon.com/images/M/MV5BMmRkNGJmNWUtNjVkMC00NTJhLTk5N2UtYmZlODdmM2UzNTRlXkEyXkFqcGc@._V1_SX300.jpg", "id": "f86cdb99-da53-41b2-97bc-b347332af18f", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"title": "Wisdom of Happiness", "watchDate": "2026-02-08", "location": "bioscoop", "myReview": "Dalai Lama — inhoudelijk interessant", "imdbID": "tt33055004", "year": "2024", "directors": "Philip Delaquis, Barbara Miller", "actors": "The Dalai Lama", "plot": "Dalai Lama, talks directly to camera about inner peace, happiness, and potential for peaceful, happy 21st century.", "imdbRating": "7.0", "posterURL": "https://m.media-amazon.com/images/M/MV5BOTVjZWI2MWItYTk5NC00YzFkLWI2OTYtNmZjMmIzYTk1MTMyXkEyXkFqcGc@._V1_SX300.jpg", "id": "fb2ebbdb-f3b8-424d-8f32-7aa6af5b7c3f", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"location": "bioscoop", "watchDate": "2026-02-07", "title": "The wizard of the kremlin", "imdbID": "tt32386654", "year": "2025", "directors": "Olivier Assayas", "actors": "Jeffrey Wright, Jude Law, Paul Dano", "plot": "A young Russian filmmaker becomes an unlikely advisor to Vladimir Putin as he rises to power in post-Soviet Russia, navigating the new era's complexities and chaos.", "imdbRating": "5.7", "posterURL": "https://m.media-amazon.com/images/M/MV5BOWU5MTEzZDctNTkyZS00NTg1LWE3NDctNDQ5M2E2ZDQ1Y2EzXkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Degelijk maar duurde te lang", "myRating": 6, "id": "a8504878-840b-4e12-b88b-f566c6804a3d", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"location": "bioscoop", "watchDate": "2026-02-07", "title": "The road to Fenix", "myReview": "Prachtige docu over gebow en tentoonstelling", "myRating": 9, "id": "d8967629-3776-4c2b-b447-90533f51eeff", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"location": "bioscoop", "watchDate": "2026-02-06", "title": "Dead man’s wire", "imdbID": "tt15181326", "year": "2025", "directors": "Gus Van Sant", "actors": "Dacre Montgomery, Bill Skarsgård, Colman Domingo", "plot": "On February 8, 1977, Tony Kiritsis entered the office of Richard Hall, president of the Meridian Mortgage Company, and took him hostage with a sawed-off shotgun wired with a \"dead man's wire\" from the trigger to Tony's own neck.", "imdbRating": "7.0", "posterURL": "https://m.media-amazon.com/images/M/MV5BYzJhZTFjYjQtOGRiYS00ZWZjLWJmYTMtYWY0ZDMzMjM5YmY5XkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Back to the 70’s. Goed gedaan, bijna absurd verhaal.", "myRating": 8, "id": "51cd84b0-ef5f-4897-8e71-8ffc7c8e83a7", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"location": "bioscoop", "watchDate": "2026-02-06", "title": "Late shift", "imdbID": "tt32204858", "year": "2025", "directors": "Petra Biondina Volpe", "actors": "Leonie Benesch, Sonja Riesen, Alireza Bayram", "plot": "Floria, a dedicated nurse, tirelessly serves in an understaffed hospital ward. However, today her shift becomes a tense and urgent race against the clock.", "imdbRating": "7.8", "posterURL": "https://m.media-amazon.com/images/M/MV5BMzMyMTI1NjgtNDhiZS00MDI3LTliOWUtY2UwODhjYjdmZmJlXkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Wow!", "myRating": 10, "id": "6e2faff8-95e4-4495-879a-347fd27484c1", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"location": "bioscoop", "watchDate": "2026-02-06", "title": "Los domingos", "imdbID": "tt35513027", "year": "2025", "directors": "Alauda Ruiz de Azúa", "actors": "Juan Minujín, Patricia López Arnaiz, Nagore Aranburu", "plot": "A young woman named Ainara faces personal crossroads while exploring career possibilities, much to her family's concern", "imdbRating": null, "posterURL": null, "myReview": "Prachtige film.", "myRating": 10, "id": "8ac1f099-657b-4c5a-82ef-6c37e2d75de5", "updatedAt": "2026-02-11T07:17:04.392Z"}, {"location": "thuis", "watchDate": "2026-02-01", "title": "Fire of love", "imdbID": "tt16227014", "year": "2022", "directors": "Sara Dosa", "actors": "Miranda July, Katia Krafft, Maurice Krafft", "plot": "Intrepid scientists and lovers Katia and Maurice Krafft died in a volcanic explosion doing the very thing that brought them together: unraveling the mysteries of volcanoes by capturing the most explosive imagery ever recorded.", "imdbRating": "7.6", "posterURL": "https://m.media-amazon.com/images/M/MV5BZDg0ZmViMWUtMGQ1Ni00NTEyLWFkYzgtMWViYjkwZDQ2ZWVkXkEyXkFqcGc@._V1_SX300.jpg", "myReview": "Prima docu, bijzonder verhaal.", "myRating": 7, "id": "e62022bc-26fc-44b1-bca9-b24c22f3f653", "updatedAt": "2026-02-20T12:52:17.319Z"}, {"location": "bioscoop", "watchDate": "2026-01-26", "title": "L'Inconnu de la Grande Arche", "myReview": "The story of Otto von Spreckelsen, a real-life architecture teacher from Copenhagen, who surprised the world when he won an open-call competition launched by French president François Mitterrand.", "myRating": 7, "id": "517a4fb5-1ca6-4f3d-a908-73397b80581e", "updatedAt": "2026-02-11T07:17:04.392Z"}];
+</script>
+</body>
+</html>
