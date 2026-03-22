@@ -2870,5 +2870,14 @@
     "myRating": 6,
     "id": "fb5f9328-22da-4a8a-90bb-f57fbbab7717",
     "updatedAt": "2026-03-13T07:35:21.341Z"
+  },
+  {
+    "readDate": "2026-03-22",
+    "title": "In ongenade",
+    "author": "J.M. Coetzee",
+    "myReview": null,
+    "myRating": 8,
+    "id": "83a140e0-70a0-44f0-8348-1bb5521e074f",
+    "updatedAt": "2026-03-22T12:04:01.286Z"
   }
 ]
