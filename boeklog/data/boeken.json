@@ -2879,5 +2879,20 @@
     "myRating": 8,
     "id": "83a140e0-70a0-44f0-8348-1bb5521e074f",
     "updatedAt": "2026-03-22T12:04:01.286Z"
+  },
+  {
+    "readDate": "2026-03-23",
+    "title": "Man’s search for meaning",
+    "author": "Viktor frankl",
+    "openLibraryKey": "/works/OL31263386W",
+    "publishYear": "1968",
+    "coverURL": null,
+    "description": null,
+    "subjects": null,
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 6,
+    "id": "69ea1c00-010d-47ca-86e9-dfa69737d59f",
+    "updatedAt": "2026-03-23T19:00:19.371Z"
   }
 ]
