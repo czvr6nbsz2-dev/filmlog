@@ -63,11 +63,20 @@ export async function generateRecommendations(films, mode, theme = null) {
 
     const filmsText = formatFilmsForPrompt(films);
 
+    // Build exclusion list of all watched film titles
+    const watchedTitles = films
+        .map(f => f.title)
+        .filter(Boolean)
+        .map(t => `"${t}"`)
+        .join(', ');
+
     const systemPrompt = `You are an expert film recommendation engine. Your task is to suggest films based on a person's viewing history and preferences.
 
 IMPORTANT: Never recommend films that already appear in the person's viewing history. All 10 recommendations must be films they have NOT yet seen.
 
 Provide exactly 10 film recommendations. Each recommendation must be a real, released film.
+
+IMPORTANT: Do NOT recommend any film the user has already watched. Their complete watch list is provided. If a film is on that list, skip it and suggest a different one instead.
 
 Respond ONLY with a valid JSON array containing exactly 10 objects with these fields:
 - title: string (film title)
@@ -78,9 +87,9 @@ Respond ONLY with a valid JSON array containing exactly 10 objects with these fi
 
     let userPrompt;
     if (mode === 'yolo') {
-        userPrompt = `Based on this person's viewing history, suggest 10 diverse films that match their demonstrated taste and viewing level:\n\n${filmsText}\n\nGenerate recommendations that explore different genres and styles they might enjoy.`;
+        userPrompt = `Based on this person's viewing history, suggest 10 diverse films that match their demonstrated taste and viewing level:\n\n${filmsText}\n\nAlready watched (DO NOT recommend these): ${watchedTitles}\n\nGenerate recommendations that explore different genres and styles they might enjoy.`;
     } else if (mode === 'theme') {
-        userPrompt = `Based on this person's viewing history, suggest 10 films specifically focused on or related to: "${theme}"\n\nTheir viewing history:\n${filmsText}\n\nConsider their viewing taste when making recommendations for this specific theme/genre/director.`;
+        userPrompt = `Based on this person's viewing history, suggest 10 films specifically focused on or related to: "${theme}"\n\nTheir viewing history:\n${filmsText}\n\nAlready watched (DO NOT recommend these): ${watchedTitles}\n\nConsider their viewing taste when making recommendations for this specific theme/genre/director.`;
     } else {
         throw new Error('Ongeldige modus');
     }

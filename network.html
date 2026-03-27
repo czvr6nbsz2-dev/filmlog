@@ -295,10 +295,10 @@
 <div id="legend">
   <div class="lg-item"><div class="lg-dot" style="background:var(--film)"></div>Film</div>
   <div class="lg-item"><div class="lg-dot" style="background:var(--director)"></div>Regisseur</div>
-  <div class="lg-item"><div class="lg-dot" style="background:var(--actor)"></div>Acteur (2+ films)</div>
+  <div class="lg-item"><div class="lg-dot" style="background:var(--actor)"></div>Acteur (top-3 per film)</div>
   <div class="lg-item"><div class="lg-dot" style="background:var(--decade)"></div>Decennium</div>
-  <div class="lg-item"><div class="lg-dot" style="background:var(--genre)"></div>Genre (3+ films)</div>
-  <div class="lg-item"><div class="lg-dot" style="background:var(--country)"></div>Land (3+ films)</div>
+  <div class="lg-item"><div class="lg-dot" style="background:var(--genre)"></div>Genre (2+ films)</div>
+  <div class="lg-item"><div class="lg-dot" style="background:var(--country)"></div>Land (2+ films)</div>
   <div class="lg-item"><div class="lg-dot" style="background:var(--writer)"></div>Schrijver (2+ films)</div>
 </div>
 
@@ -311,9 +311,10 @@
 const OMDB_KEY   = '9c012bd6';
 const TMDB_KEY   = '8bc1a2ab5515aaf8b9dda4fa487105c8';
 const TMDB_IMG   = 'https://image.tmdb.org/t/p/w185';
-const ACTOR_MIN   = 2;
-const GENRE_MIN   = 3;
-const COUNTRY_MIN = 3;
+const ACTOR_MIN   = 2;   // toon acteur als hub-node als ze in 2+ films zitten
+const ACTOR_TOP   = 3;   // altijd de top-N acteurs per film tonen
+const GENRE_MIN   = 2;   // verlaagd: genre zichtbaar vanaf 2 films
+const COUNTRY_MIN = 2;   // verlaagd: land zichtbaar vanaf 2 films
 const WRITER_MIN  = 2;
 
 const C = {
@@ -341,7 +342,7 @@ const personCache = {};    // "Name::type" → computed person profile
 function getActors(film) {
   if (film.imdbID && tmdbCast[film.imdbID]?.length)
     return tmdbCast[film.imdbID];
-  return (film.actors || '').split(',').map(a => a.trim()).filter(Boolean).slice(0, 4);
+  return (film.actors || '').split(',').map(a => a.trim()).filter(Boolean).slice(0, 5);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -499,11 +500,11 @@ function buildGraph(films) {
       });
     }
 
-    // Actors: top-1 altijd zichtbaar, acteurs in 2+ films ook
+    // Actors: top-ACTOR_TOP altijd zichtbaar, extra acteurs als ze in 2+ films zitten
     const actors = getActors(film);
     actors.forEach((a, idx) => {
       const count = actorCount[a] || 0;
-      if (idx === 0 || count >= ACTOR_MIN) {
+      if (idx < ACTOR_TOP || count >= ACTOR_MIN) {
         link(node(`act:${a}`, a, 'actor', { personName: a, personRole: 'actor' }), 'actor');
       }
     });
