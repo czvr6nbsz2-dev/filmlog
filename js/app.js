@@ -1,5 +1,7 @@
 import { getAllFilms, saveFilm, deleteFilm, saveMany, getSetting, setSetting, exportAll, importAll } from './db.js';
 import { searchFilms, fetchDetail, enrichFilm, hasApiKey } from './omdb.js';
+import { fetchTmdbByImdbId, searchTmdb, fetchTmdbResultDetail, enrichFilmTmdb } from './tmdb.js';
+import { syncToGitHub, isSyncEnabled } from './github-sync.js';
 import { generatePDF } from './pdf.js';
 import { parseCSV } from './csv.js';
 import { isApiKeyConfigured, generateRecommendations } from './recommendations.js';
@@ -169,12 +171,21 @@ async function doSearch() {
             renderSearchResults(results);
             showStep('add-step-results');
         } else {
-            // No results found - show option to continue without IMDb
-            const msg = `'${query}' niet gevonden op IMDb.\n\nJe kunt:\n• Opnieuw zoeken met andere woorden\n• Zonder IMDb-data doorgaan en de film handmatig invullen`;
-            if (confirm(msg + '\n\nKlik OK om zonder IMDb door te gaan, of Cancel om opnieuw te zoeken.')) {
-                showStep('add-step-review');
+            // OMDb nothing found — try TMDB as fallback
+            $('#loading-text').textContent = 'Niet op IMDb, probeer TMDB…';
+            const tmdbResults = await searchTmdb(query);
+            if (tmdbResults.length === 1) {
+                await selectTmdbResult(tmdbResults[0].tmdbId);
+            } else if (tmdbResults.length > 0) {
+                renderSearchResults(tmdbResults.map(r => ({ ...r, imdbID: null, _tmdbId: r.tmdbId })));
+                showStep('add-step-results');
             } else {
-                showStep('add-step-input');
+                const msg = `'${query}' niet gevonden op IMDb of TMDB.\n\nKlik OK om zonder filmdata door te gaan, of Cancel om opnieuw te zoeken.`;
+                if (confirm(msg)) {
+                    showStep('add-step-review');
+                } else {
+                    showStep('add-step-input');
+                }
             }
         }
     } catch (err) {
@@ -197,7 +208,11 @@ function renderSearchResults(results) {
         el.addEventListener('click', () => {
             showStep('add-step-loading');
             $('#loading-text').textContent = 'Gegevens ophalen...';
-            selectSearchResult(r.imdbID);
+            if (r.imdbID) {
+                selectSearchResult(r.imdbID);
+            } else if (r._tmdbId || r.tmdbId) {
+                selectTmdbResult(r._tmdbId || r.tmdbId);
+            }
         });
 
         const posterHTML = r.poster
@@ -282,9 +297,26 @@ function scheduleSuggestions(query) {
 
 async function selectSearchResult(imdbID) {
     try {
-        const detail = await fetchDetail(imdbID);
+        const [omdbDetail, tmdbData] = await Promise.all([
+            fetchDetail(imdbID),
+            fetchTmdbByImdbId(imdbID),
+        ]);
+        selectedDetail = omdbDetail;
+        currentFilm = enrichFilmTmdb(enrichFilm(currentFilm, omdbDetail), tmdbData);
+        renderConfirmation({ ...omdbDetail, genres: tmdbData?.genres, runtime: tmdbData?.runtime, tmdbRating: tmdbData?.tmdbRating });
+        showStep('add-step-confirm');
+    } catch (err) {
+        alert(err.message);
+        showStep('add-step-input');
+    }
+}
+
+async function selectTmdbResult(tmdbId) {
+    try {
+        const detail = await fetchTmdbResultDetail(tmdbId);
+        if (!detail) throw new Error('TMDB gegevens niet gevonden.');
         selectedDetail = detail;
-        currentFilm = enrichFilm(currentFilm, detail);
+        currentFilm = { ...currentFilm, ...detail };
         renderConfirmation(detail);
         showStep('add-step-confirm');
     } catch (err) {
@@ -313,6 +345,9 @@ function renderConfirmation(detail) {
             : `★ ${esc(detail.imdbRating)}`;
         html += `<div class="detail-row"><span class="detail-label">IMDb</span><span class="detail-value">${imdbLink}</span></div>`;
     }
+    if (detail.tmdbRating) html += `<div class="detail-row"><span class="detail-label">TMDB</span><span class="detail-value">★ ${esc(detail.tmdbRating)}</span></div>`;
+    if (detail.genres)     html += `<div class="detail-row"><span class="detail-label">Genres</span><span class="detail-value">${esc(detail.genres)}</span></div>`;
+    if (detail.runtime)    html += `<div class="detail-row"><span class="detail-label">Speelduur</span><span class="detail-value">${esc(detail.runtime)} min</span></div>`;
     if (detail.plot) html += `<div class="detail-plot">${esc(detail.plot)}</div>`;
 
     card.innerHTML = html;

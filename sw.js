@@ -1,4 +1,4 @@
-const CACHE_NAME = 'filmlog-v4';
+const CACHE_NAME = 'filmlog-v5';
 const ASSETS = [
     './',
     './index.html',
@@ -6,6 +6,8 @@ const ASSETS = [
     './js/app.js',
     './js/db.js',
     './js/omdb.js',
+    './js/tmdb.js',
+    './js/github-sync.js',
     './js/pdf.js',
     './js/csv.js',
     './js/recommendations.js',
