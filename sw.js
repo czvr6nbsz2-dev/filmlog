@@ -1,8 +1,11 @@
-const CACHE_NAME = 'filmlog-v7';
-const ASSETS = [
+const CACHE_NAME = 'filmlog-v8';
+const STATIC_ASSETS = [
     './',
     './index.html',
     './style.css',
+    './manifest.json',
+];
+const JS_ASSETS = [
     './js/app.js',
     './js/db.js',
     './js/omdb.js',
@@ -11,12 +14,11 @@ const ASSETS = [
     './js/pdf.js',
     './js/csv.js',
     './js/recommendations.js',
-    './manifest.json',
 ];
 
 self.addEventListener('install', (e) => {
     e.waitUntil(
-        caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+        caches.open(CACHE_NAME).then(cache => cache.addAll([...STATIC_ASSETS, ...JS_ASSETS]))
     );
     self.skipWaiting();
 });
@@ -32,15 +34,31 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
     const url = e.request.url;
-    const isLocal = url.includes(self.location.origin);
+    const isLocal = url.startsWith(self.location.origin);
 
     if (!isLocal) {
-        // External requests (Anthropic, OMDb) bypass service worker
+        // External requests (OMDb, TMDB, Anthropic, GitHub) bypass SW
         return;
     }
 
-    // Local assets: cache-first
-    e.respondWith(
-        caches.match(e.request).then(cached => cached || fetch(e.request))
-    );
+    const path = new URL(url).pathname;
+    const isJS = path.endsWith('.js');
+
+    if (isJS) {
+        // JS files: network-first so updates are picked up immediately
+        e.respondWith(
+            fetch(e.request)
+                .then(res => {
+                    const clone = res.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+                    return res;
+                })
+                .catch(() => caches.match(e.request))
+        );
+    } else {
+        // Static assets (HTML, CSS, manifest): cache-first for offline support
+        e.respondWith(
+            caches.match(e.request).then(cached => cached || fetch(e.request))
+        );
+    }
 });
