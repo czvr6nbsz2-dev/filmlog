@@ -147,12 +147,28 @@ function showStep(stepId) {
     if (stepId !== 'add-step-input') clearSuggestions();
 }
 
+function extractImdbID(text) {
+    const match = text.match(/tt\d{7,}/);
+    return match ? match[0] : null;
+}
+
 async function doSearch() {
     const query = $('#film-title-input').value.trim();
     if (!query) return;
 
-    currentFilm.title = query;
     currentFilm.watchDate = $('#film-date-input').value || today();
+
+    // If the user pasted an IMDb URL or ID directly, use it immediately
+    const directImdbID = extractImdbID(query);
+    if (directImdbID) {
+        currentFilm.title = query; // will be overwritten by fetchDetail
+        showStep('add-step-loading');
+        $('#loading-text').textContent = 'IMDb-link ophalen...';
+        await selectSearchResult(directImdbID);
+        return;
+    }
+
+    currentFilm.title = query;
 
     if (!hasApiKey()) {
         // Skip IMDb, go straight to review
