@@ -811,7 +811,10 @@ function download(filename, content, type) {
     URL.revokeObjectURL(url);
 }
 
-// Register service worker
+// Register service worker — updateViaCache:'none' bypasses HTTP cache for sw.js
+// so GitHub Pages' max-age header doesn't block SW updates
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
+        .then(reg => reg.update())
+        .catch(() => {});
 }
