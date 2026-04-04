@@ -161,7 +161,7 @@ async function doSearch() {
     // If the user pasted an IMDb URL or ID directly, use it immediately
     const directImdbID = extractImdbID(query);
     if (directImdbID) {
-        currentFilm.title = query; // will be overwritten by fetchDetail
+        currentFilm.title = ''; // cleared; real title comes from API
         showStep('add-step-loading');
         $('#loading-text').textContent = 'IMDb-link ophalen...';
         await selectSearchResult(directImdbID);

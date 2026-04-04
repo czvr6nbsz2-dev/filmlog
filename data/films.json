@@ -19,6 +19,25 @@
     "updatedAt": "2026-04-04T11:08:34.070780Z"
   },
   {
+    "id": "ca9373e3-fed2-4775-8d91-5f3a1dfa9e3d",
+    "title": "Sirāt",
+    "year": "2025",
+    "directors": "Oliver Laxe",
+    "actors": "Sergi López, Bruno Núñez, Stefania Gadda, Joshua Liam Henderson",
+    "plot": "Een man en zijn zoon arriveren bij een rave diep in de bergen van Marokko. Ze zijn op zoek naar iemand die is verdwenen.",
+    "imdbID": "tt32298285",
+    "imdbRating": null,
+    "posterURL": "https://image.tmdb.org/t/p/w500/bzBtsLi17rK4G6kDvOXfUZfAhca.jpg",
+    "tmdbId": 1151272,
+    "genres": "Drama, Thriller",
+    "runtime": "120",
+    "watchDate": "2026-04-02",
+    "location": "thuis",
+    "myRating": 7,
+    "myReview": null,
+    "updatedAt": "2026-04-02T00:00:00Z"
+  },
+  {
     "location": "bioscoop",
     "watchDate": "2026-03-16",
     "title": "Amrum",
