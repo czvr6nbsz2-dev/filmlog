@@ -314,12 +314,21 @@ function scheduleSuggestions(query) {
 async function selectSearchResult(imdbID) {
     try {
         const [omdbDetail, tmdbData] = await Promise.all([
-            fetchDetail(imdbID),
+            fetchDetail(imdbID).catch(() => null),  // OMDb may not have the film
             fetchTmdbByImdbId(imdbID),
         ]);
-        selectedDetail = omdbDetail;
-        currentFilm = enrichFilmTmdb(enrichFilm(currentFilm, omdbDetail), tmdbData);
-        renderConfirmation({ ...omdbDetail, genres: tmdbData?.genres, runtime: tmdbData?.runtime, tmdbRating: tmdbData?.tmdbRating });
+
+        if (omdbDetail) {
+            selectedDetail = omdbDetail;
+            currentFilm = enrichFilmTmdb(enrichFilm(currentFilm, omdbDetail), tmdbData);
+            renderConfirmation({ ...omdbDetail, genres: tmdbData?.genres, runtime: tmdbData?.runtime, tmdbRating: tmdbData?.tmdbRating });
+        } else if (tmdbData?.tmdbId) {
+            // OMDb has nothing — fall back to full TMDB detail
+            await selectTmdbResult(tmdbData.tmdbId);
+            return;
+        } else {
+            throw new Error('Film niet gevonden op IMDb of TMDB.');
+        }
         showStep('add-step-confirm');
     } catch (err) {
         alert(err.message);

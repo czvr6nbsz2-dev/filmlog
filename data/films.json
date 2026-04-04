@@ -1,5 +1,24 @@
 [
   {
+    "id": "c5444ca0-78a1-426d-9698-087734c33e76",
+    "title": "Champagne",
+    "year": "2026",
+    "directors": "Tim Kamps",
+    "actors": "Leo Alkemade, Huub Stapel, Jennifer Hoffman, Beppie Melissen",
+    "plot": "Wanneer Maarten te horen krijgt dat zijn vader Hans ongeneeslijk ziek is, besluit hij hem mee te nemen naar de champagnestreek.",
+    "imdbID": "tt38816122",
+    "imdbRating": null,
+    "posterURL": "https://image.tmdb.org/t/p/w500/dWRHXpzkI3c7jdaF1tvB0Go875r.jpg",
+    "tmdbId": 1603145,
+    "genres": "Drama",
+    "runtime": null,
+    "watchDate": "2026-04-03",
+    "location": "bioscoop",
+    "myRating": null,
+    "myReview": null,
+    "updatedAt": "2026-04-04T11:08:34.070780Z"
+  },
+  {
     "location": "bioscoop",
     "watchDate": "2026-03-16",
     "title": "Amrum",
