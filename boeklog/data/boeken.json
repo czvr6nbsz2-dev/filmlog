@@ -2903,5 +2903,20 @@
     "myRating": 6,
     "id": "3c1af981-16a1-4060-a382-9f1101267815",
     "updatedAt": "2026-04-05T09:48:04.228Z"
+  },
+  {
+    "readDate": "2026-04-05",
+    "title": "An african history of africa",
+    "author": "Zeinab badawi",
+    "openLibraryKey": "/works/OL39084356W",
+    "publishYear": "2024",
+    "coverURL": null,
+    "description": null,
+    "subjects": null,
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 6,
+    "id": "8ef50732-e55d-45d5-a65f-c87c9110c392",
+    "updatedAt": "2026-04-05T09:49:36.782Z"
   }
 ]
