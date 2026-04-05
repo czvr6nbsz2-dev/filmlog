@@ -2894,5 +2894,14 @@
     "myRating": 6,
     "id": "69ea1c00-010d-47ca-86e9-dfa69737d59f",
     "updatedAt": "2026-03-23T19:00:19.371Z"
+  },
+  {
+    "readDate": "2026-04-05",
+    "title": "Een afrikaanse geschiedenis",
+    "author": "Zeinab badawi",
+    "myReview": null,
+    "myRating": 6,
+    "id": "3c1af981-16a1-4060-a382-9f1101267815",
+    "updatedAt": "2026-04-05T09:48:04.228Z"
   }
 ]
