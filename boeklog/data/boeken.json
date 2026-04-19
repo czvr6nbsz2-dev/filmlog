@@ -2919,5 +2919,14 @@
     "myRating": 6,
     "id": "8ef50732-e55d-45d5-a65f-c87c9110c392",
     "updatedAt": "2026-04-05T09:49:36.782Z"
+  },
+  {
+    "readDate": "2026-04-19",
+    "title": "Een wereld valt uiteen",
+    "author": "Chinua Achebe",
+    "myReview": null,
+    "myRating": 7,
+    "id": "45f389b6-ba2f-421c-aa15-af7cc138cde2",
+    "updatedAt": "2026-04-19T19:43:05.908Z"
   }
 ]
