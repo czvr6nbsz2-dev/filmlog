@@ -2928,5 +2928,20 @@
     "myRating": 7,
     "id": "45f389b6-ba2f-421c-aa15-af7cc138cde2",
     "updatedAt": "2026-04-19T19:43:05.908Z"
+  },
+  {
+    "readDate": "2026-04-26",
+    "title": "Blindness",
+    "author": "José saramago",
+    "openLibraryKey": "/works/OL16212507W",
+    "publishYear": "1999",
+    "coverURL": null,
+    "description": null,
+    "subjects": "Blind, Blindness, Fiction, Fiction, general",
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 7,
+    "id": "16d373f5-d9ba-40b0-87a4-2b709e474f85",
+    "updatedAt": "2026-04-26T12:09:22.013Z"
   }
 ]
