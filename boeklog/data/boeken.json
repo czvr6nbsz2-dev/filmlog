@@ -2943,5 +2943,20 @@
     "myRating": 7,
     "id": "16d373f5-d9ba-40b0-87a4-2b709e474f85",
     "updatedAt": "2026-04-26T12:09:22.013Z"
+  },
+  {
+    "readDate": "2026-05-01",
+    "title": "The book of lost things",
+    "author": "John Connolly",
+    "openLibraryKey": "/works/OL8090773W",
+    "publishYear": "2011",
+    "coverURL": "https://covers.openlibrary.org/b/id/1384981-M.jpg",
+    "description": null,
+    "subjects": "Children's fiction, Fantasy fiction, Boys, fiction",
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 6,
+    "id": "be0c5719-a23f-4340-84cc-e16a7b7ff2b4",
+    "updatedAt": "2026-05-01T11:19:26.911Z"
   }
 ]
