@@ -2958,5 +2958,20 @@
     "myRating": 4,
     "id": "be0c5719-a23f-4340-84cc-e16a7b7ff2b4",
     "updatedAt": "2026-05-02T14:16:13.261Z"
+  },
+  {
+    "readDate": "2026-05-02",
+    "title": "Wolkenatlas",
+    "author": "Mitchell",
+    "openLibraryKey": "/works/OL24134027W",
+    "publishYear": "2004",
+    "coverURL": "https://covers.openlibrary.org/b/id/10530040-M.jpg",
+    "description": null,
+    "subjects": null,
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 5,
+    "id": "9bd0e3d9-0756-47a8-86ea-895a015ee5be",
+    "updatedAt": "2026-05-02T14:16:38.767Z"
   }
 ]
