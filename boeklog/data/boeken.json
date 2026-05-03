@@ -2973,5 +2973,20 @@
     "myRating": 5,
     "id": "9bd0e3d9-0756-47a8-86ea-895a015ee5be",
     "updatedAt": "2026-05-02T14:16:38.767Z"
+  },
+  {
+    "readDate": "2026-05-03",
+    "title": "Letter from an unknown woman",
+    "author": "Stefan zweig",
+    "openLibraryKey": "/works/OL17554494W",
+    "publishYear": "2013",
+    "coverURL": "https://covers.openlibrary.org/b/id/7810603-M.jpg",
+    "description": "The titular tale is a devastating depiction of unrequited love. Elsewhere in the collection, a young man mistakes the girl he loves for her sister, two erstwhile lovers meet after an age spent apart, and a married woman repays a debt of gratitude to her childhood sweetheart.",
+    "subjects": "Translations into English, Fiction, short stories (single author), Austria, fiction, Austrian Short stories",
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 6,
+    "id": "dca57f0a-2aba-47a0-81bd-3f5acd18c9d3",
+    "updatedAt": "2026-05-03T05:31:34.538Z"
   }
 ]
