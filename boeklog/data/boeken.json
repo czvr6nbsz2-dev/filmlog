@@ -2987,5 +2987,20 @@
     "myRating": 8,
     "id": "be0b8e3a-7d2d-4731-965b-e38dff72b167",
     "updatedAt": "2026-05-11T18:07:09.070Z"
+  },
+  {
+    "readDate": "2026-05-11",
+    "title": "The correspondent",
+    "author": "Virginia evans",
+    "openLibraryKey": "/works/OL42414694W",
+    "publishYear": "2025",
+    "coverURL": "https://covers.openlibrary.org/b/id/15207456-M.jpg",
+    "description": "Throughout her life Sybil Van Antwerp has used letters to make sense of the world and her place in it. Most mornings around half past ten Sybil sits down to write letters—to her brother, to her best friend, to the president of the university who will not allow her to audit a class she desperately wants to take, to Joan Didion and Larry McMurtry to tell them what she thinks of their latest books, and to one person to whom she writes often yet never sends the letter.\r\n\r\nSybil expects her world to go on as it always has. A mother, grandmother, wife, divorcée, distinguished lawyer, she has lived a full life. But when letters from someone in her past force her to examine one of the most painful periods of her life, she realizes the letter she has been writing over the years needs to be read and that she cannot move forward until she finds it in her heart to offer forgiveness.",
+    "subjects": "Fiction, Literary Fiction, Contemporary, Family, Books About Books",
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 7,
+    "id": "bf3ebc0a-d000-43f3-80eb-f79440ced967",
+    "updatedAt": "2026-05-11T18:09:57.021Z"
   }
 ]
