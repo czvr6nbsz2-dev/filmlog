@@ -62,6 +62,7 @@ export async function fetchDetail(imdbID) {
 export function enrichFilm(film, detail) {
     return {
         ...film,
+        title: detail.title || film.title,
         imdbID: detail.imdbID,
         year: detail.year,
         directors: detail.directors,
