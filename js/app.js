@@ -34,7 +34,7 @@ async function init() {
         setupScreen.hidden = false;
         initSetup();
     } else {
-        showMain();
+        await showMain(); // must await so films[] is populated before triggerSync
     }
     initEventListeners();
     if (isSyncEnabled()) triggerSync();
