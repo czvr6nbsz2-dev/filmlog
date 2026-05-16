@@ -172,6 +172,16 @@
                     </div>
                 </div>
                 <div class="settings-section">
+                    <h3>GitHub Sync</h3>
+                    <p class="hint">Synchroniseer je filmlijst automatisch naar GitHub voor de netwerkpagina.</p>
+                    <div class="form-group">
+                        <input type="password" id="settings-github-token" placeholder="GitHub token (repo-scope)">
+                        <button id="btn-save-github-token" class="btn-small">Opslaan</button>
+                    </div>
+                    <span id="github-sync-status" class="hint"></span>
+                    <button id="btn-sync-now" class="btn-secondary" style="margin-top:8px">🔄 Nu synchroniseren</button>
+                </div>
+                <div class="settings-section">
                     <h3>Data</h3>
                     <button id="btn-export-json" class="btn-secondary">💾 Backup exporteren (JSON)</button>
                     <input type="file" id="json-file" accept=".json" hidden>

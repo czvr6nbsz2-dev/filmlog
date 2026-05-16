@@ -391,6 +391,7 @@ async function doSave() {
         films.sort((a, b) => new Date(b.watchDate) - new Date(a.watchDate));
         renderFilmList();
         addModal.hidden = true;
+        syncToGitHub(films).catch(() => {});
     } catch (err) {
         alert('Fout bij opslaan: ' + err.message);
         showStep('add-step-review');
@@ -459,6 +460,7 @@ function showDetail(film) {
         films = films.filter(f => f.id !== film.id);
         renderFilmList();
         detailModal.hidden = true;
+        syncToGitHub(films).catch(() => {});
     });
 
     detailModal.hidden = false;
@@ -504,7 +506,8 @@ function showEditReview(film) {
         const idx = films.findIndex(f => f.id === film.id);
         if (idx >= 0) films[idx] = film;
         renderFilmList();
-        showDetail(film); // refresh detail view
+        showDetail(film);
+        syncToGitHub(films).catch(() => {});
     });
 }
 
@@ -522,6 +525,13 @@ function openSettings() {
     status.textContent = hasAnthropicKey ? 'Sleutel ingesteld' : '';
     status.className = hasAnthropicKey ? 'hint anthropic-status success' : 'hint';
     $('#btn-recommendations').disabled = !hasAnthropicKey || !films.length;
+
+    // GitHub token status
+    $('#settings-github-token').value = '';
+    const syncStatus = $('#github-sync-status');
+    const hasToken = isSyncEnabled();
+    syncStatus.textContent = hasToken ? 'Token ingesteld — sync actief' : 'Geen token — sync uitgeschakeld';
+    syncStatus.className = hasToken ? 'hint anthropic-status success' : 'hint';
 
     $('#stats').textContent = `${films.length} films in je logboek`;
     settingsModal.hidden = false;
@@ -719,6 +729,39 @@ function initEventListeners() {
         generateAndShowRecommendations('theme', theme);
     });
 
+    // Settings: GitHub token
+    $('#btn-save-github-token').addEventListener('click', () => {
+        const token = $('#settings-github-token').value.trim();
+        setSetting('githubToken', token);
+        const syncStatus = $('#github-sync-status');
+        if (token) {
+            syncStatus.textContent = 'Token opgeslagen — sync actief';
+            syncStatus.className = 'hint anthropic-status success';
+            syncToGitHub(films).catch(() => {});
+        } else {
+            syncStatus.textContent = 'Token verwijderd — sync uitgeschakeld';
+            syncStatus.className = 'hint';
+        }
+        $('#settings-github-token').value = '';
+    });
+
+    $('#btn-sync-now').addEventListener('click', async () => {
+        const syncStatus = $('#github-sync-status');
+        if (!isSyncEnabled()) {
+            syncStatus.textContent = 'Geen token — sla eerst een token op';
+            return;
+        }
+        syncStatus.textContent = 'Bezig met synchroniseren…';
+        try {
+            await syncToGitHub(films);
+            syncStatus.textContent = `✓ Gesynchroniseerd (${films.length} films)`;
+            syncStatus.className = 'hint anthropic-status success';
+        } catch (err) {
+            syncStatus.textContent = 'Sync mislukt: ' + err.message;
+            syncStatus.className = 'hint anthropic-status error';
+        }
+    });
+
     // Settings: JSON export/import
     $('#btn-export-json').addEventListener('click', async () => {
         const json = await exportAll();
@@ -733,6 +776,7 @@ function initEventListeners() {
             films = await getAllFilms();
             renderFilmList();
             alert(`${count} films geïmporteerd uit backup.`);
+            syncToGitHub(films).catch(() => {});
         } catch (err) {
             alert('Fout bij importeren: ' + err.message);
         }
