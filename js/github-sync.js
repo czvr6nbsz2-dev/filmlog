@@ -50,10 +50,10 @@ export async function syncToGitHub(films) {
 
         if (!res.ok) {
             const err = await res.json().catch(() => ({}));
-            console.error('GitHub sync failed:', res.status, err.message);
+            throw new Error(`GitHub sync mislukt (${res.status}): ${err.message || 'onbekend'}`);
         }
     } catch (err) {
-        console.error('GitHub sync error:', err.message);
+        throw err;
     }
 }
 

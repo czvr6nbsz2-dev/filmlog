@@ -821,3 +821,25 @@ textarea { resize: vertical; }
 
 .anthropic-status.success { color: var(--green); }
 .anthropic-status.error { color: var(--red); }
+
+.sync-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+.sync-indicator.syncing {
+    background: var(--orange);
+    animation: pulse 1s ease infinite;
+}
+
+.sync-indicator.synced { background: var(--green); }
+.sync-indicator.error  { background: var(--red); }
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+}

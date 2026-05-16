@@ -13,6 +13,7 @@ let selectedDetail = null;
 let selectedRating = null;
 let suggestionTimer = null;
 let suggestionReqId = 0;
+let isSyncing = false;
 
 // ---- DOM refs ----
 const $ = (sel) => document.querySelector(sel);
@@ -36,6 +37,32 @@ async function init() {
         showMain();
     }
     initEventListeners();
+    if (isSyncEnabled()) triggerSync();
+    window.addEventListener('online', () => { if (isSyncEnabled()) triggerSync(); });
+}
+
+// ---- Sync ----
+function showSyncIndicator(state) {
+    const el = $('#sync-indicator');
+    if (!el) return;
+    el.hidden = state === 'idle';
+    el.className = 'sync-indicator ' + state;
+}
+
+async function triggerSync() {
+    if (isSyncing) return;
+    isSyncing = true;
+    showSyncIndicator('syncing');
+    try {
+        await syncToGitHub(films);
+        showSyncIndicator('synced');
+        setTimeout(() => showSyncIndicator('idle'), 3000);
+    } catch {
+        showSyncIndicator('error');
+        setTimeout(() => showSyncIndicator('idle'), 5000);
+    } finally {
+        isSyncing = false;
+    }
 }
 
 // ---- Setup ----
@@ -391,7 +418,7 @@ async function doSave() {
         films.sort((a, b) => new Date(b.watchDate) - new Date(a.watchDate));
         renderFilmList();
         addModal.hidden = true;
-        syncToGitHub(films).catch(() => {});
+        triggerSync();
     } catch (err) {
         alert('Fout bij opslaan: ' + err.message);
         showStep('add-step-review');
@@ -460,7 +487,7 @@ function showDetail(film) {
         films = films.filter(f => f.id !== film.id);
         renderFilmList();
         detailModal.hidden = true;
-        syncToGitHub(films).catch(() => {});
+        triggerSync();
     });
 
     detailModal.hidden = false;
@@ -507,7 +534,7 @@ function showEditReview(film) {
         if (idx >= 0) films[idx] = film;
         renderFilmList();
         showDetail(film);
-        syncToGitHub(films).catch(() => {});
+        triggerSync();
     });
 }
 
@@ -752,12 +779,13 @@ function initEventListeners() {
             return;
         }
         syncStatus.textContent = 'Bezig met synchroniseren…';
+        syncStatus.className = 'hint';
         try {
             await syncToGitHub(films);
             syncStatus.textContent = `✓ Gesynchroniseerd (${films.length} films)`;
             syncStatus.className = 'hint anthropic-status success';
         } catch (err) {
-            syncStatus.textContent = 'Sync mislukt: ' + err.message;
+            syncStatus.textContent = 'Sync mislukt: ' + (err.message || 'onbekende fout');
             syncStatus.className = 'hint anthropic-status error';
         }
     });
@@ -776,7 +804,7 @@ function initEventListeners() {
             films = await getAllFilms();
             renderFilmList();
             alert(`${count} films geïmporteerd uit backup.`);
-            syncToGitHub(films).catch(() => {});
+            triggerSync();
         } catch (err) {
             alert('Fout bij importeren: ' + err.message);
         }
