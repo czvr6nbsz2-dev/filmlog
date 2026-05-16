@@ -354,9 +354,7 @@ const IDB_STORE = 'films';
 const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/czvr6nbsz2-dev/filmlog/main/data/films.json';
 
 async function loadFromGitHub() {
-  // Cache busting zodat we altijd de laatste versie krijgen
-  const url = GITHUB_JSON_URL + '?t=' + Date.now();
-  const res = await fetch(url);
+  const res = await fetch(GITHUB_JSON_URL, { cache: 'no-store' });
   if (!res.ok) throw new Error(`GitHub ${res.status}`);
   const films = await res.json();
   return Array.isArray(films) ? films : [];
