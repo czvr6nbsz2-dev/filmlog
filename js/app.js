@@ -494,7 +494,7 @@ function showDetail(film) {
 }
 
 function showEditReview(film) {
-    const card = $('#review-card');
+    const content = $('#detail-content');
     const editRating = film.myRating || null;
 
     let ratingHTML = '<div class="rating-picker edit-rating-picker">';
@@ -503,35 +503,68 @@ function showEditReview(film) {
     }
     ratingHTML += '</div>';
 
-    card.innerHTML = `
+    content.innerHTML = `
         <div class="edit-form">
-            <textarea id="edit-review-text" rows="4">${esc(film.myReview || '')}</textarea>
-            <label style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:6px;display:block">Score</label>
+            <label class="edit-label">Titel</label>
+            <input type="text" id="edit-title" class="edit-input" value="${esc(film.title || '')}">
+
+            <label class="edit-label">Datum</label>
+            <input type="date" id="edit-date" class="edit-input" value="${esc(film.watchDate || '')}">
+
+            <label class="edit-label">Locatie</label>
+            <div class="seg-control edit-seg">
+                <button class="seg-btn ${film.location !== 'thuis' ? 'active' : ''}" data-value="bioscoop">🎭 Bioscoop</button>
+                <button class="seg-btn ${film.location === 'thuis' ? 'active' : ''}" data-value="thuis">🏠 Thuis</button>
+            </div>
+
+            <label class="edit-label">Mijn beoordeling</label>
+            <textarea id="edit-review-text" rows="4" class="edit-input">${esc(film.myReview || '')}</textarea>
+
+            <label class="edit-label">Score</label>
             ${ratingHTML}
+
             <div class="edit-actions">
+                <button class="btn-secondary" id="btn-cancel-edit">Annuleren</button>
                 <button class="btn-primary" id="btn-save-edit">Opslaan</button>
             </div>
         </div>
     `;
 
     let newRating = editRating;
+    let newLocation = film.location || 'bioscoop';
 
-    card.querySelectorAll('.edit-rating-picker .rating-dot').forEach(btn => {
+    content.querySelectorAll('.edit-seg .seg-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            content.querySelectorAll('.edit-seg .seg-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            newLocation = btn.dataset.value;
+        });
+    });
+
+    content.querySelectorAll('.edit-rating-picker .rating-dot').forEach(btn => {
         btn.addEventListener('click', () => {
             const val = parseInt(btn.dataset.rating);
             newRating = newRating === val ? null : val;
-            card.querySelectorAll('.edit-rating-picker .rating-dot').forEach(b =>
+            content.querySelectorAll('.edit-rating-picker .rating-dot').forEach(b =>
                 b.classList.toggle('active', parseInt(b.dataset.rating) === newRating)
             );
         });
     });
 
+    $('#btn-cancel-edit').addEventListener('click', () => showDetail(film));
+
     $('#btn-save-edit').addEventListener('click', async () => {
-        film.myReview = $('#edit-review-text').value.trim() || null;
-        film.myRating = newRating;
+        const newTitle = $('#edit-title').value.trim();
+        if (!newTitle) { alert('Titel mag niet leeg zijn.'); return; }
+        film.title     = newTitle;
+        film.watchDate = $('#edit-date').value || film.watchDate;
+        film.location  = newLocation;
+        film.myReview  = $('#edit-review-text').value.trim() || null;
+        film.myRating  = newRating;
         await saveFilm(film);
         const idx = films.findIndex(f => f.id === film.id);
         if (idx >= 0) films[idx] = film;
+        films.sort((a, b) => new Date(b.watchDate) - new Date(a.watchDate));
         renderFilmList();
         showDetail(film);
         triggerSync();

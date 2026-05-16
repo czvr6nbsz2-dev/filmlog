@@ -843,3 +843,24 @@ textarea { resize: vertical; }
     0%, 100% { opacity: 1; }
     50%       { opacity: 0.3; }
 }
+
+.edit-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 14px 0 5px;
+}
+.edit-label:first-child { margin-top: 0; }
+
+.edit-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.edit-seg { margin-bottom: 4px; }
