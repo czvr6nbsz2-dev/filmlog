@@ -1,5 +1,305 @@
 [
   {
+    "location": "thuis",
+    "watchDate": "2026-05-16",
+    "title": "Sorry we missed you",
+    "imdbID": "tt8359816",
+    "year": "2019",
+    "directors": "Ken Loach",
+    "actors": "Kris Hitchen, Debbie Honeywood, Rhys Mcgowan",
+    "plot": "Hoping that self-employment through gig economy can solve their financial woes, a hard-up UK delivery driver and his wife struggling to raise a family end up trapped in the vicious circle of this modern-day form of labour exploita...",
+    "imdbRating": "7.6",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BN2QwZTBkZWYtZGI3Mi00NTkyLWFlZGEtZmE5YjU2NWYyMTFhXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 522369,
+    "tmdbRating": "7.3",
+    "genres": "Drama",
+    "runtime": "100",
+    "myReview": "Heel sterk b",
+    "myRating": 9,
+    "id": "76d868e7-a7e9-4033-a5bf-81777fc5e065",
+    "updatedAt": "2026-05-16T15:49:53.604Z"
+  },
+  {
+    "location": "bioscoop",
+    "watchDate": "2026-05-13",
+    "title": "Amadeus",
+    "imdbID": "tt0086879",
+    "year": "1984",
+    "directors": "Milos Forman",
+    "actors": "F. Murray Abraham, Tom Hulce, Elizabeth Berridge",
+    "plot": "The life and work of Wolfgang Amadeus Mozart seen through the eyes of his contemporary and rival, Antonio Salieri.",
+    "imdbRating": "8.4",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMzc2MjM0NTMtOGY4NC00NzY1LWE2ODUtZjMzY2RhNGNkZDAyXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 279,
+    "tmdbRating": "8",
+    "genres": "Historisch, Muziek, Drama",
+    "runtime": "160",
+    "myReview": null,
+    "myRating": 8,
+    "id": "12b3526c-b66b-4392-ae36-baa35b832937",
+    "updatedAt": "2026-05-13T19:15:09.905Z"
+  },
+  {
+    "location": "bioscoop",
+    "watchDate": "2026-05-11",
+    "title": "Saipan",
+    "imdbID": "tt33093531",
+    "year": "2025",
+    "directors": "Lisa Barros D'Sa, Glenn Leyburn",
+    "actors": "Éanna Hardwicke, Steve Coogan, Peter McDonald",
+    "plot": "On the eve of the 2002 FIFA World Cup, the Irish captain Roy Keane forfeits his place in the squad at the team's preparation base in Saipan, following a heated disagreement with the Irish manager Mick McCarthy.",
+    "imdbRating": "6.8",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMDY0NmI4ZTItMjJiOS00YjQyLWJjOTAtODA5OTE2NzA2ODMzXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1322692,
+    "tmdbRating": "6.1",
+    "genres": "Drama, Historisch",
+    "runtime": "91",
+    "myReview": "Voetbalfilm.",
+    "myRating": 4,
+    "id": "d7539d6a-ffb8-4343-a3b9-4df8f3f79e91",
+    "updatedAt": "2026-05-11T20:09:21.340Z"
+  },
+  {
+    "location": "bioscoop",
+    "watchDate": "2026-05-09",
+    "title": "The Choral",
+    "imdbID": "tt31851518",
+    "year": "2025",
+    "directors": "Nicholas Hytner",
+    "actors": "Taylor Uttley, Ralph Fiennes, Mark Addy",
+    "plot": "A choral society's male members enlist in World War I, leaving the demanding Dr. Guthrie to recruit teenagers. Together, they experience the joy of singing while the young boys grapple with their impending conscription into the army.",
+    "imdbRating": "6.5",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BNDI4ODRhODEtOTQ3ZS00YTY3LWIxMTgtNDdmY2JiNzQ4OGVhXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1262815,
+    "tmdbRating": "6.4",
+    "genres": "Komedie, Drama, Muziek",
+    "runtime": "113",
+    "myReview": null,
+    "myRating": 8,
+    "id": "530ce8a4-eaad-4ee1-88ea-ac1f9ccf54cc",
+    "updatedAt": "2026-05-09T18:58:01.280Z"
+  },
+  {
+    "location": "bioscoop",
+    "watchDate": "2026-05-08",
+    "title": "",
+    "imdbID": "tt27811248",
+    "year": "2025",
+    "directors": "Silvio Soldini",
+    "actors": "Elisa Schlott, Max Riemelt, Alma Hasun",
+    "plot": "A women conscripted to be Adolf Hitler's food tasters.",
+    "imdbRating": null,
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMDBhMDIwMzYtOTQ4MC00ZDI2LTk5ZjktOGI3NjdkYzdhNGQzXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1291712,
+    "tmdbRating": "6.6",
+    "genres": "Drama, Historisch",
+    "runtime": "124",
+    "myReview": "Prachtig verhaal",
+    "myRating": 8,
+    "id": "a45b308b-bafe-484d-95bb-a63b7b44ebdc",
+    "updatedAt": "2026-05-08T21:41:48.993Z"
+  },
+  {
+    "location": "bioscoop",
+    "watchDate": "2026-05-02",
+    "title": "",
+    "imdbID": "tt0082731",
+    "year": "1981",
+    "directors": "Ben Verbong",
+    "actors": "Renée Soutendijk, Peter Tuinman, Loes Luca",
+    "plot": "The story of Hannie Schaft of the Dutch resistance told in flashbacks how she tries to bring collaborators and criminals to justice in 1945.",
+    "imdbRating": "6.8",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BYTAwZjNmNWUtMGZmZS00ODg1LWI5YzUtNmMwZjcyZjdmNmQ1XkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 97547,
+    "tmdbRating": "6.7",
+    "genres": "Misdaad, Drama, Thriller",
+    "runtime": "109",
+    "myReview": null,
+    "myRating": 9,
+    "id": "31272511-df4c-441f-8bf6-cd2357d421c2",
+    "updatedAt": "2026-05-02T18:06:25.521Z"
+  },
+  {
+    "location": "bioscoop",
+    "watchDate": "2026-04-27",
+    "title": "",
+    "imdbID": "tt22872358",
+    "year": "2025",
+    "directors": null,
+    "actors": "Femke Vanhove, Jef Hellemans, Koen De Bouw, Peter van den Begin, Nico Sturm",
+    "plot": "Mei 1940. Terwijl de wereld op de rand van oorlog balanceert, kruisen in het Brusselse Flageygebouw — van waaruit de nationale radio uitzendt — de wegen van Elza, een jonge actrice die haar eerste stappen zet in de hoorspelstudio’s, en Berre, een beginnend klankman met een bijna magisch gehoor. Hij zoekt houvast in de ongrijpbare kracht van geluid, zij in de betovering van de hoorspelen. Hun ontmoeting ontsteekt een vonk van liefde die hen optilt boven de dreiging van hun tijd.",
+    "imdbRating": null,
+    "posterURL": "https://image.tmdb.org/t/p/w500/A97kwaAUZZ4HIUX8lMahqYliPdh.jpg",
+    "tmdbId": 1529023,
+    "tmdbRating": "7.2",
+    "genres": "Drama",
+    "runtime": "120",
+    "myReview": null,
+    "myRating": 8,
+    "id": "a4338613-08e3-47b5-bb6b-f6be0aa4b4d8",
+    "updatedAt": "2026-04-27T20:17:52.477Z"
+  },
+  {
+    "location": "bioscoop",
+    "watchDate": "2026-04-25",
+    "title": "",
+    "imdbID": "tt11378946",
+    "year": "2026",
+    "directors": "Antoine Fuqua",
+    "actors": "Jaafar Jackson, Juliano Valdi, Colman Domingo",
+    "plot": "The story of the famous musician Michael Jackson, known as the King of Pop.",
+    "imdbRating": null,
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BNzllNmRlN2EtMDQyOC00ODJjLTg4OWQtZDNmNGU3YzlkNjc1XkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+    "tmdbId": 936075,
+    "tmdbRating": "7.5",
+    "genres": "Muziek, Drama",
+    "runtime": "127",
+    "myReview": "Voooral vanwege de muziek, verhaal is mierzoet.",
+    "myRating": 7,
+    "id": "28162724-a916-45d0-8470-c3cebfde8498",
+    "updatedAt": "2026-04-26T06:50:22.714Z"
+  },
+  {
+    "location": "thuis",
+    "watchDate": "2026-04-21",
+    "title": "Syriana",
+    "imdbID": "tt0365737",
+    "year": "2005",
+    "directors": "Stephen Gaghan",
+    "actors": "George Clooney, Matt Damon, Amanda Peet",
+    "plot": "A politically charged epic about the state of the oil industry in the hands of those personally involved in and affected by it.",
+    "imdbRating": "6.9",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BYWQ0YmNiYjUtODg0NS00YjNkLWJhOTktOGMxNTdmYTM0ZmMzXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 231,
+    "tmdbRating": "6.4",
+    "genres": "Drama, Thriller",
+    "runtime": "126",
+    "myReview": null,
+    "myRating": 8,
+    "id": "f7c9733b-b877-4d8c-882b-22fed607ac2f",
+    "updatedAt": "2026-04-21T18:05:15.479Z"
+  },
+  {
+    "location": "bioscoop",
+    "watchDate": "2026-04-20",
+    "title": "Silent Friend",
+    "imdbID": "tt27811632",
+    "year": "2025",
+    "directors": "Ildikó Enyedi",
+    "actors": "Tony Leung Chiu-wai, Luna Wedler, Enzo Brumm",
+    "plot": "Tales told from the perspective of a lonely old tree standing in the middle of a botanical garden.",
+    "imdbRating": null,
+    "posterURL": "https://image.tmdb.org/t/p/w500/AvyDOTeSBip2yovX06fW4ARTEXq.jpg",
+    "tmdbId": 1168719,
+    "tmdbRating": "8.1",
+    "genres": "Drama",
+    "runtime": "148",
+    "myReview": "Te traag en te veel verschillende dingen door elkaar heen",
+    "myRating": 5,
+    "id": "550c1588-4af2-4d96-9351-c261cf0aa02a",
+    "updatedAt": "2026-04-20T20:48:02.805Z"
+  },
+  {
+    "location": "bioscoop",
+    "watchDate": "2026-04-13",
+    "title": "Father Mother Sister Brother",
+    "imdbID": "tt31189315",
+    "year": "2025",
+    "directors": "Jim Jarmusch",
+    "actors": "Tom Waits, Adam Driver, Mayim Bialik",
+    "plot": "Estranged siblings reunite after years apart, forced to confront unresolved tensions and reevaluate their strained relationships with their emotionally distant parents",
+    "imdbRating": "6.8",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BNWI5OTEzMzEtZTdiNS00NTdjLWFjMTQtZDM5MjRjYWE1M2ZkXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1159206,
+    "tmdbRating": "6.5",
+    "genres": "Komedie, Drama",
+    "runtime": "110",
+    "myReview": "Nadenkfilm…",
+    "myRating": 8,
+    "id": "e5f276f0-acd1-470a-a89e-d593f6b25a8b",
+    "updatedAt": "2026-04-14T06:18:13.086Z"
+  },
+  {
+    "location": "thuis",
+    "watchDate": "2026-04-11",
+    "title": "Sorry, Baby",
+    "imdbID": "tt32843349",
+    "year": "2025",
+    "directors": "Eva Victor",
+    "actors": "Eva Victor, Naomi Ackie, Louis Cancelmi",
+    "plot": "After a tragic event, a woman finds herself alone while everyone else continues with their lives as if nothing had happened.",
+    "imdbRating": "7.1",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMzJhZWNiMTktNjdiMi00ZTFkLTg5OTAtYzdiZjZjNDBlMmFhXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1205515,
+    "tmdbRating": "6.9",
+    "genres": "Drama, Komedie",
+    "runtime": "103",
+    "myReview": null,
+    "myRating": 7,
+    "id": "5827aa85-1682-452b-921c-0a02d650b94c",
+    "updatedAt": "2026-04-11T19:54:35.801Z"
+  },
+  {
+    "location": "thuis",
+    "watchDate": "2026-04-08",
+    "title": "",
+    "imdbID": "tt14961016",
+    "year": "2024",
+    "directors": "Walter Salles",
+    "actors": "Fernanda Torres, Fernanda Montenegro, Selton Mello",
+    "plot": "A woman married to a former politician during the military dictatorship in Brazil is forced to reinvent herself and chart a new course for her family after a violent and arbitrary act.",
+    "imdbRating": "8.2",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BM2FjMjBiZjgtZDkyYy00YTRlLTk5N2QtODE2ZWIyYWE0Yzg0XkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1000837,
+    "tmdbRating": "7.9",
+    "genres": "Drama, Historisch",
+    "runtime": "137",
+    "myReview": "Familieverhaal, mooi!",
+    "myRating": 9,
+    "id": "f5efea06-ece1-458b-83ee-f0e6372b3062",
+    "updatedAt": "2026-04-09T19:20:51.024Z"
+  },
+  {
+    "location": "bioscoop",
+    "watchDate": "2026-04-04",
+    "title": "I Swear",
+    "imdbID": "tt31514146",
+    "year": "2025",
+    "directors": "Kirk Jones",
+    "actors": "Robert Aramayo, Peter Mullan, Maxine Peake",
+    "plot": "John Davidson: diagnosed with Tourette's syndrome at a young age which alienated him from his peers, he struggled with a condition few people had witnessed.",
+    "imdbRating": "8.4",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMGM0ODliY2EtOGU1OC00YThlLWJkZjMtOTg0YjYxYTg5MjkxXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1317149,
+    "tmdbRating": "8.4",
+    "genres": "Drama, Historisch",
+    "runtime": "120",
+    "myReview": "Topper",
+    "myRating": 9,
+    "id": "46fbb6cf-7d24-4c09-a275-6f50e2b4e0f6",
+    "updatedAt": "2026-04-04T11:59:58.180Z"
+  },
+  {
+    "location": "thuis",
+    "watchDate": "2026-04-04",
+    "title": "Spotlight",
+    "imdbID": "tt1895587",
+    "year": "2015",
+    "directors": "Tom McCarthy",
+    "actors": "Mark Ruffalo, Michael Keaton, Rachel McAdams",
+    "plot": "The true story of how the Boston Globe uncovered the massive scandal of child molestation and cover-up within the local Catholic Archdiocese, shaking the entire Catholic Church to its core.",
+    "imdbRating": "8.1",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMjIyOTM5OTIzNV5BMl5BanBnXkFtZTgwMDkzODE2NjE@._V1_SX300.jpg",
+    "tmdbId": 314365,
+    "tmdbRating": "7.8",
+    "genres": "Drama, Historisch",
+    "runtime": "128",
+    "myReview": "Degelijke ouderwetse topper.",
+    "myRating": 8,
+    "id": "eaa1db0e-1e1c-4e16-844b-08345553fad1",
+    "updatedAt": "2026-04-04T12:15:11.074Z"
+  },
+  {
     "id": "c5444ca0-78a1-426d-9698-087734c33e76",
     "title": "Champagne",
     "year": "2026",
@@ -14,28 +314,49 @@
     "runtime": null,
     "watchDate": "2026-04-03",
     "location": "bioscoop",
-    "myRating": null,
-    "myReview": null,
-    "updatedAt": "2026-04-04T11:08:34.070780Z"
+    "myRating": 6,
+    "myReview": "Mierzoet, maar oké.",
+    "updatedAt": "2026-04-04T11:57:12.550Z"
   },
   {
-    "id": "ca9373e3-fed2-4775-8d91-5f3a1dfa9e3d",
-    "title": "Sirāt",
+    "location": "thuis",
+    "watchDate": "2026-04-02",
+    "title": "Sirat",
+    "imdbID": "tt32298285",
     "year": "2025",
     "directors": "Oliver Laxe",
-    "actors": "Sergi López, Bruno Núñez, Stefania Gadda, Joshua Liam Henderson",
-    "plot": "Een man en zijn zoon arriveren bij een rave diep in de bergen van Marokko. Ze zijn op zoek naar iemand die is verdwenen.",
-    "imdbID": "tt32298285",
-    "imdbRating": null,
-    "posterURL": "https://image.tmdb.org/t/p/w500/bzBtsLi17rK4G6kDvOXfUZfAhca.jpg",
+    "actors": "Sergi López, Bruno Núñez Arjona, Stefania Gadda",
+    "plot": "A father, accompanied by his son, goes looking for his missing daughter in North Africa.",
+    "imdbRating": "7.0",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BNzA1OTkyN2MtMGZjYy00NTcxLTg4Y2ItZjc4NjM2NmQzMzdjXkEyXkFqcGc@._V1_SX300.jpg",
     "tmdbId": 1151272,
+    "tmdbRating": "6.8",
     "genres": "Drama, Thriller",
     "runtime": "120",
-    "watchDate": "2026-04-02",
-    "location": "thuis",
+    "myReview": "Mad Max rave in de woestijn met dodelijke afloop.",
     "myRating": 7,
-    "myReview": null,
-    "updatedAt": "2026-04-02T00:00:00Z"
+    "id": "33a35bd3-5546-4375-963a-54b23bceb580",
+    "updatedAt": "2026-04-04T12:03:29.218Z"
+  },
+  {
+    "location": "bioscoop",
+    "watchDate": "2026-03-23",
+    "title": "The History of Sound",
+    "imdbID": "tt15799524",
+    "year": "2025",
+    "directors": "Oliver Hermanus",
+    "actors": "Paul Mescal, Josh O'Connor, Chris Cooper",
+    "plot": "Two young men during World War I set out to record the lives, voices and music of their American countrymen.",
+    "imdbRating": null,
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMzcxZTBlNTctNDcyOS00MDQxLTkzYTMtNWU4NzcxNDhlMDExXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 891584,
+    "tmdbRating": "6.3",
+    "genres": "Drama, Romantiek, Muziek",
+    "runtime": "128",
+    "myReview": "Okeeee, duurde wel lang/traag",
+    "myRating": 6,
+    "id": "e0e4bbac-1531-4703-bf01-cf2ada03e6bd",
+    "updatedAt": "2026-04-04T12:01:49.492Z"
   },
   {
     "location": "bioscoop",
@@ -51,7 +372,7 @@
     "myReview": null,
     "myRating": 7,
     "id": "9838509b-d7c8-4fad-938e-0d581a5ca178",
-    "updatedAt": "2026-03-16T22:26:58.492Z"
+    "updatedAt": "2026-04-04T11:56:46.695Z"
   },
   {
     "location": "bioscoop",
@@ -67,7 +388,7 @@
     "myReview": "Mooi!",
     "myRating": 9,
     "id": "373b588a-ad3e-485f-9bc3-fc5032cc47f6",
-    "updatedAt": "2026-03-09T21:11:14.241Z"
+    "updatedAt": "2026-04-04T11:56:46.695Z"
   },
   {
     "location": "bioscoop",
@@ -83,7 +404,7 @@
     "myReview": null,
     "myRating": 9,
     "id": "ba24cdd7-fb0c-4955-9fc8-e610f5571c89",
-    "updatedAt": "2026-03-16T22:27:19.239Z"
+    "updatedAt": "2026-04-04T11:56:46.695Z"
   },
   {
     "location": "thuis",
@@ -99,7 +420,7 @@
     "myReview": "Medium interessant",
     "myRating": 5,
     "id": "7e910436-48fd-41b6-86a2-98cd4a3191ba",
-    "updatedAt": "2026-03-05T20:37:56.321Z"
+    "updatedAt": "2026-04-04T11:56:46.695Z"
   },
   {
     "location": "bioscoop",
@@ -115,7 +436,7 @@
     "myReview": "Origineel, actiefilm over tafeltennis ?!?",
     "myRating": 8,
     "id": "20500f1f-6eb4-464e-8e0b-61bc1a65ee88",
-    "updatedAt": "2026-02-28T22:32:21.360Z"
+    "updatedAt": "2026-04-04T11:56:46.695Z"
   },
   {
     "location": "thuis",
@@ -131,7 +452,7 @@
     "myReview": "Raar",
     "myRating": 4,
     "id": "4b84ed62-e0f6-400f-bc55-6a6d371571f8",
-    "updatedAt": "2026-03-01T14:13:08.477Z"
+    "updatedAt": "2026-04-04T11:56:46.695Z"
   },
   {
     "location": "bioscoop",
@@ -147,7 +468,7 @@
     "myReview": "Prima docu , interessant!",
     "myRating": 7,
     "id": "5ed86270-418e-410c-9e6f-97a49c345f71",
-    "updatedAt": "2026-02-25T18:53:13.116Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "location": "bioscoop",
@@ -163,7 +484,7 @@
     "myReview": "Emoties, knap in beeld gebracht.",
     "myRating": 7,
     "id": "df0dcfe4-4f95-4ab9-a358-4ac4e74d6f5e",
-    "updatedAt": "2026-02-23T21:07:52.497Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "location": "thuis",
@@ -179,7 +500,7 @@
     "myReview": null,
     "myRating": 6,
     "id": "6cb5a56e-ec13-4ada-9776-216e9693daa4",
-    "updatedAt": "2026-03-01T14:13:23.579Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "location": "bioscoop",
@@ -195,7 +516,7 @@
     "myReview": "Heldhaftige daad van hele gewone schoolleraar",
     "myRating": 8,
     "id": "e1cd0e93-f91e-4016-b45a-6db0013db188",
-    "updatedAt": "2026-02-18T20:13:22.118Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "location": "thuis",
@@ -211,7 +532,7 @@
     "myReview": "Origineel!",
     "myRating": 8,
     "id": "8ae8bd72-be0c-4945-b680-0f1c32da2deb",
-    "updatedAt": "2026-02-17T19:13:35.464Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "location": "bioscoop",
@@ -227,7 +548,7 @@
     "myReview": "Boek van Albert Camus, niet mijn favoriet. Wat een zwartgallig wereldbeeld.",
     "myRating": 4,
     "id": "17e72786-62a7-4bb9-b96c-d422c14d5f3b",
-    "updatedAt": "2026-02-17T08:13:49.186Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "location": "thuis",
@@ -243,7 +564,7 @@
     "myReview": "Mooie klimdocu, wel heel Amerikaans",
     "myRating": 6,
     "id": "9a6eecf9-48e7-4d04-8f3f-b95fc27ff4b0",
-    "updatedAt": "2026-02-13T18:41:11.705Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "location": "thuis",
@@ -259,7 +580,7 @@
     "myReview": "Heftig, rauw verhaal",
     "myRating": 8,
     "id": "f451c689-dcee-4404-a547-63d5bf402934",
-    "updatedAt": "2026-02-13T17:54:49.035Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "location": "bioscoop",
@@ -275,7 +596,7 @@
     "myReview": "Lange film. Wel goed, maar duurde echt te lang. Een beetje Braziliaans traag tempo is prima, maar het werd te veel.",
     "myRating": 5,
     "id": "01061baa-6595-4dc5-ba4a-0e9f709e5c17",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "A Hero",
@@ -290,7 +611,7 @@
     "imdbRating": "7.5",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYjMxNDFjN2ItYTllOC00ZDA1LTg4MDUtMjY5ZmE0ZjQ4Y2E2XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "04300574-bc60-4157-a4c4-ad9f9358e79d",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Garden of Earthly Delights",
@@ -305,7 +626,7 @@
     "imdbRating": "6.4",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMjAwMTA2NTQzOV5BMl5BanBnXkFtZTcwNTg1NTIyMQ@@._V1_SX300.jpg",
     "id": "0660c19a-b9c2-4e8d-b40d-78bc674154cc",
-    "updatedAt": "2026-02-13T18:41:55.798Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 4
   },
   {
@@ -314,7 +635,7 @@
     "location": "bioscoop",
     "myReview": "Heftig moreel dilemma — Goed",
     "id": "0a804fdd-3bdf-48ed-b3d9-649f69fd411c",
-    "updatedAt": "2026-02-13T18:42:06.309Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 8
   },
   {
@@ -330,7 +651,7 @@
     "imdbRating": "6.6",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNzVjYjU2NDAtODljZS00OGE0LTllZDAtNDYzOWQ4N2EzZTk0XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "0eaab6f0-752e-4186-8588-f39c4a0d02e0",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "A Private War",
@@ -345,7 +666,7 @@
     "imdbRating": "6.7",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMDQzOTUxZGUtMjU5MS00OTY0LWI5ZDUtYzgyMTRjNGRhYWM1XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "114b39e2-f296-4967-a4df-0acab9738887",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Guilty",
@@ -360,7 +681,7 @@
     "imdbRating": "6.3",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BZmVjNzM0YmItZGQwYy00MzA4LTkwYjAtMmJkNWVmOTRkZGRkXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "16288988-41f8-4d11-969c-bfeaa8d81c81",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "20 Days in Mariupol",
@@ -375,7 +696,7 @@
     "imdbRating": "8.6",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BZmY2ODlmNmQtODQ2MS00OTlkLWIyNTEtNzhhNTEyNjNjMjdjXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "1764a80a-1716-45cd-bd99-632ed9e6fe3d",
-    "updatedAt": "2026-02-13T18:42:17.044Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 9
   },
   {
@@ -384,7 +705,7 @@
     "location": "bioscoop",
     "myReview": "Koreaans/Frans — sterk verhaal",
     "id": "1a78971f-1e70-4807-aec6-6c59779e0b84",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Hunt for the Wilderpeople",
@@ -399,7 +720,7 @@
     "imdbRating": "7.8",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMjI1MDQ2MDg5Ml5BMl5BanBnXkFtZTgwMjc2NjM5ODE@._V1_SX300.jpg",
     "id": "1b0fd2c3-1a52-4364-b726-a99855739ab5",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Petite Maman",
@@ -414,7 +735,7 @@
     "imdbRating": "7.4",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMjkxMTE3M2ItNjhiZC00YmEwLWI1MDYtZjY2MTEwZjAxNGE3XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "1ca4a54b-1182-4ef9-a7a3-0fb46ecb0db6",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Outfit",
@@ -429,7 +750,7 @@
     "imdbRating": "7.2",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BZTY2M2U5OTEtNDljYS00MGQwLWI4YzQtOGJiMzUxM2IyYjRhXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "2b114598-f2c5-45e0-a06c-6ac27ac32c0f",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Trip",
@@ -444,7 +765,7 @@
     "imdbRating": "8.1",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BODM2ODk2OTgtYzEwMy00MDVlLWE0Y2ItMDFjNGEwNjYzZWViXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "33379798-6bb3-49b3-98bc-33fe01eb966a",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Eight Mountains",
@@ -459,7 +780,7 @@
     "imdbRating": "7.7",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BOTMyYWRlN2QtMzgwYi00OTNlLTlhZDQtMjg1ZDMzMDUzZGExXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "347716d8-ea55-4b0d-a6ce-d05969994d27",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Leave No Trace",
@@ -474,7 +795,7 @@
     "imdbRating": "7.1",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMjE3OTI1MTU0OV5BMl5BanBnXkFtZTgwNTg1MzkzNTM@._V1_SX300.jpg",
     "id": "37559e5a-6bca-4264-aea9-18932fbe5f05",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "A complete unknown",
@@ -489,7 +810,7 @@
     "imdbRating": "7.3",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYTA2NTA5NDYtMzlkOC00MTQxLWI0NDQtMzk2M2YzMGE4MTkxXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "37ca864c-ecd1-444e-9f76-4b5f263da995",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "It's Never Over",
@@ -504,7 +825,7 @@
     "imdbRating": "8.0",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNWMxOGMwYmEtMjQ3Ny00YTMzLTllYjktNGUyMTljNDkwYTE5XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "3d26c578-8169-4fb8-bbe0-6318f5c83146",
-    "updatedAt": "2026-02-11T07:17:04.391Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 6
   },
   {
@@ -520,7 +841,7 @@
     "imdbRating": "6.9",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYjAxN2RmYjktMDE2OS00MWM5LThlZTQtZDY4YzAxMWQyZWY4XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "40c7acdf-33f8-44a5-a175-70c659eb0941",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Vie privée",
@@ -535,7 +856,7 @@
     "imdbRating": "3.9",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNzIyZjkxNDYtOTVhNS00OWM3LTg1MjItMGIzZDUxNDg2OTY1XkEyXkFqcGdeQXVyMzg1ODEwNQ@@._V1_SX300.jpg",
     "id": "418667e2-f424-4cdd-855e-576499823daa",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "A real pain",
@@ -550,7 +871,8 @@
     "imdbRating": "7.0",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BODY2YWYwM2YtZTVlNC00MjgyLTgzYTgtNmFmYWE5ZmY1MDM5XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "46baf188-29c1-46d3-925a-4590fae2c404",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-21T17:16:06.095Z",
+    "myRating": 4
   },
   {
     "title": "The Worst Person in the World",
@@ -565,7 +887,7 @@
     "imdbRating": "7.7",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BZGEyYzBiYmItZDM4OC00NTdmLWJlYzctODdiM2E2MjZmYTU2XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "46c2a11b-58b6-4135-ae8d-c1ff0ba5cb0c",
-    "updatedAt": "2026-02-13T18:43:04.259Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 9
   },
   {
@@ -581,7 +903,7 @@
     "imdbRating": "8.2",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYzUxMDAyMDAtNzIyZi00OGQ1LTllMjEtYzRjOThkZTUxNTliXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "47244589-aa4a-4eba-90d7-2981e274a64a",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Klondike",
@@ -596,7 +918,7 @@
     "imdbRating": "6.9",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYjk1YjczOTgtYzdlOS00NTk1LWEzNTktMTczNDVjZWE2NzBhXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "47904473-02b4-468f-a869-aa7cdc25d2ce",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "A Separation",
@@ -611,7 +933,7 @@
     "imdbRating": "8.3",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMDM0ZWRmMzctM2M5ZS00ZjU0LWIxN2MtNWNlNGY1ZDhjMDVhXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "4a55e0fd-7973-4131-9d26-3e645df7c68e",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Network",
@@ -626,7 +948,7 @@
     "imdbRating": "7.8",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMjlkNTE5ZTUtNGEwNy00MGVhLThmZjMtZjU1NDE5Zjk1NDZkXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "4bdaad28-cf26-4996-b469-b7c707ca1f2f",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Tale of Silyan",
@@ -634,7 +956,7 @@
     "location": "bioscoop",
     "myReview": "Ooievaar en boer in Macedonië — Mooi!",
     "id": "4edcdef2-303f-461a-b4d3-6936393f5d16",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Zone of Interest",
@@ -649,7 +971,7 @@
     "imdbRating": "7.3",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNjk4MTQ3MGEtZmI4OS00N2NhLWI5ZjgtYWE5ZWVkZGExYTQ1XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "5605f97a-6009-4c02-a12b-8a2a8c1d3326",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Quiet Girl",
@@ -664,7 +986,7 @@
     "imdbRating": "7.7",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BM2EwMjM2MzktZWE3Yy00ZTE2LTgyNTMtZmU2MGI0ZGY0MDQ5XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "5a9fdaeb-399e-4482-a64c-526542b34752",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "As It Is in Heaven",
@@ -679,7 +1001,7 @@
     "imdbRating": "7.5",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYjE1ZWFhZTMtZDI3Ny00OTBmLWFkNzgtZDhlZDJiZDJjYjIyXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "5d39090c-db7a-4282-9292-cbc1255bc955",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Carol",
@@ -694,7 +1016,7 @@
     "imdbRating": "7.3",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMTczNTQ4OTEyNV5BMl5BanBnXkFtZTgwNDgyMDI3NjE@._V1_SX300.jpg",
     "id": "64afed51-3485-4d0e-8d25-7edc99da0c2f",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "All That's Left of You",
@@ -709,7 +1031,7 @@
     "imdbRating": null,
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNzUxYWVjYWQtMDM4Ni00ZGM4LWFlMmEtNzBkNzI4YWU4ZTUzXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "678090db-8eca-45f9-8654-89a26d5482c0",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Death of Stalin",
@@ -724,7 +1046,7 @@
     "imdbRating": "7.3",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMTcxMDc1NjcyNl5BMl5BanBnXkFtZTgwNDU0NDYxMzI@._V1_SX300.jpg",
     "id": "68f61515-3e61-4b65-ae54-8bfe5e2a228c",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Anatomy of a Fall",
@@ -739,7 +1061,7 @@
     "imdbRating": "7.6",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYTk3MjFkZmQtMThiYi00N2JhLTk2YzItZTE5ZGUxZTIyZDVkXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "693941e0-53ff-4aab-9a70-ea1808bc2d71",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The voice of Hind Rajab",
@@ -754,7 +1076,7 @@
     "imdbRating": "8.5",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BZWVlM2RjYTctODU4Mi00NTQzLWEzMDktZGVmYTQ2NTEwOWFiXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "69793b46-78b0-4132-aeb3-4deb6326a209",
-    "updatedAt": "2026-02-11T07:17:04.391Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 9
   },
   {
@@ -770,7 +1092,7 @@
     "imdbRating": "7.3",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMjk5ZDRjNjAtZTgwYi00NzE5LWEzMTItODM3Y2NmNGFmYTdiXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "6c83ed2e-08f8-4487-b86d-b6064e94c6dc",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Killing of Two Lovers",
@@ -785,7 +1107,7 @@
     "imdbRating": "6.8",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BZmU0NjljOWQtMGJmZi00YjIxLWE0YTEtYzI5NGJmMjkwN2RjXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "6c8701a4-6983-4412-9721-943309df7cb9",
-    "updatedAt": "2026-02-11T07:17:04.391Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Folktales",
@@ -800,7 +1122,7 @@
     "imdbRating": null,
     "posterURL": null,
     "id": "703bb059-8b50-4204-942d-868d8fa609b0",
-    "updatedAt": "2026-02-13T18:43:27.153Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 8
   },
   {
@@ -816,7 +1138,7 @@
     "imdbRating": null,
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNjU0NDc3M2MtMjRjNi00OWY0LWI3NDEtZjE2MDViYWY0YWY5XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "70f1736f-fbb4-4ca0-8957-c883029dfe17",
-    "updatedAt": "2026-02-11T07:17:04.391Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 5
   },
   {
@@ -832,7 +1154,7 @@
     "imdbRating": "5.8",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BOTY1ZGI4YjEtY2E3Mi00ZTU4LWJmY2ItYjcwNGEwYzZlMTc3XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "73ff8f4c-8e6b-4e13-8ed5-81cc39976437",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Gioia Mia",
@@ -847,7 +1169,7 @@
     "imdbRating": null,
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNTQ4YWIzYTAtYTQ5My00MzZhLWE1ZjMtZjg5NzNkNmY3NmM4XkEyXkFqcGdeQXVyMjQxODkxNDA@._V1_SX300.jpg",
     "id": "75ed0be4-4a4d-43b9-9616-840bc0abb7e7",
-    "updatedAt": "2026-02-11T07:17:04.392Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 8
   },
   {
@@ -863,7 +1185,7 @@
     "imdbRating": null,
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNjlhODY3NjItOWY0My00YWI3LThhODAtODY3NmNmMzQ4OGE0XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "7ab45022-8d72-4809-a7a9-a0a491cdf94e",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Square",
@@ -878,7 +1200,7 @@
     "imdbRating": "7.1",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNTQ3NzJhYjktYmRkYy00ODMxLThhMGItYWQyODJmZjEyMTgzXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "7bb47b3c-18bb-45a0-9e40-c28325652d5d",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Nuremberg",
@@ -893,7 +1215,7 @@
     "imdbRating": "8.3",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNDc2ODQ5NTE2MV5BMl5BanBnXkFtZTcwODExMjUyNA@@._V1_SX300.jpg",
     "id": "7cc48df5-fb52-44b3-9ff6-9b700a3c3111",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Springsteen: Deliver Me From Nowhere",
@@ -908,7 +1230,7 @@
     "imdbRating": "6.7",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BZGE4NzJiNTUtNWQ3Mi00ZGE5LWI3NmUtMjQwNWIxMWMyZDA2XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "7d6aa1a7-1666-4074-b2f0-8c6c432b2d10",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Boy Kills World",
@@ -923,7 +1245,7 @@
     "imdbRating": "6.4",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BODMxNjFlMzYtYjg4NC00ZjIxLWIxODgtMDMxY2ViNTI1NDFlXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "87680dd0-daa1-4196-bb2f-6d308266c0ac",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "On Vous Croit",
@@ -938,7 +1260,7 @@
     "imdbRating": null,
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNDAyZDY5N2EtMzFhNC00NTAyLWEzZDctYTZjZTI3ZWE0ZDkwXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "87800ac0-9780-4b2b-9f07-1194ee21d6df",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Bugonia",
@@ -953,7 +1275,7 @@
     "imdbRating": "7.4",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNzIzNWQxMjEtZmQ3MS00OTk2LWFlZjktZDUyYWRkM2M3NWVlXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "8c341695-84d9-49f5-9e76-730d653a7e6a",
-    "updatedAt": "2026-02-13T18:43:42.914Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 8
   },
   {
@@ -969,7 +1291,7 @@
     "imdbRating": "7.4",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMjQ3ODM5MjY2N15BMl5BanBnXkFtZTgwOTU5MjM4NDM@._V1_SX300.jpg",
     "id": "8e7e3525-e35e-44bd-bab4-943b1b2440b1",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Sound of Metal",
@@ -984,7 +1306,7 @@
     "imdbRating": "7.7",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMWE5ZmYwNDEtYTYwMS00MTc0LTk2ZWItZTM1MjQ1ZDYzZGUzXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "94c17dc9-2786-4cd9-9617-9f03b88ced38",
-    "updatedAt": "2026-02-13T18:43:52.881Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 9
   },
   {
@@ -1000,7 +1322,7 @@
     "imdbRating": "7.4",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYmIzOWViNDEtOWRiZS00ZWM4LWFiMmEtNGJjMmQ3NTIxN2U0XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "98bcef52-ce80-49cf-844c-7cff038e535a",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "I Saw the TV Glow",
@@ -1015,7 +1337,7 @@
     "imdbRating": "5.8",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BZTA2MGM5M2ItNDBjYi00OWJhLTk1MTMtMGIzMDZlYzg1N2Q3XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "9a422029-3b87-4865-8570-8171b0ba1e94",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The North",
@@ -1030,7 +1352,7 @@
     "imdbRating": "6.9",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYzc5ZDMzNzItODY2MC00MzBiLWJjODgtNmVmMGM5ZWYyYmM3XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "9b486bd1-a883-4d70-86da-829abeabf131",
-    "updatedAt": "2026-02-13T18:44:01.019Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 9
   },
   {
@@ -1046,7 +1368,7 @@
     "imdbRating": "6.3",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNGM1MTljMmUtMmJhYi00Y2M0LThmYjYtNGExZmJkZjNjMWIxXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "9ba64c5c-5b77-4145-8afd-5aa7c5cb5ee4",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Fire Within",
@@ -1061,7 +1383,7 @@
     "imdbRating": "7.8",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYjQyMTEzYzYtOTdlMy00NjNiLTk3NzMtNWJlZWIzNzJhNTI1XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "a0f65a18-7922-4f34-9f07-c479e6a8c785",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Die My Love",
@@ -1076,7 +1398,7 @@
     "imdbRating": "6.1",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYjc5OWZlZmYtMTg3Yy00YzFmLTg0YTgtNjVjN2M2ZWJjOWM1XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "a3d8f006-27c6-4cc2-bbc1-18e4dd0bdc51",
-    "updatedAt": "2026-02-13T18:44:15.749Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 6
   },
   {
@@ -1092,7 +1414,7 @@
     "imdbRating": "7.6",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMGQxYTQyNDUtNmZkMi00MzQ4LWFhMTktNTYzOGQ1ZGMzYjQ2XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "a4b44717-9337-4274-8573-c2506c5027d6",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Lives of Others",
@@ -1107,7 +1429,7 @@
     "imdbRating": "8.4",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYjM1N2Q0YWEtN2E5MC00NDM3LTk2NTEtMTc1NTk5OTA5ZGIzXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "a923998c-af1a-40dc-8d9e-fe7d8f4b33d7",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Brutalist",
@@ -1122,7 +1444,7 @@
     "imdbRating": "7.3",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BM2U0MWRjZTMtMDVhNC00MzY4LTgwOTktZGQ2MDdiYTI4OWMxXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "aaf62038-1da1-4f0a-b545-6fb4b9a796e8",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Triangle of Sadness",
@@ -1137,7 +1459,7 @@
     "imdbRating": "7.2",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYTViNzUyNDUtZTg3Yy00OTY4LWEyMTYtMmUzYjE3ZmZjYzUwXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "ab932a1b-53b8-4cb9-8e07-572dd8501dea",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Banshees of Inisherin",
@@ -1152,7 +1474,7 @@
     "imdbRating": "7.6",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BOTkzMWI4OTEtMTk0MS00MTUxLWI4NTYtYmRiNWM4Zjc1MGRhXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "ac212926-afc3-4525-9c7d-3ccac9faa2ff",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Dissident",
@@ -1167,7 +1489,7 @@
     "imdbRating": "7.8",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BOGFiZWJmYmUtZjM3NC00ODM0LTlkOGEtYWFlZDg3YTM4MzExXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "ae80119a-0993-4ff0-b33c-8503c1cf008d",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "EO",
@@ -1175,7 +1497,7 @@
     "location": "thuis",
     "myReview": "Visueel en origineel — Geweldig",
     "id": "b27ea727-3219-4af8-a5a9-2ac693bbdac8",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Den Sidste Viking",
@@ -1190,7 +1512,7 @@
     "imdbRating": "5.5",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BOTc2MDcxMjI1OV5BMl5BanBnXkFtZTcwNTY2MDY4MQ@@._V1_SX300.jpg",
     "id": "b356096b-791e-4773-abb1-aed92fffbe70",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Mosul",
@@ -1205,7 +1527,7 @@
     "imdbRating": "7.1",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BOGM4N2E5NDAtMWZjNC00ZWNjLTk4YjgtYTU0OGVjM2JmZDc3XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "b5e9f040-a81e-440b-889e-6e9c3e1b0b90",
-    "updatedAt": "2026-02-13T18:44:32.208Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 8
   },
   {
@@ -1221,7 +1543,7 @@
     "imdbRating": "8.3",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMTg2NDg3ODg4NF5BMl5BanBnXkFtZTcwNzk3NTc3Nw@@._V1_SX300.jpg",
     "id": "b938af4f-2368-4aa0-bbbe-98ca22261e06",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Corpus Christi",
@@ -1236,7 +1558,7 @@
     "imdbRating": "7.7",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BZWRmNDM1ZTEtNjE1ZC00MGJkLWJhNzYtYWFiNTIwNjdjN2VmXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "bc875bab-f7cd-4455-aacf-401d763349ea",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Handmaiden",
@@ -1251,7 +1573,7 @@
     "imdbRating": "8.1",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BOTllZDI1OGItOGUxNS00OGZhLWIzMjAtYzllZTY1YTA0ZmYwXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "c690082c-37d2-42af-a900-f052b2dcbb93",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "One Flew Over the Cuckoo's Nest",
@@ -1266,7 +1588,7 @@
     "imdbRating": "8.6",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYjBkMjgzMzYtNzRiMS00NDc3LWE4YTUtZjYxYjZhNjNhYzhhXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "c71fa082-d4be-4b71-b015-6d4f37345768",
-    "updatedAt": "2026-02-13T18:44:44.721Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 8
   },
   {
@@ -1282,7 +1604,7 @@
     "imdbRating": "7.8",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BZDgwNTljYmMtYmQyNi00MmEwLTk0NzMtZDJmZDIzZmQ4MzQ2XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "c9e3beb2-65e8-48c2-b262-9c3c26cb9bfb",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The Correolis Effect",
@@ -1290,7 +1612,7 @@
     "location": "bioscoop",
     "myReview": "Langdradig — natuur viel tegen",
     "id": "cc9924d7-6a6e-4dcd-bad1-c00b844acbc1",
-    "updatedAt": "2026-02-13T18:44:54.389Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 4
   },
   {
@@ -1306,7 +1628,7 @@
     "imdbRating": "6.5",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BM2ViYTFhMTktMjU0OC00ZWY3LWEzZDItMTExNDc2NDNjN2I3XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "d018759f-2ffd-4985-b23f-ef982bb4481d",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Blue moon",
@@ -1321,7 +1643,7 @@
     "imdbRating": "7.1",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BODQ0NjNlN2MtNGRmZi00OGYzLWFjNGYtMjkyMTlmMWFkNTQ2XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "d09b0d2b-97c5-4789-a242-144e6027db3a",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Hell or High Water",
@@ -1336,7 +1658,7 @@
     "imdbRating": "7.6",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMTg4NDA1OTA5NF5BMl5BanBnXkFtZTgwMDQ2MDM5ODE@._V1_SX300.jpg",
     "id": "d17b39b2-0cc2-4be2-b775-db98929aacd4",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "In Bruges",
@@ -1351,7 +1673,7 @@
     "imdbRating": "7.9",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNjliZjBlNDItOWUyZC00ZTExLTg5NmUtNzE5ZmQyZWVmZmE5XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "d1d66d97-1c41-46eb-a27a-287fe19aa47b",
-    "updatedAt": "2026-02-13T18:45:06.124Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 5
   },
   {
@@ -1367,7 +1689,7 @@
     "imdbRating": "7.9",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMzBkZmQ0NjMtNTZlMy00ZjdlLTg5ODUtYWFlNGM0YzE3MTg0XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "d2368bb3-d392-4336-8417-43bc3292900f",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Navalny",
@@ -1382,7 +1704,7 @@
     "imdbRating": "7.8",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BZjEzNTdlYzEtMGVkZi00ZWFhLWIzOTUtNjBiZjQyYWRmMGQyXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "d4edd01a-5782-4bde-9af1-8ac6ab388a79",
-    "updatedAt": "2026-02-13T18:45:18.488Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 8
   },
   {
@@ -1398,7 +1720,7 @@
     "imdbRating": "8.1",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMDQ5ZmY0OWYtOTYzZi00Mzg5LWE3N2EtMjYwZTAzZmJhYjkyXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "d60c31fa-2318-4790-82c7-fb5d765145f2",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Fallen Leaves",
@@ -1413,7 +1735,7 @@
     "imdbRating": "7.3",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BZjNkY2M5NWMtZjJiMy00YTZmLWI2NWEtZTI0MjhmNDc4ZThmXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "d956cc70-48c9-4cb0-8091-2ff4947f6381",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "The day after tomorrow",
@@ -1428,7 +1750,7 @@
     "imdbRating": "6.5",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BOGZmNDYyNmMtNDQyNy00OTkzLTg1OGUtYWJiNmQ5Y2Q5ZGU3XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "e11e5ef9-b687-4f98-84cf-9163bfee6923",
-    "updatedAt": "2026-02-11T07:17:04.392Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 5
   },
   {
@@ -1444,7 +1766,7 @@
     "imdbRating": "7.8",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNTMwMTk0Y2QtY2VhNy00OGYwLThkMjMtZjkwMGI3MTJiMjAyXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "e58f7b57-6f81-49a5-9de1-532f1898c6d2",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.696Z"
   },
   {
     "title": "Eddington",
@@ -1459,7 +1781,7 @@
     "imdbRating": "6.6",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNmM0Yzc1ZjAtZTg4My00NDI3LWEwMzAtY2ZkNzMxMWMwOTFlXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "e6818b05-b99b-4362-bc67-c162304ab7a7",
-    "updatedAt": "2026-02-13T18:45:30.655Z",
+    "updatedAt": "2026-04-04T11:56:46.696Z",
     "myRating": 1
   },
   {
@@ -1475,7 +1797,7 @@
     "imdbRating": null,
     "posterURL": "https://m.media-amazon.com/images/M/MV5BODM2NTUxOGMtM2ZkYS00MjM3LTkzYzEtZjdkNmQ1ZTBhMWY3XkEyXkFqcGc@._V1_SX300.jpg",
     "id": "eaffa61e-373f-4c6f-8ec4-eaddb636fdbd",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.697Z"
   },
   {
     "title": "The Penguin Stories",
@@ -1483,7 +1805,7 @@
     "location": "bioscoop",
     "myReview": "Humor en dictatuur Argentinië — Top",
     "id": "f1f4349f-b7f7-4832-8ed9-9dfa4688df81",
-    "updatedAt": "2026-02-11T07:17:04.392Z",
+    "updatedAt": "2026-04-04T11:56:46.697Z",
     "myRating": 9
   },
   {
@@ -1499,7 +1821,7 @@
     "imdbRating": "7.8",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BYjQyMTNhNjUtN2VmYy00NWRhLTkwOTctMGVmNTBmNDIxYjZhXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "f1fed35e-fb07-4dc6-944f-6bc61fb0d414",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.697Z"
   },
   {
     "title": "Whiplash",
@@ -1514,7 +1836,7 @@
     "imdbRating": "8.5",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMDFjOWFkYzktYzhhMC00NmYyLTkwY2EtYjViMDhmNzg0OGFkXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "f5cf4f29-792c-4097-a1aa-d57c4b2bde0f",
-    "updatedAt": "2026-02-11T07:37:07.562Z",
+    "updatedAt": "2026-04-04T11:56:46.697Z",
     "myRating": 9
   },
   {
@@ -1530,7 +1852,7 @@
     "imdbRating": "7.2",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BNDk4YzUwZGQtNWViMi00ZmRkLTlhYjAtOTVhNTY1MWYxNDEzXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "f6233d11-3297-4c20-9fcc-21f93bdd38ca",
-    "updatedAt": "2026-02-13T18:45:39.725Z",
+    "updatedAt": "2026-04-04T11:56:46.697Z",
     "myRating": 10
   },
   {
@@ -1546,7 +1868,7 @@
     "imdbRating": "5.2",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BMmRkNGJmNWUtNjVkMC00NTJhLTk5N2UtYmZlODdmM2UzNTRlXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "f86cdb99-da53-41b2-97bc-b347332af18f",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.697Z"
   },
   {
     "title": "Wisdom of Happiness",
@@ -1561,7 +1883,7 @@
     "imdbRating": "7.0",
     "posterURL": "https://m.media-amazon.com/images/M/MV5BOTVjZWI2MWItYTk5NC00YzFkLWI2OTYtNmZjMmIzYTk1MTMyXkEyXkFqcGc@._V1_SX300.jpg",
     "id": "fb2ebbdb-f3b8-424d-8f32-7aa6af5b7c3f",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.697Z"
   },
   {
     "location": "bioscoop",
@@ -1577,7 +1899,7 @@
     "myReview": "Degelijk maar duurde te lang",
     "myRating": 6,
     "id": "a8504878-840b-4e12-b88b-f566c6804a3d",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.697Z"
   },
   {
     "location": "bioscoop",
@@ -1586,7 +1908,7 @@
     "myReview": "Prachtige docu over gebow en tentoonstelling",
     "myRating": 9,
     "id": "d8967629-3776-4c2b-b447-90533f51eeff",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.697Z"
   },
   {
     "location": "bioscoop",
@@ -1602,7 +1924,7 @@
     "myReview": "Back to the 70’s. Goed gedaan, bijna absurd verhaal.",
     "myRating": 8,
     "id": "51cd84b0-ef5f-4897-8e71-8ffc7c8e83a7",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.697Z"
   },
   {
     "location": "bioscoop",
@@ -1618,7 +1940,7 @@
     "myReview": "Wow!",
     "myRating": 10,
     "id": "6e2faff8-95e4-4495-879a-347fd27484c1",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.697Z"
   },
   {
     "location": "bioscoop",
@@ -1634,7 +1956,7 @@
     "myReview": "Prachtige film.",
     "myRating": 10,
     "id": "8ac1f099-657b-4c5a-82ef-6c37e2d75de5",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.697Z"
   },
   {
     "location": "thuis",
@@ -1650,7 +1972,7 @@
     "myReview": "Prima docu, bijzonder verhaal.",
     "myRating": 7,
     "id": "e62022bc-26fc-44b1-bca9-b24c22f3f653",
-    "updatedAt": "2026-02-20T12:52:17.319Z"
+    "updatedAt": "2026-04-04T11:56:46.697Z"
   },
   {
     "location": "bioscoop",
@@ -1659,6 +1981,6 @@
     "myReview": "The story of Otto von Spreckelsen, a real-life architecture teacher from Copenhagen, who surprised the world when he won an open-call competition launched by French president François Mitterrand.",
     "myRating": 7,
     "id": "517a4fb5-1ca6-4f3d-a908-73397b80581e",
-    "updatedAt": "2026-02-11T07:17:04.392Z"
+    "updatedAt": "2026-04-04T11:56:46.697Z"
   }
 ]
