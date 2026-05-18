@@ -1,5 +1,25 @@
 [
   {
+    "location": "bioscoop",
+    "watchDate": "2026-05-18",
+    "title": "A Sad and Beautiful World",
+    "imdbID": "tt32622406",
+    "year": "2025",
+    "directors": "Cyril Aris",
+    "actors": "Mounia Akl, Julia Kassar, Hasan Akil",
+    "plot": "In this cosmic romance set in Beirut, two star-crossed lovers, one an eternal optimist and the other an impulsive pragmatist, must decide if they want to build a family and chart a track to happiness, despite the tragic fates rava...",
+    "imdbRating": null,
+    "posterURL": "https://image.tmdb.org/t/p/w500/cOJkkfI9SzXxqoPjc3MttsqGsxr.jpg",
+    "tmdbId": 1376838,
+    "tmdbRating": "8.2",
+    "genres": "Romantiek, Drama, Komedie",
+    "runtime": "110",
+    "myReview": null,
+    "myRating": 9,
+    "id": "16e9b5f8-154f-4455-94f0-3bd3adee440e",
+    "updatedAt": "2026-05-18T20:27:39.042Z"
+  },
+  {
     "location": "thuis",
     "watchDate": "2026-05-16",
     "title": "Sorry we missed you",
