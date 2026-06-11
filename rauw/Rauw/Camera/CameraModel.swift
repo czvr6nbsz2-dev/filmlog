@@ -1,4 +1,5 @@
 import AVFoundation
+import ImageIO
 import Photos
 import UIKit
 
@@ -47,6 +48,9 @@ final class CameraModel: NSObject, ObservableObject {
     private(set) var device: AVCaptureDevice?
     private var readTimer: Timer?
     private var started = false
+    /// Stand van het toestel op het moment van afdrukken; wordt als
+    /// oriëntatietag in de DNG geschreven (Bayer RAW kan niet fysiek roteren).
+    private var pendingOrientation: CGImagePropertyOrientation = .right
 
     static let shutterSpeeds: [Double] = [
         1/4000, 1/2000, 1/1000, 1/500, 1/250, 1/125, 1/60, 1/30, 1/15, 1/8, 1/4, 1/2, 1,
@@ -65,6 +69,7 @@ final class CameraModel: NSObject, ObservableObject {
     func start() {
         started = true
         UIApplication.shared.isIdleTimerDisabled = true
+        UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         AVCaptureDevice.requestAccess(for: .video) { granted in
             guard granted else {
                 DispatchQueue.main.async {
@@ -217,6 +222,7 @@ final class CameraModel: NSObject, ObservableObject {
     // MARK: - Opname
 
     func capture() {
+        pendingOrientation = currentExifOrientation()
         DispatchQueue.main.async { self.isCapturing = true }
         sessionQueue.async {
             let dims = (self.device?.activeFormat.supportedMaxPhotoDimensions ?? [])
@@ -292,6 +298,17 @@ final class CameraModel: NSObject, ObservableObject {
         if let savedISO { manualISO = savedISO }
     }
 
+    /// Stand van het toestel -> EXIF-oriëntatie voor de achtercamera
+    /// (sensor staat landschap; portret = 90° gedraaid = .right).
+    private func currentExifOrientation() -> CGImagePropertyOrientation {
+        switch UIDevice.current.orientation {
+        case .landscapeLeft: return isFront ? .down : .up
+        case .landscapeRight: return isFront ? .up : .down
+        case .portraitUpsideDown: return .left
+        default: return .right
+        }
+    }
+
     static func shutterLabel(_ seconds: Double) -> String {
         seconds >= 1 ? String(format: "%.0f\"", seconds) : "1/\(Int((1.0 / seconds).rounded()))"
     }
@@ -309,12 +326,23 @@ extension CameraModel: AVCapturePhotoCaptureDelegate {
             DispatchQueue.main.async { self.statusMessage = "Opname mislukt: \(error.localizedDescription)" }
             return
         }
-        guard let data = photo.fileDataRepresentation() else {
+        // Bij RAW de oriëntatietag expliciet in de DNG schrijven; de
+        // connection-rotatie wordt daar niet betrouwbaar in meegenomen.
+        let data: Data?
+        if photo.isRawPhoto {
+            data = photo.fileDataRepresentation(
+                with: OrientationCustomizer(orientation: pendingOrientation)
+            )
+        } else {
+            data = photo.fileDataRepresentation()
+        }
+        guard let data else {
             DispatchQueue.main.async { self.statusMessage = "Geen fotodata ontvangen" }
             return
         }
         if let cg = photo.previewCGImageRepresentation() {
-            let thumb = UIImage(cgImage: cg)
+            let thumb = UIImage(cgImage: cg, scale: 1,
+                                orientation: UIImage.Orientation(pendingOrientation))
             DispatchQueue.main.async { self.lastThumbnail = thumb }
         }
         save(data: data, isRaw: photo.isRawPhoto)
@@ -348,5 +376,36 @@ extension CameraModel: AVCapturePhotoCaptureDelegate {
         let f = DateFormatter()
         f.dateFormat = "yyyyMMdd_HHmmss"
         return f.string(from: Date())
+    }
+}
+
+/// Schrijft de juiste oriëntatie in de DNG-metadata.
+private final class OrientationCustomizer: NSObject, AVCapturePhotoFileDataRepresentationCustomizer {
+    let orientation: CGImagePropertyOrientation
+
+    init(orientation: CGImagePropertyOrientation) {
+        self.orientation = orientation
+    }
+
+    func replacementMetadata(for photo: AVCapturePhoto) -> [String: Any]? {
+        var metadata = photo.metadata
+        metadata[kCGImagePropertyOrientation as String] = NSNumber(value: orientation.rawValue)
+        return metadata
+    }
+}
+
+private extension UIImage.Orientation {
+    init(_ cg: CGImagePropertyOrientation) {
+        switch cg {
+        case .up: self = .up
+        case .upMirrored: self = .upMirrored
+        case .down: self = .down
+        case .downMirrored: self = .downMirrored
+        case .left: self = .left
+        case .leftMirrored: self = .leftMirrored
+        case .right: self = .right
+        case .rightMirrored: self = .rightMirrored
+        @unknown default: self = .up
+        }
     }
 }
