@@ -218,6 +218,8 @@ final class CameraModel: NSObject, ObservableObject {
     /// Eén keer scherpstellen op het tikpunt, daarna blijft de focus staan.
     /// `point` is genormaliseerd (0–1) in portret-previewcoördinaten.
     func focusSingle(atNormalized point: CGPoint) {
+        // Een tik in de zoeker ontgrendelt een actieve AE-lock
+        if aeLocked { aeLocked = false }
         DispatchQueue.main.async { self.focusIndicator = point }
         sessionQueue.async {
             guard let dev = self.device else { return }

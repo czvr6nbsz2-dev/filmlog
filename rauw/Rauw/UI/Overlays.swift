@@ -1,5 +1,6 @@
 import CoreMotion
 import SwiftUI
+import UIKit
 
 /// Regel-van-derden raster.
 struct GridOverlay: View {
@@ -21,17 +22,28 @@ struct GridOverlay: View {
     }
 }
 
-/// Waterpas op basis van de zwaartekracht.
+/// Waterpas op basis van de zwaartekracht, met een voelbaar tikje
+/// precies op het moment dat de horizon waterpas komt (met hysterese,
+/// zodat hij niet blijft natikken rond het omslagpunt).
 final class MotionLevel: ObservableObject {
     private let manager = CMMotionManager()
     @Published var degrees: Double = 0
+    private var wasLevel = false
+    private let haptic = UIImpactFeedbackGenerator(style: .light)
 
     func start() {
         guard manager.isDeviceMotionAvailable else { return }
         manager.deviceMotionUpdateInterval = 1.0 / 30.0
         manager.startDeviceMotionUpdates(to: .main) { [weak self] motion, _ in
-            guard let gravity = motion?.gravity else { return }
-            self?.degrees = atan2(gravity.x, -gravity.y) * 180 / .pi
+            guard let self, let gravity = motion?.gravity else { return }
+            self.degrees = atan2(gravity.x, -gravity.y) * 180 / .pi
+            let tilt = abs(self.degrees)
+            if !self.wasLevel, tilt < 1.2 {
+                self.wasLevel = true
+                self.haptic.impactOccurred()
+            } else if self.wasLevel, tilt > 3.0 {
+                self.wasLevel = false
+            }
         }
     }
 
@@ -65,6 +77,36 @@ struct FocusBox: View {
                 .position(x: point.x * geo.size.width, y: point.y * geo.size.height)
                 .transition(.opacity)
         }
+        .allowsHitTesting(false)
+    }
+}
+
+/// Houder voor de histogramdata uit de zoeker-renderer.
+final class HistogramModel: ObservableObject {
+    @Published var bins: [Float] = []
+}
+
+/// Klein luminantiehistogram, onopvallend in de hoek van de zoeker.
+struct HistogramView: View {
+    let bins: [Float]
+
+    var body: some View {
+        Canvas { context, size in
+            guard bins.count > 1 else { return }
+            var path = Path()
+            let barWidth = size.width / CGFloat(bins.count)
+            for (i, value) in bins.enumerated() {
+                let h = CGFloat(value) * size.height
+                path.addRect(CGRect(x: CGFloat(i) * barWidth,
+                                    y: size.height - h,
+                                    width: barWidth,
+                                    height: h))
+            }
+            context.fill(path, with: .color(.white.opacity(0.85)))
+        }
+        .frame(width: 100, height: 44)
+        .background(Color.black.opacity(0.35))
+        .clipShape(RoundedRectangle(cornerRadius: 6))
         .allowsHitTesting(false)
     }
 }

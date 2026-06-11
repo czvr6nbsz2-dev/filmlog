@@ -4,9 +4,12 @@ struct ContentView: View {
     @StateObject private var camera = CameraModel()
     @StateObject private var looks = LookManager()
     @StateObject private var motion = MotionLevel()
+    @StateObject private var histogram = HistogramModel()
     @State private var showSettings = false
     @AppStorage("grid") private var grid = false
     @AppStorage("level") private var level = false
+    @AppStorage("zebras") private var zebras = true
+    @AppStorage("histogram") private var histogramOn = true
 
     var body: some View {
         VStack(spacing: 0) {
@@ -39,7 +42,8 @@ struct ContentView: View {
             if on { motion.start() } else { motion.stop() }
         }
         .sheet(isPresented: $showSettings) {
-            SettingsSheet(camera: camera, looks: looks, grid: $grid, level: $level)
+            SettingsSheet(camera: camera, looks: looks, grid: $grid, level: $level,
+                          zebras: $zebras, histogram: $histogramOn)
         }
         .overlay(alignment: .top) { statusToast }
     }
@@ -88,7 +92,9 @@ struct ContentView: View {
 
     private var viewfinder: some View {
         ZStack {
-            CameraPreview(camera: camera, looks: looks)
+            CameraPreview(camera: camera, looks: looks,
+                          zebras: zebras, histogram: histogramOn,
+                          onHistogram: { histogram.bins = $0 })
                 .aspectRatio(3.0 / 4.0, contentMode: .fit)
                 .clipped()
 
@@ -99,6 +105,11 @@ struct ContentView: View {
             VStack {
                 Spacer()
                 lensPicker.padding(.bottom, 14)
+            }
+        }
+        .overlay(alignment: .topTrailing) {
+            if histogramOn {
+                HistogramView(bins: histogram.bins).padding(10)
             }
         }
         .aspectRatio(3.0 / 4.0, contentMode: .fit)
