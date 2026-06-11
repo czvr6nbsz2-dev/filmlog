@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 """
 Genereert een 3D-LUT (.cube) die het Lightroom-profiel
-"D700 + Nikkor 50mm f/1.4 AI + Leica Kleur" benadert, voor de
-live zoeker-preview in de Rauw-app.
+"iPhone 15 + Leica Kleur" benadert, voor de live zoeker-preview
+in de Rauw-app.
 
 Let op: dit is een benadering voor de PREVIEW. De opgeslagen DNG blijft
 neutraal; de echte look komt van de LR-preset bij import.
 
-Bron-instellingen uit de XMP:
-  Contrast +10, Highlights -20, Shadows +15, Whites +5, Blacks -5
-  Vibrance -15
+Bron-instellingen uit de XMP (v2, "iPhone 15 + Leica Kleur"):
+  Belichting -0.55, Contrast +15, Highlights -55, Shadows +15,
+  Whites +5, Blacks -20, Dehaze +10, Vibrance -15, Saturation -4
+  Witbalans 5150K/+20 t.o.v. as-shot 5600K/+15 (lichte koel/magenta-shift)
   Tooncurve: (0,5)(32,30)(64,62)(128,130)(192,192)(224,222)(255,250)
-  Color grading: schaduwen hue 222 sat 12, midden hue 35 sat 8,
-                 hooglichten hue 42 sat 12, blending 45
+  Color grading: alleen middentonen hue 35 sat 8 (blending 45)
   (Vignet -16 wordt in de app als apart CIVignetteEffect toegepast;
-   korrel 16 en scherpte/NR zijn LR-werk en blijven buiten de LUT.)
+   korrel 16, clarity/texture en scherpte/NR zijn LR-werk en blijven
+   buiten de LUT.)
 """
 
 import colorsys
@@ -23,20 +24,23 @@ import os
 
 SIZE = 33
 
-CONTRAST = 0.10
-HIGHLIGHTS = -0.20
+EXPOSURE_EV = -0.55
+CONTRAST = 0.15
+HIGHLIGHTS = -0.55
 SHADOWS = 0.15
 WHITES = 0.05
-BLACKS = -0.05
+BLACKS = -0.20
+DEHAZE = 0.10
 VIBRANCE = -0.15
+SATURATION = -0.04
+# WB-shift t.o.v. de auto-witbalans van de zoeker: iets koeler + iets magenta
+WB_GAIN = (0.985, 0.995, 1.015)
 
 CURVE_PTS = [(0, 5), (32, 30), (64, 62), (128, 130), (192, 192), (224, 222), (255, 250)]
 
 GRADE = [
     # (hue, sat/100, zone)
-    (222, 0.12, "shadows"),
     (35, 0.08, "mids"),
-    (42, 0.12, "highs"),
 ]
 
 
@@ -102,6 +106,18 @@ def zone_weight(zone, y):
 
 
 def transform(r, g, b):
+    # 0. Belichting + witbalans-shift in (benaderd) lineair licht
+    gain = 2.0 ** EXPOSURE_EV
+    r = (max(r, 0.0) ** 2.2 * gain * WB_GAIN[0]) ** (1 / 2.2)
+    g = (max(g, 0.0) ** 2.2 * gain * WB_GAIN[1]) ** (1 / 2.2)
+    b = (max(b, 0.0) ** 2.2 * gain * WB_GAIN[2]) ** (1 / 2.2)
+
+    # 0b. Dehaze-benadering: waas (gelijkmatige lift) eraf halen
+    veil = DEHAZE * 0.25
+    r = max(0.0, (r - veil) / (1.0 - veil))
+    g = max(0.0, (g - veil) / (1.0 - veil))
+    b = max(0.0, (b - veil) / (1.0 - veil))
+
     # 1. Basic-panel benadering via luminantieschaling
     y = luma(r, g, b)
     dy = 0.0
@@ -127,7 +143,8 @@ def transform(r, g, b):
         skin = smoothstep(10, 25, h) * (1.0 - smoothstep(45, 60, h))
         amount = VIBRANCE * (1.0 - 0.5 * sat) * (1.0 - 0.5 * skin)
         gray = luma(r, g, b)
-        f = 1.0 + amount
+        # vibrance + globale verzadiging (-4) + dehaze-kleurcompensatie
+        f = (1.0 + amount) * (1.0 + SATURATION) * (1.0 + DEHAZE * 0.3)
         r = gray + (r - gray) * f
         g = gray + (g - gray) * f
         b = gray + (b - gray) * f
@@ -148,7 +165,7 @@ def main():
     out = os.path.join(os.path.dirname(__file__), "..", "Rauw", "Looks", "D700.cube")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w") as f:
-        f.write('TITLE "D700 Nikkor 50 1.4 AI Leica Kleur (preview-benadering)"\n')
+        f.write('TITLE "iPhone 15 Leica Kleur (preview-benadering)"\n')
         f.write(f"LUT_3D_SIZE {SIZE}\n")
         for bi in range(SIZE):
             for gi in range(SIZE):

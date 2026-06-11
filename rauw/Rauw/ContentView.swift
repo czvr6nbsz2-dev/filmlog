@@ -109,7 +109,7 @@ struct ContentView: View {
         HStack(spacing: 26) {
             ForEach(RearLens.allCases, id: \.rawValue) { l in
                 Button {
-                    camera.isFront = false
+                    if camera.isFront { camera.isFront = false }
                     camera.lens = l
                 } label: {
                     VStack(spacing: 0) {
@@ -241,17 +241,8 @@ struct ContentView: View {
 
     private var bottomRow: some View {
         HStack {
-            Group {
-                if let thumb = camera.lastThumbnail {
-                    Image(uiImage: thumb)
-                        .resizable()
-                        .scaledToFill()
-                } else {
-                    Color.white.opacity(0.1)
-                }
-            }
-            .frame(width: 48, height: 48)
-            .clipShape(Circle())
+            // Plekhouder houdt het AF-S-label gecentreerd
+            Color.clear.frame(width: 48, height: 48)
 
             Spacer()
 

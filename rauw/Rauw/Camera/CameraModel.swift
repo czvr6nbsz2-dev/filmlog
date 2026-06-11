@@ -23,8 +23,19 @@ enum ExposureControl: String {
 final class CameraModel: NSObject, ObservableObject {
 
     // MARK: - Instelbare staat (blijft bewaard tussen sessies)
-    @Published var lens: RearLens = .wide { didSet { persist(); reconfigure() } }
-    @Published var isFront = false { didSet { reconfigure() } }
+    @Published var lens: RearLens = .wide {
+        didSet {
+            guard lens != oldValue else { return }
+            persist()
+            reconfigure()
+        }
+    }
+    @Published var isFront = false {
+        didSet {
+            guard isFront != oldValue else { return }
+            reconfigure()
+        }
+    }
     @Published var control: ExposureControl = .auto { didSet { persist(); applyExposure() } }
     @Published var evThirds: Int = 0 { didSet { persist(); applyExposure() } }
     @Published var aeLocked = false { didSet { applyExposure() } }
@@ -70,6 +81,13 @@ final class CameraModel: NSObject, ObservableObject {
         started = true
         UIApplication.shared.isIdleTimerDisabled = true
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+        // Sessiefouten tonen in plaats van stil falen
+        NotificationCenter.default.addObserver(
+            forName: .AVCaptureSessionRuntimeError, object: session, queue: .main
+        ) { [weak self] note in
+            let error = note.userInfo?[AVCaptureSessionErrorKey] as? AVError
+            self?.statusMessage = "Camerafout: \(error?.localizedDescription ?? "onbekend")"
+        }
         AVCaptureDevice.requestAccess(for: .video) { granted in
             guard granted else {
                 DispatchQueue.main.async {
@@ -97,20 +115,27 @@ final class CameraModel: NSObject, ObservableObject {
     }
 
     private func configureSession() {
+        let position: AVCaptureDevice.Position = isFront ? .front : .back
+        let type: AVCaptureDevice.DeviceType = isFront ? .builtInWideAngleCamera : lens.deviceType
+        guard let dev = AVCaptureDevice.default(type, for: .video, position: position) else {
+            DispatchQueue.main.async { self.statusMessage = "Camera niet beschikbaar" }
+            return
+        }
+        // Niets doen als deze camera al actief is (voorkomt dubbele herconfiguratie)
+        if dev.uniqueID == device?.uniqueID, input != nil { return }
+        guard let newInput = try? AVCaptureDeviceInput(device: dev) else {
+            DispatchQueue.main.async { self.statusMessage = "Camera niet beschikbaar" }
+            return
+        }
+
         session.beginConfiguration()
-        session.sessionPreset = .photo
+        if session.sessionPreset != .photo { session.sessionPreset = .photo }
 
         if let input {
             session.removeInput(input)
             self.input = nil
         }
-
-        let position: AVCaptureDevice.Position = isFront ? .front : .back
-        let type: AVCaptureDevice.DeviceType = isFront ? .builtInWideAngleCamera : lens.deviceType
-        guard let dev = AVCaptureDevice.default(type, for: .video, position: position),
-              let newInput = try? AVCaptureDeviceInput(device: dev),
-              session.canAddInput(newInput)
-        else {
+        guard session.canAddInput(newInput) else {
             session.commitConfiguration()
             DispatchQueue.main.async { self.statusMessage = "Camera niet beschikbaar" }
             return
@@ -121,17 +146,19 @@ final class CameraModel: NSObject, ObservableObject {
 
         if !session.outputs.contains(photoOutput), session.canAddOutput(photoOutput) {
             session.addOutput(photoOutput)
+            photoOutput.maxPhotoQualityPrioritization = .quality
         }
         if !session.outputs.contains(videoOutput), session.canAddOutput(videoOutput) {
             session.addOutput(videoOutput)
         }
-        photoOutput.maxPhotoQualityPrioritization = .quality
+        session.commitConfiguration()
 
-        // Output-cap op het maximum; per opname wordt de juiste maat gekozen.
-        // (Bayer RAW is door Apple sowieso begrensd op 12 MP buiten ProRAW.)
-        let sorted = dev.activeFormat.supportedMaxPhotoDimensions
-            .sorted { $0.width * $0.height < $1.width * $1.height }
-        if let largest = sorted.last { photoOutput.maxPhotoDimensions = largest }
+        // Pas ná commit staat het definitieve camera-format vast; resolutie en
+        // verbindingen daarna instellen voorkomt mismatches (crashbron).
+        let dims = dev.activeFormat.supportedMaxPhotoDimensions
+        if let largest = dims.max(by: { Int($0.width) * Int($0.height) < Int($1.width) * Int($1.height) }) {
+            photoOutput.maxPhotoDimensions = largest
+        }
 
         for connection in [photoOutput.connection(with: .video), videoOutput.connection(with: .video)] {
             guard let c = connection else { continue }
@@ -141,8 +168,6 @@ final class CameraModel: NSObject, ObservableObject {
             c.automaticallyAdjustsVideoMirroring = false
             c.isVideoMirrored = isFront
         }
-
-        session.commitConfiguration()
 
         let raw = photoOutput.availableRawPhotoPixelFormatTypes
             .contains { AVCapturePhotoOutput.isBayerRAWPixelFormat($0) }
@@ -225,8 +250,12 @@ final class CameraModel: NSObject, ObservableObject {
         pendingOrientation = currentExifOrientation()
         DispatchQueue.main.async { self.isCapturing = true }
         sessionQueue.async {
+            // Alleen maten die zowel het actuele format als de output toestaan
+            let outputMax = Int(self.photoOutput.maxPhotoDimensions.width)
+                * Int(self.photoOutput.maxPhotoDimensions.height)
             let dims = (self.device?.activeFormat.supportedMaxPhotoDimensions ?? [])
-                .sorted { $0.width * $0.height < $1.width * $1.height }
+                .filter { Int($0.width) * Int($0.height) <= max(outputMax, 1) }
+                .sorted { Int($0.width) * Int($0.height) < Int($1.width) * Int($1.height) }
             let settings: AVCapturePhotoSettings
             if let raw = self.photoOutput.availableRawPhotoPixelFormatTypes
                 .first(where: { AVCapturePhotoOutput.isBayerRAWPixelFormat($0) }) {
@@ -234,7 +263,7 @@ final class CameraModel: NSObject, ObservableObject {
                 // Bayer RAW kan per definitie niet computationeel verwerkt worden
                 settings.photoQualityPrioritization = .speed
                 // Bayer RAW levert 12 MP; vraag geen grotere processed maat
-                if let d = dims.first(where: { $0.width * $0.height >= 12_000_000 }) ?? dims.last {
+                if let d = dims.first(where: { Int($0.width) * Int($0.height) >= 12_000_000 }) ?? dims.last {
                     settings.maxPhotoDimensions = d
                 }
             } else if self.photoOutput.availablePhotoCodecTypes.contains(.hevc) {
