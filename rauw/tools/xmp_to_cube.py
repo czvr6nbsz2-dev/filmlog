@@ -7,12 +7,15 @@ in de Rauw-app.
 Let op: dit is een benadering voor de PREVIEW. De opgeslagen DNG blijft
 neutraal; de echte look komt van de LR-preset bij import.
 
-Bron-instellingen uit de XMP (v2, "iPhone 15 + Leica Kleur"):
-  Belichting -0.55, Contrast +15, Highlights -55, Shadows +15,
-  Whites +5, Blacks -20, Dehaze +10, Vibrance -15, Saturation -4
+Bron-instellingen uit de XMP (v2, "iPhone 15 + Leica Kleur"),
+bijgesteld op basis van D700-referentiebeelden (juni 2026):
+  Belichting -0.55, Contrast +25 (was +15), Highlights -45 (was -55),
+  Shadows +5 (was +15), Whites +5, Blacks -30 (was -20), Dehaze +10,
+  Vibrance -20 (was -15), Saturation -4
   Witbalans 5150K/+20 t.o.v. as-shot 5600K/+15 (lichte koel/magenta-shift)
   Tooncurve: (0,5)(32,30)(64,62)(128,130)(192,192)(224,222)(255,250)
-  Color grading: alleen middentonen hue 35 sat 8 (blending 45)
+  Color grading: warme middentonen-grade verwijderd; de referenties
+  zijn koel/neutraal, dus alleen een heel lichte teal-push in de mids.
   (Vignet -16 wordt in de app als apart CIVignetteEffect toegepast;
    korrel 16, clarity/texture en scherpte/NR zijn LR-werk en blijven
    buiten de LUT.)
@@ -25,13 +28,13 @@ import os
 SIZE = 33
 
 EXPOSURE_EV = -0.55
-CONTRAST = 0.15
-HIGHLIGHTS = -0.55
-SHADOWS = 0.15
+CONTRAST = 0.25
+HIGHLIGHTS = -0.45
+SHADOWS = 0.05
 WHITES = 0.05
-BLACKS = -0.20
+BLACKS = -0.30
 DEHAZE = 0.10
-VIBRANCE = -0.15
+VIBRANCE = -0.20
 SATURATION = -0.04
 # WB-shift t.o.v. de auto-witbalans van de zoeker: iets koeler + iets magenta
 WB_GAIN = (0.985, 0.995, 1.015)
@@ -40,7 +43,7 @@ CURVE_PTS = [(0, 5), (32, 30), (64, 62), (128, 130), (192, 192), (224, 222), (25
 
 GRADE = [
     # (hue, sat/100, zone)
-    (35, 0.08, "mids"),
+    (195, 0.04, "mids"),
 ]
 
 
