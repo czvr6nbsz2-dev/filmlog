@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-06-12",
+    "title": "Mama'ku",
+    "imdbID": "tt38119633",
+    "year": "2025",
+    "directors": "Sven Peetoom",
+    "actors": null,
+    "plot": "For years, documentary filmmaker Sven Peetoom has been exposing the consequences of suppressing the Dutch colonial history in Indonesia. In this short documentary, he follows dancer Cheroney Pelupessy when she and her mother retur...",
+    "imdbRating": "9.9",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BZDhlZjk0ODAtN2E4MC00OTZmLTgxYzktMWU2MmZjYTZiNzBjXkEyXkFqcGc@._V1_QL75_UY562_CR9,0,380,562_.jpg",
+    "tmdbId": 1689970,
+    "tmdbRating": null,
+    "genres": "Documentaire",
+    "runtime": "75",
+    "myReview": null,
+    "myRating": 7,
+    "id": "9eb9ec9f-233f-423a-881c-01a7d95867ba",
+    "updatedAt": "2026-06-12T17:54:17.847Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-05-18",
     "title": "A Sad and Beautiful World",
     "imdbID": "tt32622406",
