@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-06-13",
+    "title": "Backrooms",
+    "imdbID": "tt26657236",
+    "year": "2026",
+    "directors": "Kane Parsons",
+    "actors": "Chiwetel Ejiofor, Renate Reinsve, Mark Duplass",
+    "plot": "After a therapist's patient disappears into a dimension beyond reality, she must venture into the unknown to save him.",
+    "imdbRating": "7.1",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BYzQyYjZmMjctMzIyZi00MDI0LWJhNGQtMzQ3MTFlNDgwNGM5XkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+    "tmdbId": 1083381,
+    "tmdbRating": "6.9",
+    "genres": "Horror, Mysterie, Sciencefiction",
+    "runtime": "111",
+    "myReview": null,
+    "myRating": 5,
+    "id": "9645f31a-c232-438f-8794-e5e0e7e6efec",
+    "updatedAt": "2026-06-13T19:15:42.886Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-06-12",
     "title": "Mama'ku",
     "imdbID": "tt38119633",
