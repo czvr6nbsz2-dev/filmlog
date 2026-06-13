@@ -72,8 +72,7 @@ final class CameraModel: NSObject, ObservableObject {
     struct BakedLook {
         let filter: CIFilter?
         let vignette: Bool
-        let grain: Bool
-        static let none = BakedLook(filter: nil, vignette: false, grain: false)
+        static let none = BakedLook(filter: nil, vignette: false)
     }
     /// Levert op het moment van afdrukken een verse look-snapshot. Wordt door
     /// de view-laag ingesteld (zie ContentView) en op de main-thread aangeroepen.
@@ -424,7 +423,7 @@ extension CameraModel: AVCapturePhotoCaptureDelegate {
             }
             save(data: data, isRaw: true)
         } else {
-            // Verwerkte foto -> JPG met de actieve look (+ korrel) erin gebakken,
+            // Verwerkte foto -> JPG met de actieve look erin gebakken,
             // als apart bestand naast de DNG zodat je 'm kunt delen.
             guard let cg = photo.cgImageRepresentation() else {
                 DispatchQueue.main.async { self.statusMessage = "Geen fotodata ontvangen" }
@@ -442,7 +441,7 @@ extension CameraModel: AVCapturePhotoCaptureDelegate {
         }
     }
 
-    /// Bakt de actieve look (LUT + vignet + eventueel korrel) in de verwerkte
+    /// Bakt de actieve look (LUT + vignet) in de verwerkte
     /// foto en codeert die als JPEG. De oriëntatie wordt in de pixels gebakken,
     /// zodat de JPG zonder oriëntatietag al goed staat.
     private func renderLookedJPEG(from cg: CGImage, orientation: CGImagePropertyOrientation) -> Data? {
@@ -457,7 +456,6 @@ extension CameraModel: AVCapturePhotoCaptureDelegate {
                 ])
             }
         }
-        if look.grain { image = FilmGrain.apply(to: image) }
         image = image.oriented(orientation)
         let space = CGColorSpace(name: CGColorSpace.sRGB)!
         return jpegContext.jpegRepresentation(of: image, colorSpace: space)

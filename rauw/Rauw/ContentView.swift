@@ -34,14 +34,13 @@ struct ContentView: View {
         .background(Color.black.ignoresSafeArea())
         .font(.system(.body, design: .monospaced))
         .onAppear {
-            // Bepaalt welke look (LUT + vignet + korrel) in de JPG wordt
-            // gebakken; op opnamemoment uitgelezen met een verse filterinstantie.
+            // Bepaalt welke look (LUT + vignet) in de JPG wordt gebakken;
+            // op opnamemoment uitgelezen met een verse filterinstantie.
             camera.lookSnapshot = {
                 guard looks.lookEnabled else { return .none }
                 return CameraModel.BakedLook(
                     filter: looks.makeFilter(for: looks.look),
-                    vignette: true,
-                    grain: looks.monoGrain)
+                    vignette: true)
             }
             camera.start()
             if level { motion.start() }
