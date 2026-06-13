@@ -25,6 +25,12 @@ final class LookManager: ObservableObject {
     @Published var look: FilmLook {
         didSet { UserDefaults.standard.set(look.rawValue, forKey: "filmLook") }
     }
+    @Published var grainEnabled: Bool {
+        didSet { UserDefaults.standard.set(grainEnabled, forKey: "grainEnabled") }
+    }
+
+    /// Korrel actief: alleen bij de zwartwit-look én als de korrel aanstaat.
+    var monoGrain: Bool { lookEnabled && look == .mono && grainEnabled }
 
     private struct Cube { let size: Int; let data: Data }
     private var cubes: [FilmLook: Cube] = [:]
@@ -38,6 +44,7 @@ final class LookManager: ObservableObject {
     init() {
         lookEnabled = UserDefaults.standard.object(forKey: "lookEnabled") as? Bool ?? true
         look = FilmLook(rawValue: UserDefaults.standard.string(forKey: "filmLook") ?? "") ?? .color
+        grainEnabled = UserDefaults.standard.object(forKey: "grainEnabled") as? Bool ?? true
         for l in FilmLook.allCases {
             if let cube = Self.loadCube(named: l.resource) {
                 cubes[l] = cube

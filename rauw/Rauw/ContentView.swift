@@ -41,7 +41,7 @@ struct ContentView: View {
                 return CameraModel.BakedLook(
                     filter: looks.makeFilter(for: looks.look),
                     vignette: true,
-                    grain: looks.look == .mono)
+                    grain: looks.monoGrain)
             }
             camera.start()
             if level { motion.start() }

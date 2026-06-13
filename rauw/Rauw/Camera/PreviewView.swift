@@ -194,10 +194,9 @@ struct CameraPreview: UIViewRepresentable {
     }
 
     func updateUIView(_ view: PreviewRenderer, context: Context) {
-        let mono = looks.lookEnabled && looks.look == .mono
         view.look = looks.activeFilter
         view.vignette = looks.lookEnabled
-        view.grain = mono
+        view.grain = looks.monoGrain
         view.zebrasEnabled = zebras
         view.histogramEnabled = histogram
     }

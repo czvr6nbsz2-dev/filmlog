@@ -27,6 +27,10 @@ struct SettingsSheet: View {
                         Label("Look", systemImage: "circle.lefthalf.filled")
                     }
                     .disabled(!looks.lookEnabled)
+                    Toggle(isOn: $looks.grainEnabled) {
+                        Label("Filmkorrel (zwartwit)", systemImage: "circle.grid.3x3.fill")
+                    }
+                    .disabled(!(looks.lookEnabled && looks.look == .mono))
                 } footer: {
                     Text("Elke opname bewaart twee bestanden: een neutrale DNG voor Lightroom (je eigen preset) én een JPG mét de look er al in gebakken — handig om te WhatsAppen. Kleur is de Leica-look; zwartwit benadert Kodak Tri-X (pittig, iets zachter dan vol) met een fijne filmkorrel in zoeker en JPG. Tik op de filmnaam bovenin om snel te wisselen. DNG's zijn 12 MP (±25 MB) — Apple staat buiten ProRAW geen 48 MP RAW toe; net als je D700 dus.")
                 }
