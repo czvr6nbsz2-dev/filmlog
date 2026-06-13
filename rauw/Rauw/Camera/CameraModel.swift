@@ -316,9 +316,12 @@ final class CameraModel: NSObject, ObservableObject {
                 guard let dev = self.device else { return }
                 let seconds = dev.exposureDuration.seconds
                 let iso = dev.iso
+                // Tijdens een (her)configuratie is exposureDuration even ongeldig
+                // en geeft CMTime.seconds NaN; Int(NaN) crasht fataal. Afvangen.
+                guard seconds.isFinite, seconds > 0, iso.isFinite else { return }
                 let shutter = seconds >= 0.4
                     ? String(format: "%.1f\"", seconds)
-                    : "1/\(Int((1.0 / max(seconds, 1e-6)).rounded()))"
+                    : "1/\(Int((1.0 / seconds).rounded()))"
                 DispatchQueue.main.async {
                     self.displayShutter = shutter
                     self.displayISO = "\(Int(iso.rounded()))"
