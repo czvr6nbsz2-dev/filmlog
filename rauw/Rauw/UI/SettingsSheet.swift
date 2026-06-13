@@ -18,10 +18,17 @@ struct SettingsSheet: View {
                     Toggle(isOn: $zebras) { Label("Zebra's (overbelichting)", systemImage: "exclamationmark.triangle") }
                     Toggle(isOn: $histogram) { Label("Histogram", systemImage: "chart.bar") }
                     Toggle(isOn: $looks.lookEnabled) {
-                        Label("D700-preview in zoeker", systemImage: "camera.filters")
+                        Label("Filmlook in zoeker", systemImage: "camera.filters")
                     }
+                    Picker(selection: $looks.look) {
+                        Text("Kleur (Leica)").tag(FilmLook.color)
+                        Text("Zwartwit (Tri-X)").tag(FilmLook.mono)
+                    } label: {
+                        Label("Look", systemImage: "circle.lefthalf.filled")
+                    }
+                    .disabled(!looks.lookEnabled)
                 } footer: {
-                    Text("De D700-preview kleurt alleen de zoeker. De opgeslagen DNG blijft neutraal en krijgt in Lightroom je eigen preset. DNG's zijn 12 MP (±25 MB) — Apple staat buiten ProRAW geen 48 MP RAW toe; net als je D700 dus.")
+                    Text("De filmlook kleurt alleen de zoeker. De opgeslagen DNG blijft neutraal en krijgt in Lightroom je eigen preset. Kleur is de Leica-look; zwartwit benadert Kodak Tri-X (pittig, iets zachter dan vol). Tik op de filmnaam bovenin om snel te wisselen. DNG's zijn 12 MP (±25 MB) — Apple staat buiten ProRAW geen 48 MP RAW toe; net als je D700 dus.")
                 }
 
                 Section("Vast in deze app") {
@@ -33,7 +40,7 @@ struct SettingsSheet: View {
                 }
 
                 Section {
-                    Text("Diafragma ligt op iPhone per lens vast; \"A\" werkt daarom als automaat met EV-compensatie en AE-lock (lang indrukken op de sluiterknop; een tik in de zoeker ontgrendelt weer). EV stel je ook in door verticaal over de zoeker te vegen. Zebra's en histogram meten het opnamebeeld, vóór de D700-preview. \"M\" geeft handmatige sluitertijd en ISO.")
+                    Text("Diafragma ligt op iPhone per lens vast; \"A\" werkt daarom als automaat met EV-compensatie en AE-lock (lang indrukken op de sluiterknop; een tik in de zoeker ontgrendelt weer). EV stel je ook in door verticaal over de zoeker te vegen. Zebra's en histogram meten het opnamebeeld, vóór de filmlook. \"M\" geeft handmatige sluitertijd en ISO.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }

@@ -59,6 +59,10 @@ final class CameraModel: NSObject, ObservableObject {
     private(set) var device: AVCaptureDevice?
     private var readTimer: Timer?
     private var started = false
+    /// Loopt op bij elke herconfiguratie-aanvraag; een al-ingeplande maar
+    /// nog niet uitgevoerde herconfiguratie slaat zichzelf over als er
+    /// inmiddels een nieuwere is. Voorkomt opstapelen bij snel lenswisselen.
+    private var reconfigureGeneration = 0
     /// Stand van het toestel op het moment van afdrukken; wordt als
     /// oriëntatietag in de DNG geschreven (Bayer RAW kan niet fysiek roteren).
     private var pendingOrientation: CGImagePropertyOrientation = .right
@@ -95,8 +99,10 @@ final class CameraModel: NSObject, ObservableObject {
                 }
                 return
             }
+            let front = self.isFront
+            let lens = self.lens
             self.sessionQueue.async {
-                self.configureSession()
+                self.configureSession(isFront: front, lens: lens)
                 self.session.startRunning()
             }
         }
@@ -111,10 +117,20 @@ final class CameraModel: NSObject, ObservableObject {
 
     private func reconfigure() {
         guard started else { return }
-        sessionQueue.async { self.configureSession() }
+        // Lees de doelstand op de main-thread (waar didSet draait) en geef
+        // hem mee, zodat de sessie-queue geen @Published-staat hoeft te lezen.
+        reconfigureGeneration += 1
+        let gen = reconfigureGeneration
+        let front = isFront
+        let lens = lens
+        sessionQueue.async {
+            // Sla over als er inmiddels een nieuwere aanvraag is binnengekomen.
+            guard gen == self.reconfigureGeneration else { return }
+            self.configureSession(isFront: front, lens: lens)
+        }
     }
 
-    private func configureSession() {
+    private func configureSession(isFront: Bool, lens: RearLens) {
         let position: AVCaptureDevice.Position = isFront ? .front : .back
         let type: AVCaptureDevice.DeviceType = isFront ? .builtInWideAngleCamera : lens.deviceType
         guard let dev = AVCaptureDevice.default(type, for: .video, position: position) else {
@@ -293,12 +309,21 @@ final class CameraModel: NSObject, ObservableObject {
     private func startReadout() {
         readTimer?.invalidate()
         readTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
-            guard let self, let dev = self.device else { return }
-            let seconds = dev.exposureDuration.seconds
-            self.displayShutter = seconds >= 0.4
-                ? String(format: "%.1f\"", seconds)
-                : "1/\(Int((1.0 / max(seconds, 1e-6)).rounded()))"
-            self.displayISO = "\(Int(dev.iso.rounded()))"
+            guard let self else { return }
+            // `device` wordt op de sessie-queue ge(her)configureerd; daar ook
+            // lezen voorkomt een data-race met het wisselen van lens/camera.
+            self.sessionQueue.async {
+                guard let dev = self.device else { return }
+                let seconds = dev.exposureDuration.seconds
+                let iso = dev.iso
+                let shutter = seconds >= 0.4
+                    ? String(format: "%.1f\"", seconds)
+                    : "1/\(Int((1.0 / max(seconds, 1e-6)).rounded()))"
+                DispatchQueue.main.async {
+                    self.displayShutter = shutter
+                    self.displayISO = "\(Int(iso.rounded()))"
+                }
+            }
         }
     }
 

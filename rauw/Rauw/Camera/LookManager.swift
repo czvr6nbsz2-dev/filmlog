@@ -1,29 +1,54 @@
 import CoreImage
 import Foundation
 
-/// Laadt de zoeker-LUT (benadering van het Lightroom-profiel
-/// "D700 + Nikkor 50mm f/1.4 AI + Leica Kleur") uit Looks/D700.cube.
-/// De LUT kleurt alleen de live preview; de opgeslagen DNG blijft neutraal.
+/// De twee zoeker-looks: kleur (Leica Kleur op basis van het D700-profiel)
+/// en zwartwit (Kodak Tri-X-benadering).
+enum FilmLook: String, CaseIterable {
+    case color
+    case mono
+
+    /// Bestandsnaam van de bijbehorende .cube in Looks/.
+    var resource: String { self == .color ? "D700" : "TriX" }
+    /// Korte naam voor in de zoekerbalk.
+    var label: String { self == .color ? "Kleur" : "TriX" }
+    var symbol: String { self == .color ? "film" : "circle.lefthalf.filled" }
+}
+
+/// Laadt de zoeker-LUT's uit Looks/ en levert het actieve filter aan de
+/// Metal-preview. De LUT kleurt alleen de live preview; de opgeslagen DNG
+/// blijft neutraal en krijgt in Lightroom je eigen preset.
 final class LookManager: ObservableObject {
 
     @Published var lookEnabled: Bool {
         didSet { UserDefaults.standard.set(lookEnabled, forKey: "lookEnabled") }
     }
+    @Published var look: FilmLook {
+        didSet { UserDefaults.standard.set(look.rawValue, forKey: "filmLook") }
+    }
 
-    let lookName = "D700"
-    private(set) var cubeFilter: CIFilter?
+    private var filters: [FilmLook: CIFilter] = [:]
 
-    var activeFilter: CIFilter? { lookEnabled ? cubeFilter : nil }
+    var lookName: String { look.label }
+    var lookSymbol: String { look.symbol }
+    var activeFilter: CIFilter? { lookEnabled ? filters[look] : nil }
 
     init() {
         lookEnabled = UserDefaults.standard.object(forKey: "lookEnabled") as? Bool ?? true
-        loadCube()
+        look = FilmLook(rawValue: UserDefaults.standard.string(forKey: "filmLook") ?? "") ?? .color
+        for l in FilmLook.allCases {
+            filters[l] = Self.loadCube(named: l.resource)
+        }
     }
 
-    private func loadCube() {
-        guard let url = Bundle.main.url(forResource: "D700", withExtension: "cube"),
+    /// Wisselt tussen kleur en zwartwit.
+    func toggleLook() {
+        look = (look == .color) ? .mono : .color
+    }
+
+    private static func loadCube(named name: String) -> CIFilter? {
+        guard let url = Bundle.main.url(forResource: name, withExtension: "cube"),
               let text = try? String(contentsOf: url, encoding: .utf8)
-        else { return }
+        else { return nil }
 
         var size = 0
         var values: [Float] = []
@@ -43,13 +68,13 @@ final class LookManager: ObservableObject {
             }
         }
 
-        guard size > 1, values.count == size * size * size * 4 else { return }
+        guard size > 1, values.count == size * size * size * 4 else { return nil }
         let data = values.withUnsafeBufferPointer { Data(buffer: $0) }
 
-        guard let filter = CIFilter(name: "CIColorCubeWithColorSpace") else { return }
+        guard let filter = CIFilter(name: "CIColorCubeWithColorSpace") else { return nil }
         filter.setValue(size, forKey: "inputCubeDimension")
         filter.setValue(data, forKey: "inputCubeData")
         filter.setValue(CGColorSpace(name: CGColorSpace.sRGB)!, forKey: "inputColorSpace")
-        cubeFilter = filter
+        return filter
     }
 }

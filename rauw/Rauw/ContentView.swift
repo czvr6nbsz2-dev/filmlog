@@ -60,9 +60,13 @@ struct ContentView: View {
 
             Spacer()
 
-            Button { looks.lookEnabled.toggle() } label: {
+            // Tik wisselt kleur <-> zwartwit; staat de look uit, dan zet de
+            // tik hem weer aan. Helemaal uitzetten kan in de instellingen.
+            Button {
+                if looks.lookEnabled { looks.toggleLook() } else { looks.lookEnabled = true }
+            } label: {
                 HStack(spacing: 6) {
-                    Image(systemName: "film")
+                    Image(systemName: looks.lookEnabled ? looks.lookSymbol : "film")
                     Text(looks.lookEnabled ? looks.lookName : "—")
                 }
                 .font(.system(size: 15, weight: .semibold, design: .monospaced))
