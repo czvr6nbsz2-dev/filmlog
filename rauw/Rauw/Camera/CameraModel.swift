@@ -1,4 +1,5 @@
 import AVFoundation
+import CoreImage
 import ImageIO
 import Photos
 import UIKit
@@ -45,7 +46,6 @@ final class CameraModel: NSObject, ObservableObject {
     // MARK: - Read-only staat voor de UI
     @Published var displayShutter = "—"
     @Published var displayISO = "—"
-    @Published var lastThumbnail: UIImage?
     @Published var rawAvailable = false
     @Published var statusMessage: String?
     @Published var focusIndicator: CGPoint?   // genormaliseerd (0–1) in previewcoördinaten
@@ -66,6 +66,22 @@ final class CameraModel: NSObject, ObservableObject {
     /// Stand van het toestel op het moment van afdrukken; wordt als
     /// oriëntatietag in de DNG geschreven (Bayer RAW kan niet fysiek roteren).
     private var pendingOrientation: CGImagePropertyOrientation = .right
+
+    /// De look die in de begeleidende JPG gebakken moet worden. De DNG blijft
+    /// altijd neutraal; dit raakt alleen de JPG.
+    struct BakedLook {
+        let filter: CIFilter?
+        let vignette: Bool
+        let grain: Bool
+        static let none = BakedLook(filter: nil, vignette: false, grain: false)
+    }
+    /// Levert op het moment van afdrukken een verse look-snapshot. Wordt door
+    /// de view-laag ingesteld (zie ContentView) en op de main-thread aangeroepen.
+    var lookSnapshot: () -> BakedLook = { .none }
+    private var pendingLook = BakedLook.none
+    private lazy var jpegContext = CIContext(options: [
+        .workingColorSpace: CGColorSpace(name: CGColorSpace.sRGB)!
+    ])
 
     static let shutterSpeeds: [Double] = [
         1/4000, 1/2000, 1/1000, 1/500, 1/250, 1/125, 1/60, 1/30, 1/15, 1/8, 1/4, 1/2, 1,
@@ -266,6 +282,7 @@ final class CameraModel: NSObject, ObservableObject {
 
     func capture() {
         pendingOrientation = currentExifOrientation()
+        pendingLook = lookSnapshot()
         DispatchQueue.main.async { self.isCapturing = true }
         sessionQueue.async {
             // Alleen maten die zowel het actuele format als de output toestaan
@@ -274,19 +291,30 @@ final class CameraModel: NSObject, ObservableObject {
             let dims = (self.device?.activeFormat.supportedMaxPhotoDimensions ?? [])
                 .filter { Int($0.width) * Int($0.height) <= max(outputMax, 1) }
                 .sorted { Int($0.width) * Int($0.height) < Int($1.width) * Int($1.height) }
+            // Verwerkte bron voor de begeleidende JPG (JPEG indien beschikbaar,
+            // anders HEVC); we hercoderen zelf toch naar JPG met de look erin.
+            let codecs = self.photoOutput.availablePhotoCodecTypes
+            let processedCodec: AVVideoCodecType? =
+                codecs.contains(.jpeg) ? .jpeg : (codecs.contains(.hevc) ? .hevc : nil)
             let settings: AVCapturePhotoSettings
             if let raw = self.photoOutput.availableRawPhotoPixelFormatTypes
                 .first(where: { AVCapturePhotoOutput.isBayerRAWPixelFormat($0) }) {
-                settings = AVCapturePhotoSettings(rawPixelFormatType: raw)
-                // Bayer RAW kan per definitie niet computationeel verwerkt worden
-                settings.photoQualityPrioritization = .speed
+                // RAW voor Lightroom + verwerkte foto als bron voor de JPG.
+                if let codec = processedCodec {
+                    settings = AVCapturePhotoSettings(
+                        rawPixelFormatType: raw,
+                        processedFormat: [AVVideoCodecKey: codec])
+                } else {
+                    settings = AVCapturePhotoSettings(rawPixelFormatType: raw)
+                }
+                settings.photoQualityPrioritization = .balanced
                 // Bayer RAW levert 12 MP; vraag geen grotere processed maat
                 if let d = dims.first(where: { Int($0.width) * Int($0.height) >= 12_000_000 }) ?? dims.last {
                     settings.maxPhotoDimensions = d
                 }
-            } else if self.photoOutput.availablePhotoCodecTypes.contains(.hevc) {
-                // Frontcamera kan geen RAW; daar valt de app terug op HEIF.
-                settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
+            } else if let codec = processedCodec {
+                // Frontcamera kan geen RAW; alleen de verwerkte foto -> JPG.
+                settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: codec])
                 settings.photoQualityPrioritization = .quality
                 if let d = dims.last { settings.maxPhotoDimensions = d }
             } else {
@@ -385,26 +413,53 @@ extension CameraModel: AVCapturePhotoCaptureDelegate {
             DispatchQueue.main.async { self.statusMessage = "Opname mislukt: \(error.localizedDescription)" }
             return
         }
-        // Bij RAW de oriëntatietag expliciet in de DNG schrijven; de
-        // connection-rotatie wordt daar niet betrouwbaar in meegenomen.
-        let data: Data?
         if photo.isRawPhoto {
-            data = photo.fileDataRepresentation(
-                with: OrientationCustomizer(orientation: pendingOrientation)
-            )
+            // RAW -> DNG met oriëntatietag (Bayer kan niet fysiek roteren).
+            // Ongewijzigd t.o.v. eerder: jouw Lightroom-workflow blijft gelijk.
+            guard let data = photo.fileDataRepresentation(
+                with: OrientationCustomizer(orientation: pendingOrientation)) else {
+                DispatchQueue.main.async { self.statusMessage = "Geen RAW-data ontvangen" }
+                return
+            }
+            save(data: data, isRaw: true)
         } else {
-            data = photo.fileDataRepresentation()
+            // Verwerkte foto -> JPG met de actieve look (+ korrel) erin gebakken,
+            // als apart bestand naast de DNG zodat je 'm kunt delen.
+            guard let cg = photo.cgImageRepresentation() else {
+                DispatchQueue.main.async { self.statusMessage = "Geen fotodata ontvangen" }
+                return
+            }
+            // De verwerkte foto komt door de connection-rotatie al rechtop
+            // binnen (metadata .up). Ontbreekt de tag, dan niet alsnog draaien.
+            let orientation = (photo.metadata[kCGImagePropertyOrientation as String] as? UInt32)
+                .flatMap { CGImagePropertyOrientation(rawValue: $0) } ?? .up
+            guard let jpg = renderLookedJPEG(from: cg, orientation: orientation) else {
+                DispatchQueue.main.async { self.statusMessage = "JPG maken mislukt" }
+                return
+            }
+            save(data: jpg, isRaw: false)
         }
-        guard let data else {
-            DispatchQueue.main.async { self.statusMessage = "Geen fotodata ontvangen" }
-            return
+    }
+
+    /// Bakt de actieve look (LUT + vignet + eventueel korrel) in de verwerkte
+    /// foto en codeert die als JPEG. De oriëntatie wordt in de pixels gebakken,
+    /// zodat de JPG zonder oriëntatietag al goed staat.
+    private func renderLookedJPEG(from cg: CGImage, orientation: CGImagePropertyOrientation) -> Data? {
+        var image = CIImage(cgImage: cg)
+        let look = pendingLook
+        if let filter = look.filter {
+            filter.setValue(image, forKey: kCIInputImageKey)
+            if let out = filter.outputImage { image = out }
+            if look.vignette {
+                image = image.applyingFilter("CIVignette", parameters: [
+                    kCIInputIntensityKey: 0.5, kCIInputRadiusKey: 1.8,
+                ])
+            }
         }
-        if let cg = photo.previewCGImageRepresentation() {
-            let thumb = UIImage(cgImage: cg, scale: 1,
-                                orientation: UIImage.Orientation(pendingOrientation))
-            DispatchQueue.main.async { self.lastThumbnail = thumb }
-        }
-        save(data: data, isRaw: photo.isRawPhoto)
+        if look.grain { image = FilmGrain.apply(to: image) }
+        image = image.oriented(orientation)
+        let space = CGColorSpace(name: CGColorSpace.sRGB)!
+        return jpegContext.jpegRepresentation(of: image, colorSpace: space)
     }
 
     private func save(data: Data, isRaw: Bool) {
@@ -419,6 +474,9 @@ extension CameraModel: AVCapturePhotoCaptureDelegate {
                 if isRaw {
                     options.uniformTypeIdentifier = "com.adobe.raw-image"
                     options.originalFilename = "RAUW_\(Self.filenameStamp()).dng"
+                } else {
+                    options.uniformTypeIdentifier = "public.jpeg"
+                    options.originalFilename = "RAUW_\(Self.filenameStamp()).jpg"
                 }
                 request.addResource(with: .photo, data: data, options: options)
             } completionHandler: { ok, error in
@@ -450,21 +508,5 @@ private final class OrientationCustomizer: NSObject, AVCapturePhotoFileDataRepre
         var metadata = photo.metadata
         metadata[kCGImagePropertyOrientation as String] = NSNumber(value: orientation.rawValue)
         return metadata
-    }
-}
-
-private extension UIImage.Orientation {
-    init(_ cg: CGImagePropertyOrientation) {
-        switch cg {
-        case .up: self = .up
-        case .upMirrored: self = .upMirrored
-        case .down: self = .down
-        case .downMirrored: self = .downMirrored
-        case .left: self = .left
-        case .leftMirrored: self = .leftMirrored
-        case .right: self = .right
-        case .rightMirrored: self = .rightMirrored
-        @unknown default: self = .up
-        }
     }
 }

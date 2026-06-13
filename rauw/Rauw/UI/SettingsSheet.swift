@@ -28,7 +28,7 @@ struct SettingsSheet: View {
                     }
                     .disabled(!looks.lookEnabled)
                 } footer: {
-                    Text("De filmlook kleurt alleen de zoeker. De opgeslagen DNG blijft neutraal en krijgt in Lightroom je eigen preset. Kleur is de Leica-look; zwartwit benadert Kodak Tri-X (pittig, iets zachter dan vol). Tik op de filmnaam bovenin om snel te wisselen. DNG's zijn 12 MP (±25 MB) — Apple staat buiten ProRAW geen 48 MP RAW toe; net als je D700 dus.")
+                    Text("Elke opname bewaart twee bestanden: een neutrale DNG voor Lightroom (je eigen preset) én een JPG mét de look er al in gebakken — handig om te WhatsAppen. Kleur is de Leica-look; zwartwit benadert Kodak Tri-X (pittig, iets zachter dan vol) met een fijne filmkorrel in zoeker en JPG. Tik op de filmnaam bovenin om snel te wisselen. DNG's zijn 12 MP (±25 MB) — Apple staat buiten ProRAW geen 48 MP RAW toe; net als je D700 dus.")
                 }
 
                 Section("Vast in deze app") {

@@ -20,6 +20,7 @@ final class PreviewRenderer: MTKView, MTKViewDelegate, AVCaptureVideoDataOutputS
 
     var look: CIFilter?
     var vignette = false
+    var grain = false
     var zebrasEnabled = false
     var histogramEnabled = false
     var onHistogram: (([Float]) -> Void)?
@@ -94,6 +95,9 @@ final class PreviewRenderer: MTKView, MTKViewDelegate, AVCaptureVideoDataOutputS
                 v.setValue(1.8, forKey: kCIInputRadiusKey)
                 if let output = v.outputImage { image = output.cropped(to: bounds) }
             }
+        }
+        if grain {
+            image = FilmGrain.apply(to: image).cropped(to: bounds)
         }
         if zebrasEnabled {
             image = applyZebras(to: image, measuring: base, bounds: bounds)
@@ -190,8 +194,10 @@ struct CameraPreview: UIViewRepresentable {
     }
 
     func updateUIView(_ view: PreviewRenderer, context: Context) {
+        let mono = looks.lookEnabled && looks.look == .mono
         view.look = looks.activeFilter
         view.vignette = looks.lookEnabled
+        view.grain = mono
         view.zebrasEnabled = zebras
         view.histogramEnabled = histogram
     }

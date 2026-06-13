@@ -26,17 +26,23 @@ final class LookManager: ObservableObject {
         didSet { UserDefaults.standard.set(look.rawValue, forKey: "filmLook") }
     }
 
-    private var filters: [FilmLook: CIFilter] = [:]
+    private struct Cube { let size: Int; let data: Data }
+    private var cubes: [FilmLook: Cube] = [:]
+    private var previewFilters: [FilmLook: CIFilter] = [:]
 
     var lookName: String { look.label }
     var lookSymbol: String { look.symbol }
-    var activeFilter: CIFilter? { lookEnabled ? filters[look] : nil }
+    /// Gedeelde instantie voor de live preview (alleen door de zoeker-thread).
+    var activeFilter: CIFilter? { lookEnabled ? previewFilters[look] : nil }
 
     init() {
         lookEnabled = UserDefaults.standard.object(forKey: "lookEnabled") as? Bool ?? true
         look = FilmLook(rawValue: UserDefaults.standard.string(forKey: "filmLook") ?? "") ?? .color
         for l in FilmLook.allCases {
-            filters[l] = Self.loadCube(named: l.resource)
+            if let cube = Self.loadCube(named: l.resource) {
+                cubes[l] = cube
+                previewFilters[l] = Self.makeFilter(from: cube)
+            }
         }
     }
 
@@ -45,7 +51,14 @@ final class LookManager: ObservableObject {
         look = (look == .color) ? .mono : .color
     }
 
-    private static func loadCube(named name: String) -> CIFilter? {
+    /// Verse, eigen filterinstantie om de look in de JPG te bakken — los van de
+    /// preview, zodat foto- en zoeker-thread niet op dezelfde CIFilter schrijven.
+    func makeFilter(for look: FilmLook) -> CIFilter? {
+        guard let cube = cubes[look] else { return nil }
+        return Self.makeFilter(from: cube)
+    }
+
+    private static func loadCube(named name: String) -> Cube? {
         guard let url = Bundle.main.url(forResource: name, withExtension: "cube"),
               let text = try? String(contentsOf: url, encoding: .utf8)
         else { return nil }
@@ -70,10 +83,13 @@ final class LookManager: ObservableObject {
 
         guard size > 1, values.count == size * size * size * 4 else { return nil }
         let data = values.withUnsafeBufferPointer { Data(buffer: $0) }
+        return Cube(size: size, data: data)
+    }
 
+    private static func makeFilter(from cube: Cube) -> CIFilter? {
         guard let filter = CIFilter(name: "CIColorCubeWithColorSpace") else { return nil }
-        filter.setValue(size, forKey: "inputCubeDimension")
-        filter.setValue(data, forKey: "inputCubeData")
+        filter.setValue(cube.size, forKey: "inputCubeDimension")
+        filter.setValue(cube.data, forKey: "inputCubeData")
         filter.setValue(CGColorSpace(name: CGColorSpace.sRGB)!, forKey: "inputColorSpace")
         return filter
     }
