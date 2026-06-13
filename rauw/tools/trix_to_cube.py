@@ -11,6 +11,8 @@ Karakter:
     worden wat donkerder (dramatisch), huid en blad blijven helder.
   - Pittige S-curve met diepe maar niet dichtgeknepen zwarten en een
     zachte schouder in de hooglichten.
+  - Heel subtiele bruinzwarte toning in de schaduwen (geen sepia): warm in
+    de diepe tonen, neutraal naar de hooglichten toe, zodat wit schoon blijft.
   - Belichting -0.55 gelijk aan de kleurlook, zodat de zoeker even helder is.
 """
 
@@ -32,6 +34,18 @@ CURVE_PTS = [
     (0, 4), (32, 22), (64, 52), (96, 92), (128, 132),
     (160, 172), (192, 206), (224, 234), (255, 251),
 ]
+
+# Bruinzwarte toning: maximale verschuiving per kanaal in de diepste tonen.
+# Rood iets op, groen heel licht op, blauw iets eraf -> warm bruinzwart.
+# Klein houden: dit moet "een tikkie" zijn, geen sepia.
+TONE_R = 0.018
+TONE_G = 0.006
+TONE_B = -0.012
+
+
+def smoothstep(a, b, x):
+    t = max(0.0, min(1.0, (x - a) / (b - a)))
+    return t * t * (3 - 2 * t)
 
 
 def monotone_cubic(points):
@@ -81,7 +95,13 @@ def transform(r, g, b):
     y = W_R * r + W_G * g + W_B * b
     y = curve(min(max(y, 0.0), 1.0))
     y = max(0.0, min(1.0, y))
-    return y, y, y
+
+    # Bruinzwarte toning, alleen in de schaduwen; valt weg richting hooglicht.
+    w = 1.0 - smoothstep(0.0, 0.55, y)
+    r = y + TONE_R * w
+    g = y + TONE_G * w
+    b = y + TONE_B * w
+    return (max(0.0, min(1.0, c)) for c in (r, g, b))
 
 
 def main():
