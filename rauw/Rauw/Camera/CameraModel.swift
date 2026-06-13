@@ -307,7 +307,8 @@ final class CameraModel: NSObject, ObservableObject {
                 } else {
                     settings = AVCapturePhotoSettings(rawPixelFormatType: raw)
                 }
-                settings.photoQualityPrioritization = .balanced
+                // photoQualityPrioritization mag NIET bij een RAW-opname
+                // (crasht: "Unsupported when capturing RAW"). Bewust weggelaten.
                 // Bayer RAW levert 12 MP; vraag geen grotere processed maat
                 if let d = dims.first(where: { Int($0.width) * Int($0.height) >= 12_000_000 }) ?? dims.last {
                     settings.maxPhotoDimensions = d
