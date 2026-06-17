@@ -99,6 +99,25 @@
   .div-row .d .me { color: var(--accent); }
   .div-row .d .world { color: var(--muted); }
 
+  /* ── AI SMAAKDUIDING (B5) ── */
+  .ai-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 4px; padding: 18px 20px;
+  }
+  .ai-btn {
+    padding: 8px 16px; border: 1px solid var(--accent2); background: transparent;
+    color: var(--accent2); font-family: 'DM Mono', monospace; font-size: 12px;
+    cursor: pointer; border-radius: 3px; transition: all 0.15s; letter-spacing: 0.03em;
+  }
+  .ai-btn:hover:not(:disabled) { background: rgba(122,159,184,0.1); }
+  .ai-btn:disabled { opacity: 0.5; cursor: default; }
+  .ai-text { line-height: 1.7; font-size: 13px; color: var(--text); white-space: pre-wrap; }
+  .ai-text + .ai-actions { margin-top: 14px; }
+  .ai-note { color: var(--muted); font-size: 11px; margin-top: 10px; }
+  .ai-err { color: var(--bad); font-size: 12px; }
+  @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+  .ai-loading { color: var(--accent2); animation: pulse 1.2s infinite; }
+
   #loading, #error { text-align: center; padding: 80px 20px; color: var(--muted); }
   #error { color: var(--bad); }
   .empty { color: var(--muted); font-size: 11px; font-style: italic; }
@@ -197,6 +216,117 @@ function barChart(rows, color, formatVal) {
   return wrap;
 }
 
+// ─────────── AI SMAAKDUIDING (B5) ───────────
+const ANTHROPIC_KEY = 'filmlog_anthropic_token';
+const TASTE_CACHE = 'filmlog_taste_profile';
+
+function formatFilmsForTaste(films) {
+  const rated = films.filter(f => num(f.myRating) != null);
+  const pool = (rated.length >= 10 ? rated : films).slice();
+  // hoogst beoordeelde eerst, zodat de smaaksignalen vooraan staan
+  pool.sort((a, b) => (num(b.myRating) || 0) - (num(a.myRating) || 0));
+  return pool.slice(0, 60).map(f => {
+    const r = num(f.myRating);
+    const parts = [`"${f.title}"`];
+    if (f.year) parts.push(`(${f.year})`);
+    if (f.directors) parts.push(`dir. ${f.directors}`);
+    if (f.genres) parts.push(`[${f.genres}]`);
+    if (r != null) parts.push(`— mijn cijfer ${r}/10`);
+    if (f.imdbRating) parts.push(`(IMDb ${f.imdbRating})`);
+    return '- ' + parts.join(' ');
+  }).join('\n');
+}
+
+async function generateTaste(films, target) {
+  const key = localStorage.getItem(ANTHROPIC_KEY);
+  if (!key) {
+    target.innerHTML = '<div class="ai-err">Geen Anthropic-sleutel gevonden. Voer hem in via de FilmLog-app → Instellingen, en open deze pagina daarna op hetzelfde (github.io) domein.</div>';
+    return;
+  }
+  target.innerHTML = '<div class="ai-loading">Claude leest je filmlijst…</div>';
+
+  const system = `Je bent een scherpzinnige filmcurator. Je krijgt iemands kijkgeschiedenis met hun eigen cijfers. Schrijf een korte, persoonlijke smaakduiding in het Nederlands.
+
+Structuur (gebruik exact deze koppen, zonder opsommingstekens):
+SMAAKPROFIEL: 2-3 zinnen die de rode draad in hun smaak benoemen (genres, thema's, regisseurs, tijdperken, stemming).
+OPVALLEND: 1-2 zinnen over een patroon dat opvalt — bijvoorbeeld waar hun cijfers afwijken van de consensus, of een verrassende voorkeur.
+BLINDE VLEK: 1 concrete suggestie voor een regisseur, stroming of land dat goed bij hun smaak past maar ontbreekt.
+
+Houd het bondig, concreet en vermijd clichés. Spreek de persoon aan met "je".`;
+
+  const user = `Mijn kijkgeschiedenis (hoogst beoordeeld eerst):\n\n${formatFilmsForTaste(films)}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 600,
+        temperature: 0.7,
+        system,
+        messages: [{ role: 'user', content: user }]
+      })
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      if (res.status === 401) throw new Error('Anthropic-sleutel ongeldig. Controleer hem in de app.');
+      if (res.status === 429) throw new Error('Te veel verzoeken — even wachten en opnieuw proberen.');
+      let msg = `API-fout (${res.status})`;
+      try { msg = JSON.parse(body).error?.message || msg; } catch (_) {}
+      throw new Error(msg);
+    }
+    const data = await res.json();
+    const text = data?.content?.[0]?.text?.trim();
+    if (!text) throw new Error('Leeg antwoord van Claude.');
+    try { localStorage.setItem(TASTE_CACHE, JSON.stringify({ text, n: films.length, at: Date.now() })); } catch (_) {}
+    showTaste(target, text, true);
+  } catch (e) {
+    target.innerHTML = `<div class="ai-err">${e.message}</div>`;
+    const actions = el('div', 'ai-actions');
+    const retry = el('button', 'ai-btn', 'Opnieuw proberen');
+    retry.onclick = () => generateTaste(films, target);
+    actions.appendChild(retry);
+    target.appendChild(actions);
+  }
+}
+
+function showTaste(target, text, fresh) {
+  target.innerHTML = '';
+  target.appendChild(el('div', 'ai-text', text.replace(/&/g, '&amp;').replace(/</g, '&lt;')));
+  const actions = el('div', 'ai-actions');
+  const again = el('button', 'ai-btn', '↻ Opnieuw genereren');
+  again.onclick = () => generateTaste(window.__FILMS__, target);
+  actions.appendChild(again);
+  target.appendChild(actions);
+  if (!fresh) target.appendChild(el('div', 'ai-note', 'Eerder gegenereerd — klik op "Opnieuw genereren" voor een nieuwe duiding.'));
+}
+
+function buildTasteSection(films) {
+  window.__FILMS__ = films;
+  const sec = section('Smaakduiding', 'Laat Claude je kijkgeschiedenis lezen en je smaak in een paar zinnen samenvatten.');
+  const box = el('div', 'ai-box');
+  const body = el('div');
+
+  const cached = (() => { try { return JSON.parse(localStorage.getItem(TASTE_CACHE)); } catch (_) { return null; } })();
+  if (cached?.text) {
+    showTaste(body, cached.text, false);
+  } else {
+    const btn = el('button', 'ai-btn', '✨ Genereer smaakduiding');
+    btn.onclick = () => { btn.disabled = true; generateTaste(films, body); };
+    body.appendChild(btn);
+    body.appendChild(el('div', 'ai-note', 'Gebruikt je Anthropic-sleutel uit de app-instellingen. Eén korte API-aanroep.'));
+  }
+  box.appendChild(body);
+  sec.appendChild(box);
+  return sec;
+}
+
 // ─────────── RENDER ───────────
 function render(films) {
   // only films with a real title
@@ -229,6 +359,9 @@ function render(films) {
   });
   ov.appendChild(tiles);
   main.appendChild(ov);
+
+  // ===== AI SMAAKDUIDING (B5) =====
+  main.appendChild(buildTasteSection(films));
 
   // ===== 2. KIJKPATROON (per maand) =====
   const byMonth = {};
