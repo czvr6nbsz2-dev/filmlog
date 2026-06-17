@@ -1,7 +1,8 @@
-const CACHE_NAME = 'filmlog-v11';
+const CACHE_NAME = 'filmlog-v12';
 const STATIC_ASSETS = [
     './',
     './index.html',
+    './stats.html',
     './style.css',
     './manifest.json',
 ];

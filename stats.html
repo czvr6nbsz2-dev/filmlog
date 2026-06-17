@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Filmlog — Statistieken</title>
+<link rel="manifest" href="manifest.json">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Serif+Display:ital@0;1&display=swap');
+
+  :root {
+    --bg: #0d0d0f;
+    --surface: #141416;
+    --surface2: #1a1a1d;
+    --border: #222226;
+    --text: #e8e4dc;
+    --muted: #6b6860;
+    --accent: #c8b87a;
+    --accent2: #7a9fb8;
+
+    --good: #9fb87a;
+    --bad: #b87a7a;
+    --film: #c8b87a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'DM Mono', monospace; font-size: 13px;
+    min-height: 100vh; padding-bottom: 60px;
+  }
+
+  /* ── HEADER ── */
+  #header {
+    position: sticky; top: 0; left: 0; right: 0; min-height: 48px;
+    background: rgba(13,13,15,0.94); backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 20px; gap: 16px; z-index: 100;
+    flex-wrap: wrap;
+  }
+  #header h1 {
+    font-family: 'DM Serif Display', serif; font-size: 17px;
+    color: var(--accent); letter-spacing: 0.02em; white-space: nowrap;
+  }
+  #header .meta { color: var(--muted); font-size: 10px; white-space: nowrap; }
+  #nav { display: flex; gap: 6px; margin-left: auto; }
+  #nav a {
+    padding: 3px 9px; border: 1px solid var(--border); background: transparent;
+    color: var(--muted); font-size: 10px; cursor: pointer; border-radius: 2px;
+    text-decoration: none; transition: all 0.15s; letter-spacing: 0.03em;
+  }
+  #nav a:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── LAYOUT ── */
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+
+  .section { margin-bottom: 40px; }
+  .section > h2 {
+    font-family: 'DM Serif Display', serif; font-size: 19px; font-weight: normal;
+    color: var(--text); margin-bottom: 4px;
+  }
+  .section > .sub { color: var(--muted); font-size: 11px; margin-bottom: 18px; }
+
+  /* ── TILES ── */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .tile {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 4px; padding: 16px 18px;
+  }
+  .tile .num {
+    font-family: 'DM Serif Display', serif; font-size: 30px;
+    color: var(--accent); line-height: 1.1;
+  }
+  .tile .lbl { color: var(--muted); font-size: 10px; margin-top: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  /* ── BAR ROWS ── */
+  .bars { display: flex; flex-direction: column; gap: 7px; }
+  .bar-row { display: grid; grid-template-columns: 130px 1fr 56px; align-items: center; gap: 10px; }
+  .bar-row .name { color: var(--text); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar-track { background: var(--surface2); border-radius: 2px; height: 16px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+  .bar-row .val { color: var(--muted); font-size: 11px; text-align: right; }
+
+  /* mini bars for time chart */
+  .timechart { display: flex; align-items: flex-end; gap: 3px; height: 130px; overflow-x: auto; padding-bottom: 4px; }
+  .timebar { flex: 1 0 14px; min-width: 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+  .timebar .col { width: 100%; background: var(--accent2); border-radius: 2px 2px 0 0; min-height: 2px; transition: height 0.5s; }
+  .timebar .tick { color: var(--muted); font-size: 8px; margin-top: 4px; transform: rotate(-60deg); transform-origin: top left; white-space: nowrap; height: 28px; }
+
+  /* ── SCATTER ── */
+  .scatter-wrap { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 720px) { .scatter-wrap { grid-template-columns: 360px 1fr; } }
+  svg.scatter { width: 100%; height: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+  .divlist { display: flex; flex-direction: column; gap: 14px; }
+  .divlist h3 { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px; }
+  .div-row { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+  .div-row .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .div-row .d { font-size: 11px; white-space: nowrap; }
+  .div-row .d .me { color: var(--accent); }
+  .div-row .d .world { color: var(--muted); }
+
+  #loading, #error { text-align: center; padding: 80px 20px; color: var(--muted); }
+  #error { color: var(--bad); }
+  .empty { color: var(--muted); font-size: 11px; font-style: italic; }
+</style>
+</head>
+<body>
+  <div id="header">
+    <h1>Filmlog</h1>
+    <span class="meta" id="meta"></span>
+    <nav id="nav">
+      <a href="network.html">Netwerk →</a>
+      <a href="index.html">App →</a>
+    </nav>
+  </div>
+
+  <div id="loading">Statistieken laden…</div>
+  <div id="error" style="display:none"></div>
+  <main id="main" style="display:none"></main>
+
+<script>
+const GITHUB_JSON_URL = 'https://raw.githubusercontent.com/czvr6nbsz2-dev/filmlog/main/data/films.json';
+const IDB_NAME = 'filmlog', IDB_STORE = 'films';
+
+const MONTHS = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+
+// ─────────── DATA LOADING (GitHub → IndexedDB) ───────────
+async function loadFromGitHub() {
+  const res = await fetch(GITHUB_JSON_URL, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`GitHub ${res.status}`);
+  const films = await res.json();
+  return Array.isArray(films) ? films : [];
+}
+function loadFromIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(IDB_STORE)) { db.close(); return resolve([]); }
+      const store = db.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE);
+      const all = store.getAll();
+      all.onsuccess = () => { db.close(); resolve(all.result || []); };
+      all.onerror = () => { db.close(); reject(all.error); };
+    };
+  });
+}
+async function load() {
+  try {
+    const films = await loadFromGitHub();
+    if (films.length) return films;
+  } catch (e) { console.log('GitHub niet beschikbaar:', e.message); }
+  try {
+    const films = await loadFromIndexedDB();
+    if (films.length) return films;
+  } catch (e) { console.log('IndexedDB niet bereikbaar:', e.message); }
+  return [];
+}
+
+// ─────────── HELPERS ───────────
+const num = v => { const n = parseFloat(v); return isNaN(n) ? null : n; };
+const splitList = s => (s || '').split(',').map(x => x.trim()).filter(x => x && x !== 'N/A');
+
+function avg(arr) { return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0; }
+function fmt(n, d = 1) { return Number(n).toFixed(d).replace(/\.0$/, ''); }
+
+function el(tag, cls, html) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html != null) e.innerHTML = html;
+  return e;
+}
+function section(title, sub) {
+  const s = el('div', 'section');
+  s.appendChild(el('h2', null, title));
+  if (sub) s.appendChild(el('div', 'sub', sub));
+  return s;
+}
+
+// build a list of {name, value, secondary} → horizontal bars
+function barChart(rows, color, formatVal) {
+  const wrap = el('div', 'bars');
+  if (!rows.length) { wrap.appendChild(el('div', 'empty', 'Geen gegevens.')); return wrap; }
+  const max = Math.max(...rows.map(r => r.value));
+  rows.forEach(r => {
+    const row = el('div', 'bar-row');
+    row.appendChild(el('div', 'name', r.name));
+    const track = el('div', 'bar-track');
+    const fill = el('div', 'bar-fill');
+    fill.style.width = (max ? (r.value / max) * 100 : 0) + '%';
+    fill.style.background = typeof color === 'function' ? color(r) : color;
+    track.appendChild(fill);
+    row.appendChild(track);
+    row.appendChild(el('div', 'val', formatVal ? formatVal(r) : r.value));
+    wrap.appendChild(row);
+  });
+  return wrap;
+}
+
+// ─────────── RENDER ───────────
+function render(films) {
+  // only films with a real title
+  films = films.filter(f => f.title);
+  const main = document.getElementById('main');
+
+  // ===== 1. OVERZICHT =====
+  const rated = films.filter(f => num(f.myRating) != null);
+  // runtime is only recorded for some films → estimate total from the known average
+  const knownRuntimes = films.map(f => num(f.runtime)).filter(v => v != null && v > 0);
+  const avgRuntime = knownRuntimes.length ? avg(knownRuntimes) : 0;
+  const hours = avgRuntime ? Math.round((avgRuntime * films.length) / 60) : 0;
+  const cinema = films.filter(f => (f.location || '').toLowerCase().startsWith('bios')).length;
+  const home = films.length - cinema;
+  const avgMine = avg(rated.map(f => num(f.myRating)));
+
+  const ov = section('Overzicht', 'Een blik op je volledige filmlogboek.');
+  const tiles = el('div', 'tiles');
+  [
+    [films.length, 'films gezien'],
+    [hours ? '± ' + hours + ' u' : '—', 'kijktijd (schatting)'],
+    [fmt(avgMine), 'gemiddeld cijfer'],
+    [cinema, 'in de bioscoop'],
+    [home, 'thuis'],
+  ].forEach(([n, l]) => {
+    const t = el('div', 'tile');
+    t.appendChild(el('div', 'num', String(n)));
+    t.appendChild(el('div', 'lbl', l));
+    tiles.appendChild(t);
+  });
+  ov.appendChild(tiles);
+  main.appendChild(ov);
+
+  // ===== 2. KIJKPATROON (per maand) =====
+  const byMonth = {};
+  films.forEach(f => {
+    if (!f.watchDate) return;
+    const key = f.watchDate.slice(0, 7); // YYYY-MM
+    if (/^\d{4}-\d{2}$/.test(key)) byMonth[key] = (byMonth[key] || 0) + 1;
+  });
+  const monthKeys = Object.keys(byMonth).sort();
+  const tp = section('Kijkpatroon', 'Aantal films per maand.');
+  if (monthKeys.length) {
+    // fill gaps between first and last month
+    const filled = [];
+    if (monthKeys.length) {
+      let [y, m] = monthKeys[0].split('-').map(Number);
+      const [ey, em] = monthKeys[monthKeys.length - 1].split('-').map(Number);
+      while (y < ey || (y === ey && m <= em)) {
+        const k = `${y}-${String(m).padStart(2, '0')}`;
+        filled.push(k);
+        m++; if (m > 12) { m = 1; y++; }
+      }
+    }
+    const maxM = Math.max(...Object.values(byMonth));
+    const chart = el('div', 'timechart');
+    filled.forEach(k => {
+      const [yy, mm] = k.split('-');
+      const c = byMonth[k] || 0;
+      const bar = el('div', 'timebar');
+      const col = el('div', 'col');
+      col.style.height = (maxM ? (c / maxM) * 100 : 0) + '%';
+      col.title = `${MONTHS[+mm - 1]} ${yy}: ${c} film(s)`;
+      bar.appendChild(col);
+      bar.appendChild(el('div', 'tick', `${MONTHS[+mm - 1]} '${yy.slice(2)}`));
+      chart.appendChild(bar);
+    });
+    tp.appendChild(chart);
+  } else {
+    tp.appendChild(el('div', 'empty', 'Geen kijkdata beschikbaar.'));
+  }
+  main.appendChild(tp);
+
+  // ===== 3. SMAAKPROFIEL: genres by avg rating =====
+  const genreStats = {};
+  films.forEach(f => {
+    const r = num(f.myRating);
+    splitList(f.genres).forEach(g => {
+      (genreStats[g] ||= { count: 0, ratings: [] }).count++;
+      if (r != null) genreStats[g].ratings.push(r);
+    });
+  });
+  const genreRows = Object.entries(genreStats)
+    .filter(([, v]) => v.count >= 2)
+    .map(([name, v]) => ({ name, value: avg(v.ratings), count: v.count }))
+    .sort((a, b) => b.value - a.value);
+
+  const sp = section('Smaakprofiel', 'Genres gerangschikt op jouw gemiddelde cijfer (minstens 2 films).');
+  sp.appendChild(barChart(
+    genreRows,
+    r => `linear-gradient(90deg, var(--accent2), var(--accent))`,
+    r => `${fmt(r.value)} · ${r.count}×`
+  ));
+  main.appendChild(sp);
+
+  // ===== 4. TOP REGISSEURS (by count, with avg rating) =====
+  const dirStats = {};
+  films.forEach(f => {
+    const r = num(f.myRating);
+    splitList(f.directors).forEach(d => {
+      (dirStats[d] ||= { count: 0, ratings: [] }).count++;
+      if (r != null) dirStats[d].ratings.push(r);
+    });
+  });
+  const dirRows = Object.entries(dirStats)
+    .map(([name, v]) => ({ name, value: v.count, rating: avg(v.ratings) }))
+    .filter(r => r.value >= 2)
+    .sort((a, b) => b.value - a.value || b.rating - a.rating)
+    .slice(0, 12);
+  const ds = section('Meest geziene regisseurs', 'Regisseurs van wie je 2 of meer films zag.');
+  ds.appendChild(barChart(
+    dirRows,
+    'var(--director, #7a9fb8)',
+    r => `${r.value} films · ${fmt(r.rating)}`
+  ));
+  main.appendChild(ds);
+
+  // ===== 5. DECENNIA =====
+  const decStats = {};
+  films.forEach(f => {
+    const y = parseInt(f.year);
+    if (isNaN(y)) return;
+    const d = Math.floor(y / 10) * 10;
+    decStats[d] = (decStats[d] || 0) + 1;
+  });
+  const decRows = Object.entries(decStats)
+    .map(([d, c]) => ({ name: `${d}s`, value: c, dec: +d }))
+    .sort((a, b) => a.dec - b.dec);
+  const dc = section('Spreiding over decennia', 'Uit welke periode komen je films?');
+  dc.appendChild(barChart(decRows, 'var(--decade, #b87a9f)', r => `${r.value}`));
+  main.appendChild(dc);
+
+  // ===== 6. JIJ VS. DE WERELD =====
+  const pairs = films.map(f => {
+    const me = num(f.myRating);
+    const world = num(f.imdbRating);
+    return (me != null && world != null) ? { title: f.title, me, world } : null;
+  }).filter(Boolean);
+
+  const jw = section('Jij vs. de wereld', 'Jouw cijfer (1–10) tegenover de IMDb-score. De diagonaal = je bent het eens.');
+  const wrap = el('div', 'scatter-wrap');
+
+  // scatter SVG
+  const W = 360, H = 360, pad = 34;
+  const sx = v => pad + ((v - 1) / 9) * (W - 2 * pad);
+  const sy = v => H - pad - ((v - 1) / 9) * (H - 2 * pad);
+  let svg = `<svg class="scatter" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">`;
+  // diagonal
+  svg += `<line x1="${sx(1)}" y1="${sy(1)}" x2="${sx(10)}" y2="${sy(10)}" stroke="#333338" stroke-dasharray="3 3"/>`;
+  // axes ticks
+  for (let v = 2; v <= 10; v += 2) {
+    svg += `<text x="${sx(v)}" y="${H - pad + 14}" fill="#6b6860" font-size="9" text-anchor="middle">${v}</text>`;
+    svg += `<text x="${pad - 8}" y="${sy(v) + 3}" fill="#6b6860" font-size="9" text-anchor="end">${v}</text>`;
+  }
+  svg += `<text x="${W / 2}" y="${H - 4}" fill="#6b6860" font-size="9" text-anchor="middle">IMDb-score</text>`;
+  svg += `<text x="12" y="${H / 2}" fill="#6b6860" font-size="9" text-anchor="middle" transform="rotate(-90 12 ${H / 2})">jouw cijfer</text>`;
+  pairs.forEach(p => {
+    const above = p.me - p.world; // positief = jij vond 'm beter
+    const col = above > 0.5 ? '#9fb87a' : above < -0.5 ? '#b87a7a' : '#c8b87a';
+    svg += `<circle cx="${sx(p.world).toFixed(1)}" cy="${sy(p.me).toFixed(1)}" r="4" fill="${col}" fill-opacity="0.75"><title>${p.title.replace(/"/g, '&quot;')} — jij ${p.me}, IMDb ${p.world}</title></circle>`;
+  });
+  svg += `</svg>`;
+  wrap.innerHTML = svg;
+
+  // divergence lists
+  const lists = el('div', 'divlist');
+  const withDiff = pairs.map(p => ({ ...p, diff: p.me - p.world }));
+  const fans = [...withDiff].sort((a, b) => b.diff - a.diff).slice(0, 5);
+  const skeptic = [...withDiff].sort((a, b) => a.diff - b.diff).slice(0, 5);
+
+  const mkList = (title, rows) => {
+    const box = el('div');
+    box.appendChild(el('h3', null, title));
+    rows.forEach(p => {
+      const row = el('div', 'div-row');
+      row.appendChild(el('div', 't', p.title));
+      row.appendChild(el('div', 'd',
+        `<span class="me">${fmt(p.me, 0)}</span> <span class="world">/ ${fmt(p.world)}</span>`));
+      box.appendChild(row);
+    });
+    return box;
+  };
+  const col2 = el('div');
+  col2.appendChild(mkList('Jij bent fan (jij ≫ IMDb)', fans));
+  col2.appendChild(el('div', null, '<div style="height:14px"></div>'));
+  col2.appendChild(mkList('Jij bent kritisch (jij ≪ IMDb)', skeptic));
+  lists.appendChild(col2);
+
+  if (pairs.length) {
+    wrap.appendChild(lists);
+    jw.appendChild(wrap);
+  } else {
+    jw.appendChild(el('div', 'empty', 'Geen films met zowel een eigen cijfer als IMDb-score.'));
+  }
+  main.appendChild(jw);
+
+  // header meta
+  document.getElementById('meta').textContent =
+    `${films.length} films · ${rated.length} beoordeeld${hours ? ' · ± ' + hours + ' u kijktijd' : ''}`;
+}
+
+// ─────────── BOOT ───────────
+(async function () {
+  try {
+    const films = await load();
+    document.getElementById('loading').style.display = 'none';
+    if (!films.length) {
+      const err = document.getElementById('error');
+      err.style.display = 'block';
+      err.textContent = 'Geen filmdata gevonden. Stel GitHub-sync in via de FilmLog-app, of open deze pagina op het github.io-domein.';
+      return;
+    }
+    render(films);
+    document.getElementById('main').style.display = 'block';
+  } catch (e) {
+    document.getElementById('loading').style.display = 'none';
+    const err = document.getElementById('error');
+    err.style.display = 'block';
+    err.textContent = 'Fout bij laden: ' + e.message;
+  }
+})();
+</script>
+</body>
+</html>
