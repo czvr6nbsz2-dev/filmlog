@@ -65,6 +65,14 @@
   #btn-timeline:hover { border-color: var(--accent); color: var(--accent); }
   #btn-timeline.active { border-color: var(--accent2); color: var(--accent2); background: rgba(255,255,255,0.04); }
 
+  #btn-deep {
+    padding: 3px 9px; border: 1px solid var(--border); background: transparent;
+    color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px;
+    cursor: pointer; border-radius: 2px; transition: all 0.15s; letter-spacing: 0.03em; white-space: nowrap;
+  }
+  #btn-deep:hover { border-color: var(--actor); color: var(--actor); }
+  #btn-deep.active { border-color: var(--actor); color: var(--actor); background: rgba(255,255,255,0.04); }
+
   /* ── TIMELINE BAR (C9) ── */
   #timeline {
     display: none;
@@ -292,6 +300,7 @@
   <div id="controls">
     <button id="btn-refresh" title="Herlaad films uit FilmLog">↺ vernieuwen</button>
     <button id="btn-timeline" title="Laat het web groeien in kijkvolgorde">⏱ tijdlijn</button>
+    <button id="btn-deep" title="Haal de volledige cast op voor meer acteur- en regieverbindingen">⋯ dieper</button>
     <a id="btn-stats" href="stats.html" title="Bekijk statistieken">▦ statistieken</a>
     <div class="sep"></div>
     <button class="filter-btn active" data-type="film">● Films</button>
@@ -395,14 +404,29 @@ let timeStops = [];      // sorted unique watchDates
 let timeCutoff = null;   // null = toon alles; anders YYYY-MM-DD grens
 let tlTimer = null;      // play interval
 const omdbCache  = {};     // imdbID → enriched OMDb data
-const tmdbCast   = {};     // imdbID → [naam, naam, naam, naam] (top 4 via TMDb)
+const tmdbCast   = {};     // imdbID → [naam, …] diepe cast via TMDb (gevuld in deep-modus)
+const deepDirectors = {};  // imdbID → [naam, …] volledige regie via TMDb
 const personCache = {};    // "Name::type" → computed person profile
 
-// Top-4 acteurs: TMDb (rijker) → film.actors (fallback)
+// Diepere zoekmodus: gebruik volledige TMDb-cast/regie i.p.v. alleen de top-hoofdrollen
+let deepMode = false;
+let deepLoaded = false;    // is de diepe cast al opgehaald?
+let deepLoading = false;
+let currentFilms = [];     // laatst geladen films (voor herbouw)
+const DEEP_CAST_N = 12;    // hoeveel acteurs per film meenemen in deep-modus
+
+// Acteurs: in deep-modus de volledige TMDb-cast, anders top-5 uit film.actors (OMDb)
 function getActors(film) {
-  if (film.imdbID && tmdbCast[film.imdbID]?.length)
+  if (deepMode && film.imdbID && tmdbCast[film.imdbID]?.length)
     return tmdbCast[film.imdbID];
   return (film.actors || '').split(',').map(a => a.trim()).filter(Boolean).slice(0, 5);
+}
+
+// Regisseurs: in deep-modus de volledige TMDb-regielijst, anders film.directors (OMDb)
+function getDirectors(film) {
+  if (deepMode && film.imdbID && deepDirectors[film.imdbID]?.length)
+    return deepDirectors[film.imdbID];
+  return (film.directors || '').split(',').map(d => d.trim()).filter(Boolean);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -552,11 +576,9 @@ function buildGraph(films) {
     };
 
     // Director(s)
-    if (film.directors) {
-      film.directors.split(',').map(d => d.trim()).filter(Boolean).forEach(d => {
-        link(node(`dir:${d}`, d, 'director', { personName: d, personRole: 'director' }), 'director');
-      });
-    }
+    getDirectors(film).forEach(d => {
+      link(node(`dir:${d}`, d, 'director', { personName: d, personRole: 'director' }), 'director');
+    });
 
     // Actors: top-ACTOR_TOP altijd zichtbaar, extra acteurs als ze in 2+ films zitten
     const actors = getActors(film);
@@ -617,6 +639,7 @@ function buildGraph(films) {
 // ═══════════════════════════════════════════════════════════
 function init(films) {
   document.getElementById('load-panel').style.display = 'none';
+  currentFilms = films;
 
   // If we have embedded OMDb data, use it; otherwise graph renders without genres first
   const graph = buildGraph(films);
@@ -633,6 +656,104 @@ function init(films) {
   initClickHandlers();
   setupTimeline();
   render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// DIEPER ZOEKEN — volledige TMDb-cast/regie ophalen voor meer verbindingen
+// ═══════════════════════════════════════════════════════════
+// Maar 18 van de films hebben een tmdbId; de rest (≈119) wordt opgelost via
+// de imdbID met TMDb's /find-endpoint, zodat de hele collectie meedoet.
+async function fetchCredits(film) {
+  const cacheId = film.imdbID || ('tmdb' + film.tmdbId);
+  const cacheKey = 'filmlog_credits_' + cacheId;
+  try { const c = localStorage.getItem(cacheKey); if (c) return JSON.parse(c); } catch (_) {}
+
+  let tmdbId = film.tmdbId;
+  if (!tmdbId && film.imdbID) {
+    const find = await (await fetch(
+      `https://api.themoviedb.org/3/find/${film.imdbID}?api_key=${TMDB_KEY}&external_source=imdb_id`
+    )).json();
+    tmdbId = find?.movie_results?.[0]?.id;
+  }
+  if (!tmdbId) return { cast: [], directors: [] };
+
+  const res = await fetch(`https://api.themoviedb.org/3/movie/${tmdbId}/credits?api_key=${TMDB_KEY}`);
+  if (!res.ok) throw new Error('TMDB ' + res.status);
+  const data = await res.json();
+  const out = {
+    cast: (data.cast || []).slice(0, DEEP_CAST_N).map(c => c.name).filter(Boolean),
+    directors: (data.crew || []).filter(c => c.job === 'Director').map(c => c.name).filter(Boolean),
+  };
+  try { localStorage.setItem(cacheKey, JSON.stringify(out)); } catch (_) {}
+  return out;
+}
+
+async function loadDeepCast(onProgress) {
+  const films = currentFilms.filter(f => f.imdbID || f.tmdbId);
+  let done = 0, idx = 0;
+  const CONCURRENCY = 6;
+  async function worker() {
+    while (idx < films.length) {
+      const f = films[idx++];
+      const key = f.imdbID;
+      try {
+        const c = await fetchCredits(f);
+        if (key) {
+          if (c.cast?.length) tmdbCast[key] = c.cast;
+          if (c.directors?.length) deepDirectors[key] = c.directors;
+        }
+      } catch (_) { /* sla films over die TMDb niet teruggeeft */ }
+      done++;
+      if (onProgress) onProgress(done, films.length);
+    }
+  }
+  await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+}
+
+function rebuildGraph() {
+  stopPlay();
+  timeCutoff = null;
+  document.getElementById('timeline').classList.remove('vis');
+  document.getElementById('btn-timeline').classList.remove('active');
+  allNodes = []; allLinks = []; filmMap = {};
+  init(currentFilms);
+}
+
+async function toggleDeep() {
+  const btn = document.getElementById('btn-deep');
+  if (deepLoading) return;
+
+  if (deepMode) {                       // uitschakelen → terug naar hoofdrollen
+    deepMode = false;
+    btn.classList.remove('active');
+    btn.textContent = '⋯ dieper';
+    rebuildGraph();
+    return;
+  }
+
+  if (deepLoaded) {                     // al opgehaald → direct weer aanzetten
+    deepMode = true;
+    btn.classList.add('active');
+    btn.textContent = '⋯ dieper ✓';
+    rebuildGraph();
+    return;
+  }
+
+  deepLoading = true;                   // eerste keer → ophalen via TMDb
+  btn.classList.add('active');
+  try {
+    await loadDeepCast((d, t) => { btn.textContent = `⋯ ${Math.round(d / t * 100)}%`; });
+    deepLoaded = true;
+    deepMode = true;
+    btn.textContent = '⋯ dieper ✓';
+    rebuildGraph();
+  } catch (e) {
+    btn.textContent = '⋯ fout';
+    btn.classList.remove('active');
+    setTimeout(() => { btn.textContent = '⋯ dieper'; }, 2500);
+  } finally {
+    deepLoading = false;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -731,6 +852,7 @@ function stopPlay() {
 // ═══════════════════════════════════════════════════════════
 function setupSVG() {
   svg = d3.select('#canvas').attr('width', W).attr('height', H);
+  svg.selectAll('*').remove(); // idempotent: voorkomt gestapelde <g> bij herbouw
   const zoom = d3.zoom().scaleExtent([0.1, 8]).on('zoom', e => g.attr('transform', e.transform));
   svg.call(zoom);
   g = svg.append('g');
@@ -1425,6 +1547,8 @@ function navigeerNaarNode(node) {
 // ═══════════════════════════════════════════════════════════
 // REFRESH KNOP
 // ═══════════════════════════════════════════════════════════
+document.getElementById('btn-deep').onclick = toggleDeep;
+
 document.getElementById('btn-refresh').onclick = async () => {
   const btn = document.getElementById('btn-refresh');
   btn.textContent = '↺ laden…';
