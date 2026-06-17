@@ -49,6 +49,51 @@
   }
   #btn-refresh:hover { border-color: var(--accent); color: var(--accent); }
 
+  #btn-stats {
+    padding: 3px 9px; border: 1px solid var(--border); background: transparent;
+    color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px;
+    cursor: pointer; border-radius: 2px; transition: all 0.15s; letter-spacing: 0.03em;
+    text-decoration: none; white-space: nowrap;
+  }
+  #btn-stats:hover { border-color: var(--accent); color: var(--accent); }
+
+  #btn-timeline {
+    padding: 3px 9px; border: 1px solid var(--border); background: transparent;
+    color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px;
+    cursor: pointer; border-radius: 2px; transition: all 0.15s; letter-spacing: 0.03em; white-space: nowrap;
+  }
+  #btn-timeline:hover { border-color: var(--accent); color: var(--accent); }
+  #btn-timeline.active { border-color: var(--accent2); color: var(--accent2); background: rgba(255,255,255,0.04); }
+
+  /* ── TIMELINE BAR (C9) ── */
+  #timeline {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0; height: 52px;
+    background: rgba(13,13,15,0.94); backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border);
+    align-items: center; padding: 0 20px; gap: 14px; z-index: 100;
+  }
+  #timeline.vis { display: flex; }
+  #timeline button {
+    width: 30px; height: 26px; border: 1px solid var(--border); background: transparent;
+    color: var(--accent2); font-size: 11px; cursor: pointer; border-radius: 2px;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  #timeline button:hover { border-color: var(--accent2); }
+  #tl-slider {
+    flex: 1; appearance: none; -webkit-appearance: none; height: 3px; border-radius: 2px;
+    background: var(--border); outline: none; cursor: pointer;
+  }
+  #tl-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--accent2); cursor: pointer; border: 2px solid var(--bg);
+  }
+  #tl-slider::-moz-range-thumb {
+    width: 14px; height: 14px; border-radius: 50%; background: var(--accent2); cursor: pointer; border: 2px solid var(--bg);
+  }
+  #tl-date  { color: var(--accent); font-size: 12px; white-space: nowrap; min-width: 96px; text-align: right; }
+  #tl-count { color: var(--muted); font-size: 10px; white-space: nowrap; min-width: 58px; }
+
   .filter-btn {
     padding: 3px 9px; border: 1px solid var(--border); background: transparent;
     color: var(--muted); font-family: 'DM Mono', monospace; font-size: 10px;
@@ -246,6 +291,8 @@
   <span id="stats"></span>
   <div id="controls">
     <button id="btn-refresh" title="Herlaad films uit FilmLog">↺ vernieuwen</button>
+    <button id="btn-timeline" title="Laat het web groeien in kijkvolgorde">⏱ tijdlijn</button>
+    <a id="btn-stats" href="stats.html" title="Bekijk statistieken">▦ statistieken</a>
     <div class="sep"></div>
     <button class="filter-btn active" data-type="film">● Films</button>
     <button class="filter-btn active" data-type="director">● Regisseurs</button>
@@ -279,6 +326,14 @@
 </div>
 
 <svg id="canvas"></svg>
+
+<div id="timeline">
+  <button id="tl-play" title="Afspelen / pauzeren">▶</button>
+  <input id="tl-slider" type="range" min="0" max="0" value="0">
+  <span id="tl-date"></span>
+  <span id="tl-count"></span>
+  <button id="tl-close" title="Sluiten">✕</button>
+</div>
 
 <div id="tooltip">
   <div class="tt-title" id="tt-title"></div>
@@ -334,6 +389,11 @@ let allNodes = [], allLinks = [], filmMap = {};
 let activeTypes = new Set(['film','director','actor','decade','genre','country','writer']);
 let simulation, svg, g, linkLayer, nodeLayer;
 let W = window.innerWidth, H = window.innerHeight;
+
+// ── Timeline (C9) ──
+let timeStops = [];      // sorted unique watchDates
+let timeCutoff = null;   // null = toon alles; anders YYYY-MM-DD grens
+let tlTimer = null;      // play interval
 const omdbCache  = {};     // imdbID → enriched OMDb data
 const tmdbCast   = {};     // imdbID → [naam, naam, naam, naam] (top 4 via TMDb)
 const personCache = {};    // "Name::type" → computed person profile
@@ -562,6 +622,7 @@ function init(films) {
   const graph = buildGraph(films);
   allNodes = graph.nodes;
   allLinks = graph.links;
+  computeRevealDates();
 
   const filmCount = films.length;
   const nodeCount = allNodes.length;
@@ -570,7 +631,99 @@ function init(films) {
 
   setupSVG();
   initClickHandlers();
+  setupTimeline();
   render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// TIMELINE (C9) — laat het web groeien in kijkvolgorde
+// ═══════════════════════════════════════════════════════════
+function computeRevealDates() {
+  const FAR = '9999-99-99';
+  // film-node verschijnt op zijn eigen kijkdatum
+  for (const n of allNodes) {
+    if (n.type === 'film') n.revealDate = n.filmRef?.watchDate || FAR;
+  }
+  const filmRevealById = {};
+  for (const n of allNodes) if (n.type === 'film') filmRevealById[n.id] = n.revealDate;
+
+  // groep-node verschijnt zodra zijn vroegste gekoppelde film verschijnt
+  for (const n of allNodes) {
+    if (n.type === 'film') continue;
+    let earliest = FAR;
+    for (const fid of (n.filmIds || [])) {
+      const d = filmRevealById[fid] || FAR;
+      if (d < earliest) earliest = d;
+    }
+    n.revealDate = earliest;
+  }
+  // een relatie verschijnt zodra zijn film-eindpunt verschijnt
+  for (const l of allLinks) {
+    const sid = typeof l.source === 'object' ? l.source.id : l.source;
+    l.revealDate = filmRevealById[sid] || FAR;
+  }
+
+  timeStops = [...new Set(allNodes
+    .filter(n => n.type === 'film' && n.revealDate && n.revealDate !== FAR)
+    .map(n => n.revealDate))].sort();
+}
+
+function setupTimeline() {
+  const slider = document.getElementById('tl-slider');
+  if (!slider || !timeStops.length) return;
+  slider.min = 0;
+  slider.max = timeStops.length - 1;
+  slider.value = timeStops.length - 1;
+
+  document.getElementById('btn-timeline').onclick = () => {
+    const bar = document.getElementById('timeline');
+    const opening = !bar.classList.contains('vis');
+    bar.classList.toggle('vis', opening);
+    document.getElementById('btn-timeline').classList.toggle('active', opening);
+    if (opening) { slider.value = 0; setCutoffByIndex(0); }
+    else { stopPlay(); timeCutoff = null; applyTimeFilter(); }
+  };
+  slider.oninput = () => { stopPlay(); setCutoffByIndex(+slider.value); };
+  document.getElementById('tl-play').onclick = togglePlay;
+  document.getElementById('tl-close').onclick = () => document.getElementById('btn-timeline').onclick();
+}
+
+function setCutoffByIndex(i) {
+  i = Math.max(0, Math.min(timeStops.length - 1, i));
+  timeCutoff = timeStops[i];
+  const d = new Date(timeCutoff);
+  document.getElementById('tl-date').textContent =
+    isNaN(d) ? timeCutoff : d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' });
+  const shown = allNodes.filter(n => n.type === 'film' && n.revealDate <= timeCutoff).length;
+  document.getElementById('tl-count').textContent = `${shown} films`;
+  applyTimeFilter();
+}
+
+function applyTimeFilter() {
+  if (!nodeLayer) return;
+  if (timeCutoff === null) {
+    nodeLayer.style('display', null);
+    if (linkLayer) linkLayer.style('display', null);
+    return;
+  }
+  nodeLayer.style('display', d => (d.revealDate || '') <= timeCutoff ? null : 'none');
+  if (linkLayer) linkLayer.style('display', d => (d.revealDate || '') <= timeCutoff ? null : 'none');
+}
+
+function togglePlay() {
+  if (tlTimer) return stopPlay();
+  const slider = document.getElementById('tl-slider');
+  document.getElementById('tl-play').textContent = '❚❚';
+  if (+slider.value >= timeStops.length - 1) slider.value = 0; // herstart vanaf begin
+  tlTimer = setInterval(() => {
+    let v = +slider.value + 1;
+    if (v > timeStops.length - 1) { v = timeStops.length - 1; slider.value = v; setCutoffByIndex(v); return stopPlay(); }
+    slider.value = v; setCutoffByIndex(v);
+  }, 450);
+}
+function stopPlay() {
+  if (tlTimer) { clearInterval(tlTimer); tlTimer = null; }
+  document.getElementById('tl-play').textContent = '▶';
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -649,6 +802,8 @@ function render() {
         .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
       nodeLayer.attr('transform', d => `translate(${d.x},${d.y})`);
     });
+
+  applyTimeFilter();
 }
 
 // ═══════════════════════════════════════════════════════════
