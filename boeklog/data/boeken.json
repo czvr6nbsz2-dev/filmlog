@@ -3032,5 +3032,14 @@
     "myRating": 7,
     "id": "addec109-6b6e-462d-b46f-307670263338",
     "updatedAt": "2026-06-06T21:11:01.445Z"
+  },
+  {
+    "readDate": "2026-06-12",
+    "title": "Amerikanah",
+    "author": "Chimamanda ngozi adichie",
+    "myReview": null,
+    "myRating": 8,
+    "id": "2febd535-2716-433e-88a5-27a88b0d9bd8",
+    "updatedAt": "2026-06-18T16:42:56.312Z"
   }
 ]
