@@ -413,7 +413,7 @@ let deepMode = false;
 let deepLoaded = false;    // is de diepe cast al opgehaald?
 let deepLoading = false;
 let currentFilms = [];     // laatst geladen films (voor herbouw)
-const DEEP_CAST_N = 12;    // hoeveel acteurs per film meenemen in deep-modus
+const DEEP_CAST_N = 20;    // hoeveel acteurs per film meenemen in deep-modus
 
 // Acteurs: in deep-modus de volledige TMDb-cast, anders top-5 uit film.actors (OMDb)
 function getActors(film) {
@@ -665,7 +665,7 @@ function init(films) {
 // de imdbID met TMDb's /find-endpoint, zodat de hele collectie meedoet.
 async function fetchCredits(film) {
   const cacheId = film.imdbID || ('tmdb' + film.tmdbId);
-  const cacheKey = 'filmlog_credits_' + cacheId;
+  const cacheKey = `filmlog_credits_n${DEEP_CAST_N}_` + cacheId; // depth in sleutel → bumpen invalideert oude cache
   try { const c = localStorage.getItem(cacheKey); if (c) return JSON.parse(c); } catch (_) {}
 
   let tmdbId = film.tmdbId;
