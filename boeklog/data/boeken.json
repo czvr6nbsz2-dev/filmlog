@@ -3041,5 +3041,20 @@
     "myRating": 8,
     "id": "2febd535-2716-433e-88a5-27a88b0d9bd8",
     "updatedAt": "2026-06-18T16:42:56.312Z"
+  },
+  {
+    "readDate": "2026-06-19",
+    "title": "Klara and the sun",
+    "author": "Kazuo ishiguro",
+    "openLibraryKey": "/works/OL20883297W",
+    "publishYear": "2019",
+    "coverURL": "https://covers.openlibrary.org/b/id/10648686-M.jpg",
+    "description": "\"Klara and the Sun, the first novel by Kazuo Ishiguro since he was awarded the Nobel Prize in Literature, tells the story of Klara, an Artificial Friend with outstanding observational qualities, who, from her place in the store, watches carefully the behavior of those who come in to browse, and of those who pass on the street outside. She remains hopeful that a customer will soon choose her.\r\n\r\nKlara and the Sun is a thrilling book that offers a look at our changing world through the eyes of an unforgettable narrator, and one that explores the fundamental question: what does it mean to love?\r\n\r\nIn its award citation in 2017, the Nobel committee described Ishiguro's books as \"novels of great emotional force\" and said he has \"uncovered the abyss beneath our illusory sense of connection with the world.\"\"",
+    "subjects": "Fiction, science fiction, general, speculative fiction, nyt:combined-print-and-e-book-fiction=2021-03-21, New York Times bestseller, Fiction, dystopian",
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 7,
+    "id": "a9ef831e-7899-425a-ae2f-b5e6f35de13c",
+    "updatedAt": "2026-06-19T17:58:36.563Z"
   }
 ]
