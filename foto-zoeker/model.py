@@ -4,6 +4,8 @@ Eén multitaal-model (SigLIP 2) dat zowel beelden als Nederlandse tekst
 naar dezelfde vectorruimte vertaalt, zodat we tekst-tegen-beeld kunnen zoeken.
 """
 
+from __future__ import annotations  # nieuwere type-hints werkend op Python 3.9
+
 import os
 import torch
 from transformers import AutoModel, AutoProcessor

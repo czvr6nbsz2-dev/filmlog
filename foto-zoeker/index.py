@@ -11,6 +11,8 @@ Resultaat (afgeleide cache, mag je altijd weggooien en opnieuw bouwen):
 Herhaald draaien is veilig: al geindexeerde paden worden overgeslagen.
 """
 
+from __future__ import annotations  # nieuwere type-hints werkend op Python 3.9
+
 import argparse
 import json
 import sys
