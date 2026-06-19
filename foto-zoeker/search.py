@@ -52,13 +52,32 @@ def main():
 
 
 def write_html(path, query, results):
-    """Maakt een simpele thumbnail-pagina en opent die in de browser."""
+    """Maakt een thumbnail-pagina met ingebakken (base64) beelden en opent die.
+
+    Beelden worden in de HTML zelf gezet, zodat browsers geen lokale
+    file://-bestanden hoeven te laden (dat blokkeert Safari).
+    """
+    import base64
     import html
+    import io
     import webbrowser
 
+    from PIL import Image
+
+    def thumb_data_uri(p, max_side=400):
+        try:
+            im = Image.open(p).convert("RGB")
+            im.thumbnail((max_side, max_side))
+            buf = io.BytesIO()
+            im.save(buf, format="JPEG", quality=72)
+            b64 = base64.b64encode(buf.getvalue()).decode()
+            return f"data:image/jpeg;base64,{b64}"
+        except Exception:
+            return ""
+
     cards = "\n".join(
-        f'<figure><img src="file://{html.escape(p)}" loading="lazy">'
-        f'<figcaption>{rank}. {score:.3f}</figcaption></figure>'
+        f'<figure><img src="{thumb_data_uri(p)}" loading="lazy">'
+        f'<figcaption>{rank}. {score:.3f}<br>{html.escape(Path(p).name)}</figcaption></figure>'
         for rank, (score, p) in enumerate(results, 1)
     )
     doc = f"""<!doctype html><meta charset="utf-8">
@@ -67,7 +86,7 @@ def write_html(path, query, results):
  body{{font-family:sans-serif;background:#222;color:#eee;margin:1rem}}
  .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}}
  figure{{margin:0}} img{{width:100%;height:200px;object-fit:cover;border-radius:4px}}
- figcaption{{font-size:.85rem;opacity:.8;padding:2px 0}}
+ figcaption{{font-size:.8rem;opacity:.8;padding:2px 0}}
 </style>
 <h2>{html.escape(query)}</h2>
 <div class="grid">{cards}</div>"""
