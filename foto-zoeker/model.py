@@ -29,18 +29,27 @@ def load_model(device: str | None = None):
     """Laadt model + processor. Eerste keer wordt het model gedownload."""
     device = device or pick_device()
     print(f"Model laden: {MODEL_NAME} op {device} ...")
-    model = AutoModel.from_pretrained(MODEL_NAME).to(device).eval()
-    processor = AutoProcessor.from_pretrained(MODEL_NAME)
+    # eager-attention voorkomt NaN's die SigLIP soms op Apple MPS geeft.
+    model = AutoModel.from_pretrained(
+        MODEL_NAME, attn_implementation="eager"
+    ).to(device).eval()
+    processor = AutoProcessor.from_pretrained(MODEL_NAME, use_fast=True)
     return model, processor, device
+
+
+def _normalize(feats):
+    """Naar float32, NaN/inf wegpoetsen, dan veilig L2-normaliseren."""
+    feats = feats.float()
+    feats = torch.nan_to_num(feats, nan=0.0, posinf=0.0, neginf=0.0)
+    norm = feats.norm(dim=-1, keepdim=True).clamp_min(1e-8)
+    return (feats / norm).cpu().numpy()
 
 
 @torch.no_grad()
 def embed_images(model, processor, device, pil_images):
     """Geeft L2-genormaliseerde beeld-embeddings terug (numpy, [N, D])."""
     inputs = processor(images=pil_images, return_tensors="pt").to(device)
-    feats = model.get_image_features(**inputs)
-    feats = feats / feats.norm(dim=-1, keepdim=True)
-    return feats.cpu().numpy()
+    return _normalize(model.get_image_features(**inputs))
 
 
 @torch.no_grad()
@@ -50,6 +59,4 @@ def embed_text(model, processor, device, texts):
     inputs = processor(
         text=texts, return_tensors="pt", padding="max_length"
     ).to(device)
-    feats = model.get_text_features(**inputs)
-    feats = feats / feats.norm(dim=-1, keepdim=True)
-    return feats.cpu().numpy()
+    return _normalize(model.get_text_features(**inputs))

@@ -23,6 +23,8 @@ def main():
     ap.add_argument("query", help="Zoekterm in natuurlijke taal")
     ap.add_argument("--out", default="index", help="Basisnaam indexbestanden")
     ap.add_argument("--top-k", type=int, default=20)
+    ap.add_argument("--html", nargs="?", const="results.html", default=None,
+                    help="Schrijf een HTML-contactafdruk (en open hem)")
     args = ap.parse_args()
 
     out = Path(args.out)
@@ -43,6 +45,36 @@ def main():
     print(f"\nTop {len(order)} voor: \"{args.query}\"\n")
     for rank, idx in enumerate(order, 1):
         print(f"{rank:>3}. {scores[idx]:.3f}  {paths[idx]}")
+
+    if args.html is not None:
+        write_html(args.html, args.query,
+                   [(float(scores[i]), paths[i]) for i in order])
+
+
+def write_html(path, query, results):
+    """Maakt een simpele thumbnail-pagina en opent die in de browser."""
+    import html
+    import webbrowser
+
+    cards = "\n".join(
+        f'<figure><img src="file://{html.escape(p)}" loading="lazy">'
+        f'<figcaption>{rank}. {score:.3f}</figcaption></figure>'
+        for rank, (score, p) in enumerate(results, 1)
+    )
+    doc = f"""<!doctype html><meta charset="utf-8">
+<title>{html.escape(query)}</title>
+<style>
+ body{{font-family:sans-serif;background:#222;color:#eee;margin:1rem}}
+ .grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}}
+ figure{{margin:0}} img{{width:100%;height:200px;object-fit:cover;border-radius:4px}}
+ figcaption{{font-size:.85rem;opacity:.8;padding:2px 0}}
+</style>
+<h2>{html.escape(query)}</h2>
+<div class="grid">{cards}</div>"""
+    out = Path(path).resolve()
+    out.write_text(doc)
+    print(f"\nHTML-contactafdruk: {out}")
+    webbrowser.open(out.as_uri())
 
 
 if __name__ == "__main__":
