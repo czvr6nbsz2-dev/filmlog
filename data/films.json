@@ -1,5 +1,25 @@
 [
   {
+    "location": "thuis",
+    "watchDate": "2026-06-21",
+    "title": "Civil War",
+    "imdbID": "tt17279496",
+    "year": "2024",
+    "directors": "Alex Garland",
+    "actors": "Kirsten Dunst, Wagner Moura, Cailee Spaeny",
+    "plot": "In a dystopian future, four journalists travel across the United States during a nation-wide conflict. While trying to survive, they aim to reach the White House to interview the president before he is overthrown.",
+    "imdbRating": "7.0",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BYTkzMjc0YzgtY2E0Yi00NDBlLWI0MWUtODY1ZjExMDAyOWZiXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 929590,
+    "tmdbRating": "6.9",
+    "genres": "Oorlog, Actie, Drama",
+    "runtime": "109",
+    "myReview": null,
+    "myRating": 7,
+    "id": "224f5d32-c9ea-46e3-afd5-f52058a7554a",
+    "updatedAt": "2026-06-21T18:25:04.042Z"
+  },
+  {
     "location": "bioscoop",
     "watchDate": "2026-06-13",
     "title": "Backrooms",
