@@ -1,5 +1,25 @@
 [
   {
+    "location": "bioscoop",
+    "watchDate": "2026-06-25",
+    "title": "Calle Málaga",
+    "imdbID": "tt32429174",
+    "year": "2025",
+    "directors": "Maryam Touzani",
+    "actors": "Carmen Maura, Marta Etura, María Alfonsa Rosso",
+    "plot": "An aging Spanish woman in Tangier resists her daughter's decision to sell her home. Determined to stay, she does everything she can to keep her home and reclaim the belongings of a lifetime. Along the way, she rediscovers love and...",
+    "imdbRating": null,
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMjRhYmZiZjMtMmIzZC00NjM3LTg1N2MtMjg4MjkxZjAzODAxXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1399462,
+    "tmdbRating": "7.3",
+    "genres": "Drama",
+    "runtime": "116",
+    "myReview": null,
+    "myRating": 9,
+    "id": "b76951da-e5d6-4db8-8ae4-f4d399641f7e",
+    "updatedAt": "2026-06-25T20:38:11.367Z"
+  },
+  {
     "location": "thuis",
     "watchDate": "2026-06-21",
     "title": "Civil War",
