@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-06-26",
+    "title": "À bras-le-corps",
+    "imdbID": "tt34973241",
+    "year": "2025",
+    "directors": "Marie-Elsa Sgualdo",
+    "actors": "Lila Gueneau, Sasha Gravat Harsch, Sandrine Blancke",
+    "plot": "Zwitserland, 1943. In een traditioneel protestants bergdorpje werkt de vijftienjarige Emma als dienstmeisje bij een rijke familie. Haar stille droom om verpleegster te worden hoopt ze waar te maken door de deugdprijs van het dorp te winnen. Maar wanneer een rijke jongeman haar verkracht en ze zwanger raakt, begint haar wereld te wankelen. Wanhopig zoekt Emma naar een schandaalvrije uitweg, die ze vindt in een huwelijk met dorpsgenoot Paul. Verscheurd door sociale druk en haar groeiende eigenwaarde begint ze zich echter te verzetten – tegen haar nieuwe rol, tegen de hypocrisie van haar dorpsgenoten en tegen de soldaten die oorlogsvluchtelingen terugsturen naar bezet gebied.",
+    "imdbRating": null,
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BN2IyYTQzMTItNzgyOC00ZGYwLWEwMzktMzRlYjBhMDYwNTdlXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1303357,
+    "tmdbRating": "6.9",
+    "genres": "Drama, Historisch",
+    "runtime": "96",
+    "myReview": null,
+    "myRating": 8,
+    "id": "c4639aa0-7d14-40ef-a17b-f406660b0c90",
+    "updatedAt": "2026-06-26T19:56:45.769Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-06-25",
     "title": "Calle Málaga",
     "imdbID": "tt32429174",
