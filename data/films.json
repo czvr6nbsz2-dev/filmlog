@@ -1,5 +1,21 @@
 [
   {
+    "location": "thuis",
+    "watchDate": "2026-06-27",
+    "title": "Blow-Up",
+    "imdbID": "tt0060176",
+    "year": "1966",
+    "directors": "Michelangelo Antonioni",
+    "actors": "David Hemmings, Vanessa Redgrave, Sarah Miles",
+    "plot": "A fashion photographer unknowingly captures a death on film after following two lovers in a park.",
+    "imdbRating": "7.4",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BOGFlNzlhYWMtZmZkZi00YmYyLWJiZjgtNmQ1MzkyOGQ5NDdjXkEyXkFqcGc@._V1_SX300.jpg",
+    "myReview": "Te oud, lukt niet meer",
+    "myRating": 5,
+    "id": "dec6d802-1fda-48e5-995a-4c37472e31e8",
+    "updatedAt": "2026-06-27T17:53:35.019Z"
+  },
+  {
     "location": "bioscoop",
     "watchDate": "2026-06-26",
     "title": "À bras-le-corps",
