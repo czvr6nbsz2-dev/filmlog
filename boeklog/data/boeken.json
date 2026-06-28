@@ -3080,5 +3080,20 @@
     "myRating": 6,
     "id": "cf2f938c-31f0-4f32-8e15-07108ed94cfc",
     "updatedAt": "2026-06-28T07:31:07.780Z"
+  },
+  {
+    "readDate": "2026-06-28",
+    "title": "Same as ever",
+    "author": "Morgan housel",
+    "openLibraryKey": "/works/OL35156586W",
+    "publishYear": "2023",
+    "coverURL": "https://covers.openlibrary.org/b/id/14157635-M.jpg",
+    "description": null,
+    "subjects": "nyt:advice-how-to-and-miscellaneous=2023-11-26, New York Times bestseller",
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 7,
+    "id": "acae417c-e7ca-439f-92c7-e55393a58300",
+    "updatedAt": "2026-06-28T18:54:07.116Z"
   }
 ]
