@@ -3056,5 +3056,14 @@
     "myRating": 7,
     "id": "a9ef831e-7899-425a-ae2f-b5e6f35de13c",
     "updatedAt": "2026-06-19T17:58:36.563Z"
+  },
+  {
+    "readDate": "2026-06-21",
+    "title": "The sixth extinction",
+    "author": "Elisabeth Kolbert",
+    "myReview": null,
+    "myRating": 8,
+    "id": "1547d02f-409a-44e0-82a5-0087e58ffeb1",
+    "updatedAt": "2026-06-28T07:30:25.000Z"
   }
 ]
