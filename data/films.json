@@ -1,5 +1,25 @@
 [
   {
+    "location": "bioscoop",
+    "watchDate": "2026-07-07",
+    "title": "The Salt of the Earth",
+    "imdbID": "tt3674140",
+    "year": "2014",
+    "directors": "Juliano Ribeiro Salgado, Wim Wenders",
+    "actors": "Sebastião Salgado, Wim Wenders, Lélia Wanick Salgado",
+    "plot": "The life and work of photographer Sebastião Salgado, who has spent forty years documenting societies in hidden corners of the world.",
+    "imdbRating": "8.4",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BNjkyNjI3ODc0Ml5BMl5BanBnXkFtZTgwMTU0MjM2NDE@._V1_SX300.jpg",
+    "tmdbId": 265297,
+    "tmdbRating": "8.1",
+    "genres": "Documentaire",
+    "runtime": "110",
+    "myReview": null,
+    "myRating": 9,
+    "id": "79ca517f-f926-4757-b67c-2d51fcb6c497",
+    "updatedAt": "2026-07-07T21:03:27.662Z"
+  },
+  {
     "location": "thuis",
     "watchDate": "2026-06-27",
     "title": "Blow-Up",
