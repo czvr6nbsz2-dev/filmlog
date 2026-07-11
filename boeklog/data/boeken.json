@@ -3095,5 +3095,20 @@
     "myRating": 7,
     "id": "acae417c-e7ca-439f-92c7-e55393a58300",
     "updatedAt": "2026-06-28T18:54:07.116Z"
+  },
+  {
+    "readDate": "2026-07-11",
+    "title": "Nachttrein naar lissabon",
+    "author": "Pascal mercier",
+    "openLibraryKey": "/works/OL24754007W",
+    "publishYear": "2006",
+    "coverURL": "https://covers.openlibrary.org/b/id/11499620-M.jpg",
+    "description": "Een Zwitserse leraar raakt zo geboeid door de filosofische overpeinzingen van een Portugese arts dat hij naar Portugal afreist om meer over hem te weten te komen.",
+    "subjects": null,
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 10,
+    "id": "4c1a05db-8321-4775-bf13-33e244117962",
+    "updatedAt": "2026-07-11T12:10:54.478Z"
   }
 ]
