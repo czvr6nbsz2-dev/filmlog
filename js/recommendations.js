@@ -1,13 +1,12 @@
 /**
  * Film Recommendation Engine
- * Generates personalized film recommendations using the OpenAI API
+ * Generates personalized film recommendations using Claude API
  */
 
-// Storage key is kept as-is so the existing Settings field keeps working.
-const API_KEY_KEY = 'filmlog_anthropic_token';
+const ANTHROPIC_API_KEY_KEY = 'filmlog_anthropic_token';
 
 export function isApiKeyConfigured() {
-    return !!localStorage.getItem(API_KEY_KEY);
+    return !!localStorage.getItem(ANTHROPIC_API_KEY_KEY);
 }
 
 function formatFilmsForPrompt(films) {
@@ -35,7 +34,7 @@ function extractJsonArray(text) {
 
 function parseRecommendationResponse(data) {
     let text = '';
-    if (data?.choices?.[0]?.message?.content) text = data.choices[0].message.content;
+    if (data?.content?.[0]?.text) text = data.content[0].text;
     else if (typeof data === 'string') text = data;
     else throw new Error('Onverwacht API-antwoord');
 
@@ -59,8 +58,8 @@ function parseRecommendationResponse(data) {
 }
 
 export async function generateRecommendations(films, mode, theme = null) {
-    const apiKey = localStorage.getItem(API_KEY_KEY);
-    if (!apiKey) throw new Error('OpenAI API-sleutel niet ingesteld. Sla deze op in Instellingen.');
+    const apiKey = localStorage.getItem(ANTHROPIC_API_KEY_KEY);
+    if (!apiKey) throw new Error('Anthropic API-sleutel niet ingesteld. Sla deze op in Instellingen.');
 
     const filmsText = formatFilmsForPrompt(films);
 
@@ -100,21 +99,20 @@ Respond ONLY with a valid JSON array containing exactly 10 objects with these fi
 
         let response;
         try {
-            response = await fetch('https://api.openai.com/v1/chat/completions', {
+            response = await fetch('https://api.anthropic.com/v1/messages', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
+                    'x-api-key': apiKey,
+                    'anthropic-version': '2023-06-01',
+                    'anthropic-dangerous-direct-browser-access': 'true'
                 },
                 body: JSON.stringify({
-                    model: 'gpt-4o',
+                    model: 'claude-sonnet-5',
                     max_tokens: 2000,
                     temperature: 0.7,
-                    response_format: { type: 'json_object' },
-                    messages: [
-                        { role: 'system', content: systemPrompt + '\n\nReturn the JSON array under a top-level key called "recommendations".' },
-                        { role: 'user', content: userPrompt }
-                    ]
+                    system: systemPrompt,
+                    messages: [{ role: 'user', content: userPrompt }]
                 })
             });
         } catch (fetchError) {
@@ -125,8 +123,8 @@ Respond ONLY with a valid JSON array containing exactly 10 objects with these fi
             const errorData = await response.text();
             console.error('[FilmLog] API error:', { status: response.status, body: errorData });
 
-            if (response.status === 401) throw new Error('API-sleutel ongeldig. Controleer je OpenAI-token in Instellingen.');
-            if (response.status === 429) throw new Error('Te veel verzoeken of geen tegoed. Controleer je OpenAI-tegoed en probeer later opnieuw.');
+            if (response.status === 401) throw new Error('API-sleutel ongeldig. Controleer je Anthropic-token in Instellingen.');
+            if (response.status === 429) throw new Error('Te veel verzoeken. Even geduld en daarna opnieuw proberen.');
 
             let message = `API-fout (${response.status})`;
             try {
