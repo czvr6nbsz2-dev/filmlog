@@ -108,7 +108,7 @@ Respond ONLY with a valid JSON array containing exactly 10 objects with these fi
                     'anthropic-dangerous-direct-browser-access': 'true'
                 },
                 body: JSON.stringify({
-                    model: 'claude-sonnet-4-20250514',
+                    model: 'claude-sonnet-5',
                     max_tokens: 2000,
                     temperature: 0.7,
                     system: systemPrompt,
