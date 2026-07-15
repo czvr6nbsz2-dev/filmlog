@@ -3119,5 +3119,14 @@
     "myRating": 6,
     "id": "62d63d6b-a612-41cf-827c-f1eec7474eae",
     "updatedAt": "2026-07-11T15:13:14.038Z"
+  },
+  {
+    "readDate": "2026-07-15",
+    "title": "De rode keizer",
+    "author": "Michael sheridan",
+    "myReview": null,
+    "myRating": 8,
+    "id": "8d6e3251-3cf1-4fef-a04e-c15faafc94fa",
+    "updatedAt": "2026-07-15T15:14:38.544Z"
   }
 ]
