@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-07-16",
+    "title": "The Invite",
+    "imdbID": "tt14173636",
+    "year": "2026",
+    "directors": "Olivia Wilde",
+    "actors": "Seth Rogen, Olivia Wilde, Penélope Cruz",
+    "plot": "Joe and Angela's marriage is on thin ice. When they invite their enigmatic upstairs neighbors for a dinner party, the night spirals into unexpected places.",
+    "imdbRating": "7.8",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMjI0MzJjMjctNmQzZi00Y2U4LWEwZGItMmE3NDUzNzk1YzY3XkEyXkFqcGc@._V1_QL75_UX380_CR0,15,380,562_.jpg",
+    "tmdbId": 950028,
+    "tmdbRating": "7.6",
+    "genres": "Drama, Komedie",
+    "runtime": "107",
+    "myReview": "Te Amerkaans",
+    "myRating": 5,
+    "id": "c6091d08-020a-4b6e-a361-25e04ecef3f5",
+    "updatedAt": "2026-07-16T21:03:38.604Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-07-10",
     "title": "Una quinta portuguesa",
     "imdbID": "tt28090350",
