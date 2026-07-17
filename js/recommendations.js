@@ -34,9 +34,18 @@ function extractJsonArray(text) {
 
 function parseRecommendationResponse(data) {
     let text = '';
-    if (data?.content?.[0]?.text) text = data.content[0].text;
-    else if (typeof data === 'string') text = data;
-    else throw new Error('Onverwacht API-antwoord');
+    if (Array.isArray(data?.content)) {
+        const textBlock = data.content.find(block => block.type === 'text' && block.text);
+        if (textBlock) text = textBlock.text;
+    } else if (typeof data === 'string') {
+        text = data;
+    }
+    if (!text) {
+        console.error('[FilmLog] Onverwacht API-antwoord:', data);
+        if (data?.stop_reason === 'max_tokens') throw new Error('Antwoord afgekapt (te lang). Probeer het opnieuw.');
+        if (data?.stop_reason === 'refusal') throw new Error('Claude weigerde dit verzoek te beantwoorden. Probeer een ander thema.');
+        throw new Error('Onverwacht API-antwoord');
+    }
 
     const recommendations = extractJsonArray(text);
     if (!Array.isArray(recommendations) || recommendations.length === 0) {
@@ -96,7 +105,7 @@ Respond ONLY with a valid JSON array containing exactly 10 objects with these fi
 
     const requestBody = JSON.stringify({
         model: 'claude-sonnet-5',
-        max_tokens: 2000,
+        max_tokens: 4000,
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }]
     });
