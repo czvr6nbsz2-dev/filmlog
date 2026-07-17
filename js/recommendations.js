@@ -110,7 +110,6 @@ Respond ONLY with a valid JSON array containing exactly 10 objects with these fi
                 body: JSON.stringify({
                     model: 'claude-sonnet-5',
                     max_tokens: 2000,
-                    temperature: 0.7,
                     system: systemPrompt,
                     messages: [{ role: 'user', content: userPrompt }]
                 })
