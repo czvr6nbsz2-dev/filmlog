@@ -94,28 +94,42 @@ Respond ONLY with a valid JSON array containing exactly 10 objects with these fi
         throw new Error('Ongeldige modus');
     }
 
+    const requestBody = JSON.stringify({
+        model: 'claude-sonnet-5',
+        max_tokens: 2000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+    });
+
+    const MAX_ATTEMPTS = 3;
+
     try {
         console.log('[FilmLog] Generating recommendations...', { mode, theme, filmsCount: films.length });
 
         let response;
-        try {
-            response = await fetch('https://api.anthropic.com/v1/messages', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': apiKey,
-                    'anthropic-version': '2023-06-01',
-                    'anthropic-dangerous-direct-browser-access': 'true'
-                },
-                body: JSON.stringify({
-                    model: 'claude-sonnet-5',
-                    max_tokens: 2000,
-                    system: systemPrompt,
-                    messages: [{ role: 'user', content: userPrompt }]
-                })
-            });
-        } catch (fetchError) {
-            throw new Error(`Netwerk-/fetch-fout: ${fetchError?.message || 'Onbekend'}`);
+        for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+            try {
+                response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': apiKey,
+                        'anthropic-version': '2023-06-01',
+                        'anthropic-dangerous-direct-browser-access': 'true'
+                    },
+                    body: requestBody
+                });
+            } catch (fetchError) {
+                throw new Error(`Netwerk-/fetch-fout: ${fetchError?.message || 'Onbekend'}`);
+            }
+
+            // 529 = Anthropic servers tijdelijk overbelast — met korte wachttijd opnieuw proberen
+            if (response.status === 529 && attempt < MAX_ATTEMPTS) {
+                console.warn(`[FilmLog] API overbelast, poging ${attempt}/${MAX_ATTEMPTS}, opnieuw proberen...`);
+                await new Promise(r => setTimeout(r, attempt * 1500));
+                continue;
+            }
+            break;
         }
 
         if (!response.ok) {
@@ -124,6 +138,7 @@ Respond ONLY with a valid JSON array containing exactly 10 objects with these fi
 
             if (response.status === 401) throw new Error('API-sleutel ongeldig. Controleer je Anthropic-token in Instellingen.');
             if (response.status === 429) throw new Error('Te veel verzoeken. Even geduld en daarna opnieuw proberen.');
+            if (response.status === 529) throw new Error('Claude is momenteel overbelast. Probeer het over een minuutje opnieuw.');
 
             let message = `API-fout (${response.status})`;
             try {
