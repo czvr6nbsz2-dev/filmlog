@@ -162,9 +162,9 @@ Consider their reading style and level when making recommendations for this spec
                     'anthropic-dangerous-direct-browser-access': 'true'
                 },
                 body: JSON.stringify({
-                    model: 'claude-sonnet-4-20250514',
+                    model: 'claude-sonnet-5',
                     max_tokens: 2000,
-                    temperature: 0.7,
+                    thinking: { type: 'disabled' },
                     system: systemPrompt,
                     messages: [
                         { role: 'user', content: userPrompt }
