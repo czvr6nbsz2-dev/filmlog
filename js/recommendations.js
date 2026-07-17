@@ -106,6 +106,7 @@ Respond ONLY with a valid JSON array containing exactly 10 objects with these fi
     const requestBody = JSON.stringify({
         model: 'claude-sonnet-5',
         max_tokens: 4000,
+        thinking: { type: 'disabled' },
         system: systemPrompt,
         messages: [{ role: 'user', content: userPrompt }]
     });
