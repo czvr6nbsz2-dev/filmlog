@@ -44,9 +44,7 @@ function parseRecommendationResponse(data) {
         console.error('[FilmLog] Onverwacht API-antwoord:', data);
         if (data?.stop_reason === 'max_tokens') throw new Error('Antwoord afgekapt (te lang). Probeer het opnieuw.');
         if (data?.stop_reason === 'refusal') throw new Error('Claude weigerde dit verzoek te beantwoorden. Probeer een ander thema.');
-        let diag;
-        try { diag = JSON.stringify(data).slice(0, 500); } catch { diag = String(data); }
-        throw new Error(`Onverwacht API-antwoord: ${diag}`);
+        throw new Error('Onverwacht API-antwoord');
     }
 
     const recommendations = extractJsonArray(text);
