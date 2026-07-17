@@ -3128,5 +3128,14 @@
     "myRating": 9,
     "id": "8d6e3251-3cf1-4fef-a04e-c15faafc94fa",
     "updatedAt": "2026-07-17T20:45:18.547Z"
+  },
+  {
+    "readDate": "2026-07-17",
+    "title": "De eerste kruistocht",
+    "author": "Peter frankopan",
+    "myReview": null,
+    "myRating": 7,
+    "id": "83a3089d-8039-42e7-a29b-d6ec325243f0",
+    "updatedAt": "2026-07-17T20:52:16.794Z"
   }
 ]
