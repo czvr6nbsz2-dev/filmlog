@@ -1,5 +1,25 @@
 [
   {
+    "location": "thuis",
+    "watchDate": "2026-07-18",
+    "title": "No Hit Wonder",
+    "imdbID": "tt36987599",
+    "year": "2025",
+    "directors": "Florian Dietrich",
+    "actors": "Anja Antonowicz, Bibiana Beglau, Sebastian Blomberg",
+    "plot": "Singer Daniel has hit rock bottom. After a failed suicide attempt, the former one-hit wonder finds himself stuck in a psychiatric ward.",
+    "imdbRating": "6.9",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BODJkZTRmNWQtMjY1Ny00MDIzLWJkMmEtNjY0Y2Y0YjFiOThiXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1427832,
+    "tmdbRating": "7",
+    "genres": "Komedie, Drama",
+    "runtime": "118",
+    "myReview": null,
+    "myRating": 8,
+    "id": "e93c3f92-e148-4702-96b6-e9fafe81a12e",
+    "updatedAt": "2026-07-18T18:19:42.184Z"
+  },
+  {
     "location": "bioscoop",
     "watchDate": "2026-07-16",
     "title": "The Invite",
