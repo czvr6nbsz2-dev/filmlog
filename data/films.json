@@ -1,5 +1,25 @@
 [
   {
+    "location": "bioscoop",
+    "watchDate": "2026-07-20",
+    "title": "The Christophers",
+    "imdbID": "tt34966562",
+    "year": "2026",
+    "directors": "Steven Soderbergh",
+    "actors": "Michaela Coel, Ian McKellen, Jessica Gunning",
+    "plot": "The children of a once famous artist hire a forger to complete some unfinished, long ago abandoned canvases so they'll have an inheritance when he dies.",
+    "imdbRating": "6.8",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMDY1YjgyOTAtYjRlNS00NmE4LWE2YTgtZDcxNTBhZGVmMGVlXkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+    "tmdbId": 1400357,
+    "tmdbRating": "6.4",
+    "genres": "Misdaad, Komedie",
+    "runtime": "100",
+    "myReview": null,
+    "myRating": 8,
+    "id": "60853f40-aff4-4b31-a07b-7ddcea1419db",
+    "updatedAt": "2026-07-20T20:04:53.308Z"
+  },
+  {
     "location": "thuis",
     "watchDate": "2026-07-18",
     "title": "No Hit Wonder",
