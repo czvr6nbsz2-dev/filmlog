@@ -1,5 +1,25 @@
 [
   {
+    "location": "thuis",
+    "watchDate": "2026-07-23",
+    "title": "City of Ghosts",
+    "imdbID": "tt6333056",
+    "year": "2017",
+    "directors": "Matthew Heineman",
+    "actors": "Abdelaziz Alhamza, Mohamad Almusari, Hamoud Almousa",
+    "plot": "The anonymous activists who exposed ISIS atrocities in Raqqa. Follows their undercover operations, exile, and risks taken to reveal the ruthless realities under ISIS rule.",
+    "imdbRating": "7.4",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMmVmYjczNDUtYmJjZS00YTZiLWIwNzgtMzM4MWE0Nzc4ODQ3XkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 428501,
+    "tmdbRating": "7.2",
+    "genres": "Oorlog, Documentaire",
+    "runtime": "90",
+    "myReview": null,
+    "myRating": 7,
+    "id": "2e38e176-172d-4f30-adc1-668cbcee7d06",
+    "updatedAt": "2026-07-23T18:04:50.529Z"
+  },
+  {
     "location": "bioscoop",
     "watchDate": "2026-07-20",
     "title": "The Christophers",
