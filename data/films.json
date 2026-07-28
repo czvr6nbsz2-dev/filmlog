@@ -1,5 +1,25 @@
 [
   {
+    "location": "bioscoop",
+    "watchDate": "2026-07-28",
+    "title": "The Departed",
+    "imdbID": "tt0407887",
+    "year": "2006",
+    "directors": "Martin Scorsese",
+    "actors": "Leonardo DiCaprio, Matt Damon, Jack Nicholson",
+    "plot": "An undercover cop and a mole in the police attempt to identify each other while infiltrating an Irish gang in South Boston.",
+    "imdbRating": "8.5",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMTI1MTY2OTIxNV5BMl5BanBnXkFtZTYwNjQ4NjY3._V1_QL75_UY562_CR0,0,380,562_.jpg",
+    "tmdbId": 1422,
+    "tmdbRating": "8.2",
+    "genres": "Drama, Thriller, Misdaad",
+    "runtime": "151",
+    "myReview": null,
+    "myRating": 8,
+    "id": "6cd0ce01-c25a-4f7f-b6fd-8fa03f2c091f",
+    "updatedAt": "2026-07-28T22:21:34.155Z"
+  },
+  {
     "location": "thuis",
     "watchDate": "2026-07-23",
     "title": "City of Ghosts",
