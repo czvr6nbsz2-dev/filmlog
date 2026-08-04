@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-08-04",
+    "title": "Tuner",
+    "imdbID": "tt33296751",
+    "year": "2026",
+    "directors": "Daniel Roher",
+    "actors": "Leo Woodall, Dustin Hoffman, Alisen Richmond-Peck",
+    "plot": "A talented piano tuner who suffers from hyperacusis discovers an unexpected aptitude for cracking safes, turning his life upside down.",
+    "imdbRating": "7.2",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BNDA0ZjZjYTktZjg1MC00MDRiLWEzYjItMTQ1ZWFkOTUxNjc0XkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+    "tmdbId": 1340206,
+    "tmdbRating": "7.1",
+    "genres": "Misdaad, Drama, Thriller",
+    "runtime": "108",
+    "myReview": null,
+    "myRating": 9,
+    "id": "f55dc329-d7a5-4b52-97cf-e72c9d193e3d",
+    "updatedAt": "2026-08-04T20:29:41.582Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-07-28",
     "title": "The Departed",
     "imdbID": "tt0407887",
