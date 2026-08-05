@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-08-05",
+    "title": "Life Goes This Way",
+    "imdbID": "tt34905624",
+    "year": "2025",
+    "directors": null,
+    "actors": "Giuseppe Ignazio Loi, Virginia Raffaele, Aldo Baglio, Diego Abatantuono, Geppi Cucciari",
+    "plot": "Chronicles the intertwined lives of characters set in the picturesque landscapes of Sardinia, Italy, exploring human connections, emotions, and personal journeys.",
+    "imdbRating": null,
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMDg1ZjJmMTQtYzlmZS00ZTRhLThhNGEtOTkzYWFhYjlhZWM4XkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1397375,
+    "tmdbRating": "6.9",
+    "genres": "Komedie, Drama",
+    "runtime": "118",
+    "myReview": null,
+    "myRating": 7,
+    "id": "d9ee7c57-1343-4877-bb39-45cb7316e174",
+    "updatedAt": "2026-08-05T21:47:36.606Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-08-04",
     "title": "Tuner",
     "imdbID": "tt33296751",
