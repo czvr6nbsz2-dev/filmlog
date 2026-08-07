@@ -1,5 +1,25 @@
 [
   {
+    "location": "thuis",
+    "watchDate": "2026-08-07",
+    "title": "I, Dolours",
+    "imdbID": "tt8649148",
+    "year": "2018",
+    "directors": "Maurice Sweeney",
+    "actors": "Lorna Larkin, Lauren Beale, Gail Brady",
+    "plot": "Documentary about Dolours Price, one of very few women who rose to the top of the IRA and who was involved in bombings during the Troubles in the 1970s.",
+    "imdbRating": "7.1",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BNjExYzVmNDktZGQ3YS00MDNjLWE2NjItYjU2MTk1MzFhNjNlXkEyXkFqcGdeQXVyODAyNDE3Mw@@._V1_SX300.jpg",
+    "tmdbId": 521703,
+    "tmdbRating": "7.3",
+    "genres": "Documentaire",
+    "runtime": "82",
+    "myReview": null,
+    "myRating": 8,
+    "id": "801a8a79-54b4-4ac4-a1e3-d78ecbcbb760",
+    "updatedAt": "2026-08-07T08:41:46.191Z"
+  },
+  {
     "location": "bioscoop",
     "watchDate": "2026-08-05",
     "title": "Life Goes This Way",
