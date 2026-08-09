@@ -1,5 +1,25 @@
 [
   {
+    "location": "bioscoop",
+    "watchDate": "2026-08-09",
+    "title": "Primavera",
+    "imdbID": "tt33586629",
+    "year": "2025",
+    "directors": "Damiano Michieletto",
+    "actors": "Tecla Insolia, Michele Riondino, Andrea Pennacchi",
+    "plot": "A talented violinist, Cecilia, confined in an orphanage, meets Vivaldi who becomes her teacher. Under his mentorship and through his music, she gains courage to break free from the life she was destined for and pursue her passion.",
+    "imdbRating": null,
+    "posterURL": "https://image.tmdb.org/t/p/w500/nqKAtqVRDkwxpiwI3AIhDXP6tvT.jpg",
+    "tmdbId": 1365683,
+    "tmdbRating": "7.1",
+    "genres": "Muziek, Drama, Historisch",
+    "runtime": "110",
+    "myReview": null,
+    "myRating": 8,
+    "id": "3258a5c3-0707-42d5-af94-57d3337cf224",
+    "updatedAt": "2026-08-09T18:04:02.303Z"
+  },
+  {
     "location": "thuis",
     "watchDate": "2026-08-07",
     "title": "I, Dolours",
