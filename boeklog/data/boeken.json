@@ -3206,5 +3206,20 @@
     "myRating": 4,
     "id": "d4047d93-5994-440a-9d1a-f21c4f5ede46",
     "updatedAt": "2026-08-09T11:02:01.189Z"
+  },
+  {
+    "readDate": "2026-08-09",
+    "title": "The Return",
+    "author": "Hisham Matar",
+    "openLibraryKey": "/works/OL19635270W",
+    "publishYear": "2016",
+    "coverURL": "https://covers.openlibrary.org/b/id/8543276-M.jpg",
+    "description": "243 pages : 21 cm",
+    "subjects": "Matar, Hisham, 1970-, Matar, Hisham, 1970- -- Travel -- Libya, Matar, Hisham, 1970- -- Family, Matar, Jaballa, Matar, Hisham, 1970- -- Voyages -- Libye",
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 7,
+    "id": "995f7bf0-ae4f-42ff-a9d1-1b6dd9dcf1db",
+    "updatedAt": "2026-08-09T11:08:03.215Z"
   }
 ]
