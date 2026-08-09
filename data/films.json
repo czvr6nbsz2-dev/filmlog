@@ -1,25 +1,5 @@
 [
   {
-    "location": "bioscoop",
-    "watchDate": "2026-08-07",
-    "title": "De Gaulle Partie 1: La France Libre",
-    "imdbID": "tt28553375",
-    "year": "2025",
-    "directors": "Antonin Baudry",
-    "actors": "Anamaria Vartolomei, Tom Mison, Mathieu Kassovitz",
-    "plot": "A two-part film about Charles De Gaulle. The two films will follow De Gaulle's life and political commitment between 1940 and 1945, and trace his development towards a political career.",
-    "imdbRating": null,
-    "posterURL": "https://image.tmdb.org/t/p/w500/gWul6R3of23ygdwHkJIv5ZChMqj.jpg",
-    "tmdbId": 1165366,
-    "tmdbRating": "7.8",
-    "genres": "Historisch, Drama",
-    "runtime": "161",
-    "myReview": null,
-    "myRating": 8,
-    "id": "f9df0dd7-0f79-4456-8d4c-d812c24056eb",
-    "updatedAt": "2026-08-07T14:26:28.968Z"
-  },
-  {
     "location": "thuis",
     "watchDate": "2026-08-07",
     "title": "I, Dolours",
@@ -38,6 +18,26 @@
     "myRating": 8,
     "id": "801a8a79-54b4-4ac4-a1e3-d78ecbcbb760",
     "updatedAt": "2026-08-07T08:41:46.191Z"
+  },
+  {
+    "location": "bioscoop",
+    "watchDate": "2026-08-07",
+    "title": "De Gaulle Partie 1: La France Libre",
+    "imdbID": "tt28553375",
+    "year": "2025",
+    "directors": "Antonin Baudry",
+    "actors": "Anamaria Vartolomei, Tom Mison, Mathieu Kassovitz",
+    "plot": "A two-part film about Charles De Gaulle. The two films will follow De Gaulle's life and political commitment between 1940 and 1945, and trace his development towards a political career.",
+    "imdbRating": null,
+    "posterURL": "https://image.tmdb.org/t/p/w500/gWul6R3of23ygdwHkJIv5ZChMqj.jpg",
+    "tmdbId": 1165366,
+    "tmdbRating": "7.8",
+    "genres": "Historisch, Drama",
+    "runtime": "161",
+    "myReview": null,
+    "myRating": 8,
+    "id": "f9df0dd7-0f79-4456-8d4c-d812c24056eb",
+    "updatedAt": "2026-08-07T14:26:28.968Z"
   },
   {
     "location": "bioscoop",
