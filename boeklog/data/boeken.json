@@ -3221,5 +3221,14 @@
     "myRating": 7,
     "id": "995f7bf0-ae4f-42ff-a9d1-1b6dd9dcf1db",
     "updatedAt": "2026-08-09T11:08:03.215Z"
+  },
+  {
+    "readDate": "2026-08-09",
+    "title": "De sympathisant",
+    "author": "Viet Thanh Nguyen",
+    "myReview": null,
+    "myRating": 6,
+    "id": "82fb6a25-f5f3-4f43-a257-8cd8fe6a49ac",
+    "updatedAt": "2026-08-09T20:16:48.912Z"
   }
 ]
