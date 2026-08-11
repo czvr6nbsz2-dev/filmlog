@@ -3230,5 +3230,14 @@
     "myRating": 4,
     "id": "82fb6a25-f5f3-4f43-a257-8cd8fe6a49ac",
     "updatedAt": "2026-08-11T10:50:22.221Z"
+  },
+  {
+    "readDate": "2026-08-11",
+    "title": "Son",
+    "author": "Thomas enger",
+    "myReview": null,
+    "myRating": 7,
+    "id": "30ac7046-9ae0-4e26-b639-07175748aea7",
+    "updatedAt": "2026-08-11T10:50:39.090Z"
   }
 ]
