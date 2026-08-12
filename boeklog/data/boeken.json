@@ -3239,5 +3239,14 @@
     "myRating": 7,
     "id": "30ac7046-9ae0-4e26-b639-07175748aea7",
     "updatedAt": "2026-08-11T10:50:39.090Z"
+  },
+  {
+    "readDate": "2026-08-12",
+    "title": "Michael Robotham",
+    "author": "De andere vrouw",
+    "myReview": null,
+    "myRating": 6,
+    "id": "f5d59f0f-b241-4f95-a7e6-470d5fd1a5df",
+    "updatedAt": "2026-08-12T19:05:15.135Z"
   }
 ]
