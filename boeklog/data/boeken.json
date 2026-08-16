@@ -3257,5 +3257,14 @@
     "myRating": 8,
     "id": "253c6e59-1995-4bb9-adfe-5f3518a4f70a",
     "updatedAt": "2026-08-15T19:44:39.045Z"
+  },
+  {
+    "readDate": "2026-08-16",
+    "title": "Vrijstaat",
+    "author": "Lena Sundström",
+    "myReview": null,
+    "myRating": 6,
+    "id": "813cddd0-faeb-4677-8e19-3e899725b736",
+    "updatedAt": "2026-08-16T05:59:34.594Z"
   }
 ]
