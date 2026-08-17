@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-08-17",
+    "title": "Un anno di scuola",
+    "imdbID": "tt31778123",
+    "year": "2025",
+    "directors": "Laura Samani",
+    "actors": "Stella Wendick, Giacomo Covi, Pietro Giustolisi",
+    "plot": "Triëst, zomer van 2007. De zelfverzekerde Zweedse Fredrika is pas verhuisd naar de Italiaanse kuststad en belandt op een technische middelbare school in een klas vol jongens. Ze staat meteen in het middelpunt van belangstelling, en niet alleen om haar intelligentie en kennis. Gaandeweg bouwt ze een vriendschap op met een onafscheidelijk trio: de fascinerende en bescheiden Antero, de extraverte casanova Pasini en de lieve en beschermende Mitis. Samen verkennen ze de straten van Triëst, feesten ze, denken na over de toekomst, delen ze geheimen en ontdekken ze nieuwe gevoelens. Het laatste schooljaar zal hen voor altijd tekenen.",
+    "imdbRating": null,
+    "posterURL": "https://image.tmdb.org/t/p/w500/AsfUWYo96Q7l4oU1ZISkZ3rJAiS.jpg",
+    "tmdbId": 1442922,
+    "tmdbRating": "7.1",
+    "genres": "Drama",
+    "runtime": "102",
+    "myReview": null,
+    "myRating": 7,
+    "id": "6976c1a6-a714-4454-9a6d-a487a03cca1e",
+    "updatedAt": "2026-08-17T20:19:50.320Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-08-09",
     "title": "Primavera",
     "imdbID": "tt33586629",
