@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-08-21",
+    "title": "The Rivals of Amziah King",
+    "imdbID": "tt27706593",
+    "year": "2026",
+    "directors": "Andrew Patterson",
+    "actors": "Matthew McConaughey, Angelina LookingGlass, Jake Horowitz",
+    "plot": "Amziah King, beekeeper, musician, and anchor of his community, reunites with former foster daughter Kateri after many years apart, and fends off threats to his honey business.",
+    "imdbRating": "7.7",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BOGVkMTY3OTMtMjEwOC00MGVmLTlmNmItZmZhNDNhYTEzOTQ0XkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+    "tmdbId": 1124142,
+    "tmdbRating": "7.7",
+    "genres": "Misdaad, Drama, Thriller",
+    "runtime": "131",
+    "myReview": null,
+    "myRating": 7,
+    "id": "03fc77a1-ac5a-4b85-9f68-3a0fceba9b20",
+    "updatedAt": "2026-08-21T19:07:23.705Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-08-17",
     "title": "Un anno di scuola",
     "imdbID": "tt31778123",
