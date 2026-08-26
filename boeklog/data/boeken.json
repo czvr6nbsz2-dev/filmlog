@@ -3284,5 +3284,14 @@
     "myRating": 7,
     "id": "ba4b87da-56c2-4d3b-abf2-ad3d6dee9b4b",
     "updatedAt": "2026-08-23T17:26:52.641Z"
+  },
+  {
+    "readDate": "2026-08-26",
+    "title": "In een oogwenk",
+    "author": "K. Slater",
+    "myReview": null,
+    "myRating": 6,
+    "id": "f492f8f3-83fc-454c-9bcb-405a7e561e7b",
+    "updatedAt": "2026-08-26T05:17:47.436Z"
   }
 ]
