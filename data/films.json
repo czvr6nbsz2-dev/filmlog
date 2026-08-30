@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-08-30",
+    "title": "Soul on a String",
+    "imdbID": "tt5974624",
+    "year": "2016",
+    "directors": "Yang Zhang",
+    "actors": "Jinpa, Sonam Nyima, Choenyi Tsering",
+    "plot": "A killer is entrusted with a sacred mission.",
+    "imdbRating": "6.8",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BYTFiOTVmMzAtZmZlNS00Yjk5LWExODgtYjdlOTFiYzIyZTNiXkEyXkFqcGdeQXVyNTk5NDY3Mw@@._V1_SX300.jpg",
+    "tmdbId": 412208,
+    "tmdbRating": "5.2",
+    "genres": "Drama",
+    "runtime": "142",
+    "myReview": null,
+    "myRating": 8,
+    "id": "9e64c72d-f578-47a1-9a79-a6eed6b003de",
+    "updatedAt": "2026-08-30T17:57:51.319Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-08-21",
     "title": "The Rivals of Amziah King",
     "imdbID": "tt27706593",
