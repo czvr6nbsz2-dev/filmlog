@@ -3293,5 +3293,14 @@
     "myRating": 5,
     "id": "f492f8f3-83fc-454c-9bcb-405a7e561e7b",
     "updatedAt": "2026-08-30T07:48:44.568Z"
+  },
+  {
+    "readDate": "2026-08-30",
+    "title": "Spin",
+    "author": "Lars kepler",
+    "myReview": null,
+    "myRating": 6,
+    "id": "a49b2a5f-1dca-428c-ac32-08433a53fe46",
+    "updatedAt": "2026-08-30T07:49:00.492Z"
   }
 ]
