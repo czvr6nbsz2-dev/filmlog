@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-08-31",
+    "title": "Pour le plaisir",
+    "imdbID": "tt38607784",
+    "year": "2026",
+    "directors": "Reem Kherici",
+    "actors": "François Cluzet, Alexandra Lamy, Camille Aumont Carnel",
+    "plot": "Na een huwelijk van twintig jaar leeft Fanny nog steeds met een geheim voor haar man Tom: ze heeft nog nooit een orgasme gehad. Tom, een ingenieur, besluit een gewaagde uitdaging aan te gaan: het creëren van hét object dat vrouwelijk genot zal revolutioneren. Samen onderzoeken ze wat wel en niet werkt en vinden ze iets dat hun relatie en die van vele anderen zal veranderen.",
+    "imdbRating": null,
+    "posterURL": "https://image.tmdb.org/t/p/w500/khaJlB6LGjTtGjbxthU4MJzjrx5.jpg",
+    "tmdbId": 1516724,
+    "tmdbRating": "6.3",
+    "genres": "Komedie",
+    "runtime": "89",
+    "myReview": "Superflauw",
+    "myRating": 1,
+    "id": "e2a2bd0a-f108-40f9-9ff3-0de6d7669d75",
+    "updatedAt": "2026-09-02T19:14:16.669Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-08-30",
     "title": "Soul on a String",
     "imdbID": "tt5974624",
