@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-09-03",
+    "title": "Terminator 2: Judgment Day",
+    "imdbID": "tt0103064",
+    "year": "1991",
+    "directors": "James Cameron",
+    "actors": "Arnold Schwarzenegger, Linda Hamilton, Edward Furlong",
+    "plot": "A cyborg from the future, identical to the one who failed to kill Sarah Connor, must now protect her ten-year-old son John from an even more advanced and powerful cyborg.",
+    "imdbRating": "8.6",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BNGMyMGNkMDUtMjc2Ni00NWFlLTgyODEtZTY2MzBiZTg0OWZiXkEyXkFqcGc@._V1_QL75_UX380_CR0,1,380,562_.jpg",
+    "tmdbId": 280,
+    "tmdbRating": "8.2",
+    "genres": "Actie, Thriller, Sciencefiction",
+    "runtime": "137",
+    "myReview": null,
+    "myRating": 8,
+    "id": "8578bb5e-a690-4a77-b10c-c32dd2f532fd",
+    "updatedAt": "2026-09-04T13:32:44.618Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-08-31",
     "title": "Pour le plaisir",
     "imdbID": "tt38607784",
