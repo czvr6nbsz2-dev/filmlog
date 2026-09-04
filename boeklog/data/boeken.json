@@ -3302,5 +3302,14 @@
     "myRating": 8,
     "id": "a49b2a5f-1dca-428c-ac32-08433a53fe46",
     "updatedAt": "2026-09-04T18:57:14.730Z"
+  },
+  {
+    "readDate": "2026-09-04",
+    "title": "Huizenruil",
+    "author": "Stefan Ahnhem",
+    "myReview": null,
+    "myRating": 6,
+    "id": "b8ebb3ca-9357-4f7b-aa93-4aa1d3ac888c",
+    "updatedAt": "2026-09-04T18:57:43.996Z"
   }
 ]
