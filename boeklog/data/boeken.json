@@ -3311,5 +3311,14 @@
     "myRating": 5,
     "id": "b8ebb3ca-9357-4f7b-aa93-4aa1d3ac888c",
     "updatedAt": "2026-09-05T15:09:41.181Z"
+  },
+  {
+    "readDate": "2026-09-05",
+    "title": "De bergkoning",
+    "author": "Anders de la Motte",
+    "myReview": null,
+    "myRating": 6,
+    "id": "6f3c4259-5dd9-4319-90e9-f42174669dc6",
+    "updatedAt": "2026-09-05T15:10:07.705Z"
   }
 ]
