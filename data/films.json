@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-09-08",
+    "title": "Les enfants vont bien",
+    "imdbID": "tt35455855",
+    "year": "2025",
+    "directors": "Nathan Ambrosioni",
+    "actors": "Camille Cottin, Monia Chokri, Juliette Armanet",
+    "plot": "Jeanne heeft bewust gekozen voor een leven zonder kinderen. Haar zorgvuldig opgebouwde bestaan wordt volledig verstoord wanneer haar vervreemde zus Suzanne plotseling voor de deur staat met haar twee jonge kinderen. Het onverwachte bezoek lijkt een poging om hun band te herstellen, maar de volgende ochtend  is Suzanne verdwenen.  Zonder uitleg - en zonder de kinderen. Terwijl de zoektocht naar Suzanne niets oplevert, blijft Jeanne achter met de zorg voor haar neefje en nichtje. Wat begint als een tijdelijke noodsituatie, dwingt Jeanne haar ideeën over familie, verantwoordelijkheid en de toekomst die ze voor zichzelf had uitgestippeld opnieuw onder ogen te zien.",
+    "imdbRating": null,
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BM2NkZmRjNDAtODg5Ni00ZWI0LWE1ZjItODE4ZWY0YWE2MTBjXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1277882,
+    "tmdbRating": "6.9",
+    "genres": "Drama",
+    "runtime": "111",
+    "myReview": null,
+    "myRating": 9,
+    "id": "4478f02c-67d6-4f8d-999b-bae846b4f892",
+    "updatedAt": "2026-09-08T19:26:44.539Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-09-03",
     "title": "Terminator 2: Judgment Day",
     "imdbID": "tt0103064",
