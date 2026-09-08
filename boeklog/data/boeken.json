@@ -3320,5 +3320,14 @@
     "myRating": 6,
     "id": "6f3c4259-5dd9-4319-90e9-f42174669dc6",
     "updatedAt": "2026-09-05T15:10:07.705Z"
+  },
+  {
+    "readDate": "2026-09-08",
+    "title": "De man van glas",
+    "author": "Anders decla Motte",
+    "myReview": null,
+    "myRating": 6,
+    "id": "f701c6c7-3cdf-49b4-b57a-cdb181490eef",
+    "updatedAt": "2026-09-08T14:39:30.377Z"
   }
 ]
