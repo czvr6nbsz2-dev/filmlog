@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-09-11",
+    "title": "Pressure",
+    "imdbID": "tt32547691",
+    "year": "2026",
+    "directors": "Anthony Maras",
+    "actors": "Andrew Scott, Brendan Fraser, Kerry Condon",
+    "plot": "In the tense 72 hours before D-Day, General Dwight D. Eisenhower and Captain James Stagg face an impossible choice--launch the most dangerous seaborne invasion in history or risk losing the war altogether.",
+    "imdbRating": "7.3",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMjE2YjdkNDctMDg1MS00MjBjLWIyZjEtZWM1ZjczNTAzZGEyXkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+    "tmdbId": 1318413,
+    "tmdbRating": "7.7",
+    "genres": "Thriller, Historisch, Oorlog, Drama",
+    "runtime": "101",
+    "myReview": null,
+    "myRating": 8,
+    "id": "eeba7e9f-cec7-4546-bd93-c6d2904765a0",
+    "updatedAt": "2026-09-12T06:35:44.168Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-09-08",
     "title": "Les enfants vont bien",
     "imdbID": "tt35455855",
