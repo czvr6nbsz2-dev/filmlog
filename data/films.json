@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-09-19",
+    "title": "De manager",
+    "imdbID": "tt32033744",
+    "year": "2026",
+    "directors": "Maartje Bakers",
+    "actors": null,
+    "plot": "The Manager takes you behind closed doors, to what is perhaps the most intimate moment within any organization: the performance review. We are with managers and staff in conversations that are relatable, awkward and surprisingly w...",
+    "imdbRating": "7.9",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BYTRjYTNlNDItNjY2My00MTExLTkwZGUtNmY5MTU3NWQ3MWM0XkEyXkFqcGc@._V1_QL75_UY562_CR9,0,380,562_.jpg",
+    "tmdbId": 1715593,
+    "tmdbRating": null,
+    "genres": "Documentaire",
+    "runtime": "71",
+    "myReview": null,
+    "myRating": 7,
+    "id": "7d3994c1-539c-4920-8c31-ab927e14ab34",
+    "updatedAt": "2026-09-19T19:41:24.906Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-09-18",
     "title": "De Gaulle Partie 2",
     "imdbID": "tt35856133",
