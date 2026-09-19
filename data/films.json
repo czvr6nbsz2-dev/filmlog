@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-09-18",
+    "title": "De Gaulle Partie 2",
+    "imdbID": "tt35856133",
+    "year": "2026",
+    "directors": "Antonin Baudry",
+    "actors": "Anamaria Vartolomei, Tom Mison, Simon Russell Beale",
+    "plot": "Juni 1940. Frankrijk geeft zich over aan het Duitse leger en tekent de wapenstilstand. Te midden van de chaos weigert één man zich neer te leggen bij de situatie: generaal de Gaulle. Als kersverse staatsvijand vlucht hij – zonder leger steun noch hoop – naar Londen om de scherven van zijn gevallen vaderland op te rapen. De Gaulle heeft één rotsvast geloof: een nieuw vrij Frankrijk en Europa dat zijn wapens niet neerlegt tegen Nazi-Duitsland.",
+    "imdbRating": null,
+    "posterURL": "https://image.tmdb.org/t/p/w500/5h5FUkdupSlUMtosWHKiqTVCXxd.jpg",
+    "tmdbId": 1165369,
+    "tmdbRating": "7.8",
+    "genres": "Historisch, Drama",
+    "runtime": "159",
+    "myReview": null,
+    "myRating": 8,
+    "id": "41b1de02-80d0-489c-9ca1-f219f866fe24",
+    "updatedAt": "2026-09-19T05:39:46.973Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-09-11",
     "title": "Pressure",
     "imdbID": "tt32547691",
