@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-09-21",
+    "title": "The Cycle of Love",
+    "imdbID": "tt38063160",
+    "year": "2025",
+    "directors": "Orlando von Einsiedel",
+    "actors": "Mina Dale, Chirag Lobo, PK Mahanandia",
+    "plot": "Documents the romantic journey of PK Mahanandia, a Delhi street artist who trekked 6,000 miles by bicycle in 1977, venturing across continents to reunite with the woman he loved.",
+    "imdbRating": null,
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMzEzOTRlMmEtOWQ0My00ZjgwLTkzMmMtMjQzN2M3MGRkNjI3XkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1537518,
+    "tmdbRating": null,
+    "genres": "Documentaire, Romantiek",
+    "runtime": "98",
+    "myReview": null,
+    "myRating": 8,
+    "id": "5a52ec18-db57-408c-a19b-bf3d3c5f152d",
+    "updatedAt": "2026-09-21T20:09:21.559Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-09-19",
     "title": "De manager",
     "imdbID": "tt32033744",
