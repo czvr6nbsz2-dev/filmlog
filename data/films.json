@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-09-23",
+    "title": "Hjem",
+    "imdbID": "tt39379299",
+    "year": "2026",
+    "directors": "Marijana Jankovic",
+    "actors": "Dejan Cukic, Nada Sargin, Tara Cubrilo",
+    "plot": "In the hope of creating a better life, 6-year-old Maja and her parents leave Yugoslavia for Denmark, leaving behind Maja's two older brothers with the promise they will join once the family is settled. But the new country proves d...",
+    "imdbRating": null,
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BNWFhYmVjNDgtZGU1MS00OTgyLTlhMzgtNzBkMGE2ZjNhODlkXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1600168,
+    "tmdbRating": "7.8",
+    "genres": "Drama",
+    "runtime": "105",
+    "myReview": null,
+    "myRating": 7,
+    "id": "9797c3f5-8fb0-4017-9eb5-d68293c13a62",
+    "updatedAt": "2026-09-23T16:53:00.163Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-09-21",
     "title": "The Cycle of Love",
     "imdbID": "tt38063160",
