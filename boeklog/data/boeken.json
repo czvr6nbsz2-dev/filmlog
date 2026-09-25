@@ -3329,5 +3329,20 @@
     "myRating": 6,
     "id": "f701c6c7-3cdf-49b4-b57a-cdb181490eef",
     "updatedAt": "2026-09-08T14:39:30.377Z"
+  },
+  {
+    "readDate": "2026-09-25",
+    "title": "Zonder gezicht",
+    "author": "Stefan Ahnhem",
+    "openLibraryKey": "/works/OL24762639W",
+    "publishYear": "2014",
+    "coverURL": "https://covers.openlibrary.org/b/id/11512509-M.jpg",
+    "description": "Een Zweedse politie-inspecteur belandt totaal onvoorbereid in een moordzaak waarbij snel duidelijk wordt dat al zijn vroegere klasgenoten en hijzelf mogelijke slachtoffers zullen zijn.",
+    "subjects": "Romans en novellen ; vertaald",
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 7,
+    "id": "b370be04-cb63-46d5-b100-dfe2a3dd5d0e",
+    "updatedAt": "2026-09-25T12:28:29.760Z"
   }
 ]
