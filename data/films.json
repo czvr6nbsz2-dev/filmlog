@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-09-26",
+    "title": "Human Nature",
+    "imdbID": "tt18283374",
+    "year": "2022",
+    "directors": "Bart Schrijver",
+    "actors": "Jamie Bouwmeester, Ellen Helinder, Huub Smit",
+    "plot": "Sophie decides to hike 500 kilometers through the Arctic region of Norway. She wants to get away from the pressure everyday life. But life at home doesn't seem to understand her desire to go be by herself.",
+    "imdbRating": "7.2",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BZDI5OTExZDAtZGY4ZS00M2EzLTkwMzgtMTQyMjNjMmI3YmIzXkEyXkFqcGdeQXVyMTUwMDcyMDUz._V1_SX300.jpg",
+    "tmdbId": 1098433,
+    "tmdbRating": "2.7",
+    "genres": "Avontuur, Drama",
+    "runtime": "111",
+    "myReview": null,
+    "myRating": 8,
+    "id": "f420fccc-b8ed-4742-831b-0e157bbf1230",
+    "updatedAt": "2026-09-27T05:21:52.472Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-09-23",
     "title": "Hjem",
     "imdbID": "tt39379299",
