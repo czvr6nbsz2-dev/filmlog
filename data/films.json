@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-09-28",
+    "title": "Gelbe Briefe",
+    "imdbID": "tt32888226",
+    "year": "2026",
+    "directors": "Ilker Çatak",
+    "actors": "Yusuf Akgün, Emre Bakar, Tansu Biçer",
+    "plot": "The marriage of Derya and Aziz is under pressure after losing their jobs because of state arbitrariness and moving to Istanbul to live with Aziz's parents. They and their 13-year-old daughter Ezgi have to redefine their way of life.",
+    "imdbRating": null,
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BYTA2MmFmM2MtODY4ZC00ZTI1LTg3OWQtZGIxZmJlMDI1YmRkXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1315657,
+    "tmdbRating": "7.2",
+    "genres": "Drama",
+    "runtime": "127",
+    "myReview": null,
+    "myRating": 7,
+    "id": "146df6f4-d3f7-465e-984c-4414d227cf08",
+    "updatedAt": "2026-09-28T20:16:16.771Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-09-26",
     "title": "Human Nature",
     "imdbID": "tt18283374",
