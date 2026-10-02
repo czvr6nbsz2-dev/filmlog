@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-09-30",
+    "title": "Juste une illusion",
+    "imdbID": "tt36842933",
+    "year": "2026",
+    "directors": null,
+    "actors": "Camille Cottin, Louis Garrel, Rony Kramer",
+    "plot": "A 12-year-old boy in 1985 suburban Paris navigates life between his distant older brother and quarreling parents while grappling with identity, friendship, love, and understanding why adults seem lost.",
+    "imdbRating": null,
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BODY3ZGIyNDktZDdjMy00MGU2LWI5YWYtZWExOTg0N2YzNTM5XkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1404684,
+    "tmdbRating": "7.3",
+    "genres": "Komedie, Drama",
+    "runtime": "115",
+    "myReview": null,
+    "myRating": 7,
+    "id": "dfe93fec-eaa1-475a-8688-3f52c39b6f46",
+    "updatedAt": "2026-09-30T17:47:10.838Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-09-28",
     "title": "Gelbe Briefe",
     "imdbID": "tt32888226",
