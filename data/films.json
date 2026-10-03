@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-10-03",
+    "title": "Palestine 36",
+    "imdbID": "tt29271622",
+    "year": "2026",
+    "directors": "Annemarie Jacir",
+    "actors": "Robert Aramayo, Jeremy Irons, Liam Cunningham",
+    "plot": "In 1936, as Palestinian villages revolt against British colonial rule, Yusuf navigates between Jerusalem and his rural home, amidst escalating unrest and a pivotal moment for the British Empire.",
+    "imdbRating": "7.5",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BOGU3MTc1MWUtOWJkMC00MjRiLWJlN2ItNDYzMzRhZWZhZjAxXkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+    "tmdbId": 1432596,
+    "tmdbRating": "7.7",
+    "genres": "Drama, Historisch, Oorlog",
+    "runtime": "118",
+    "myReview": null,
+    "myRating": 8,
+    "id": "462f7179-9e45-4627-b4fe-faff54fa6b25",
+    "updatedAt": "2026-10-03T18:00:37.575Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-09-30",
     "title": "Juste une illusion",
     "imdbID": "tt36842933",
