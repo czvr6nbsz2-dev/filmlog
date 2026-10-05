@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-10-05",
+    "title": "El ser querido",
+    "imdbID": "tt33451014",
+    "year": "2025",
+    "directors": "Rodrigo Sorogoyen",
+    "actors": "Javier Bardem, Victoria Luengo",
+    "plot": "Acclaimed director reunites with estranged daughter, an unsuccessful actress, to shoot a film together, confronting their strained relationship and unresolved past issues that neither wants to address directly.",
+    "imdbRating": null,
+    "posterURL": "https://image.tmdb.org/t/p/w500/2SEi6I0O7tRNL3rmW7GEWp3eqjI.jpg",
+    "tmdbId": 1074074,
+    "tmdbRating": "6.9",
+    "genres": "Drama",
+    "runtime": "135",
+    "myReview": null,
+    "myRating": 6,
+    "id": "4750d47a-ae5f-4eb4-8e2a-adb99da53527",
+    "updatedAt": "2026-10-05T20:20:11.325Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-10-03",
     "title": "Palestine 36",
     "imdbID": "tt29271622",
