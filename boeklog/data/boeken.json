@@ -3359,5 +3359,14 @@
     "myRating": 7,
     "id": "ddfebc72-eb66-4679-b5ac-14665241623d",
     "updatedAt": "2026-09-27T19:37:09.992Z"
+  },
+  {
+    "readDate": "2026-10-09",
+    "title": "De Zwarte Dahlia",
+    "author": "James Ellroy",
+    "myReview": null,
+    "myRating": 6,
+    "id": "9e5fbf96-bbc8-4d25-ac54-c6505293c746",
+    "updatedAt": "2026-10-09T17:38:54.835Z"
   }
 ]
