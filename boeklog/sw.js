@@ -1,4 +1,4 @@
-const CACHE_NAME = 'boeklog-v13';
+const CACHE_NAME = 'boeklog-v14';
 const ASSETS = [
     './',
     './index.html',
@@ -14,7 +14,7 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
-    console.log('[SW] Installing v13...');
+    console.log('[SW] Installing v14...');
     e.waitUntil(
         caches.open(CACHE_NAME).then(cache => {
             console.log('[SW] Cache opened, adding assets');
@@ -25,7 +25,7 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('activate', (e) => {
-    console.log('[SW] Activating v13...');
+    console.log('[SW] Activating v14...');
     e.waitUntil(
         caches.keys().then(keys => {
             console.log('[SW] Found caches:', keys);
@@ -43,20 +43,22 @@ self.addEventListener('fetch', (e) => {
     const isLocal = url.includes(self.location.origin);
 
     if (isLocal) {
-        // Local assets: cache-first
+        // Local assets: network-first, so code fixes land immediately.
+        // Falls back to the cache when offline. Successful responses are
+        // written back to the cache to keep the offline copy fresh.
         e.respondWith(
-            caches.match(e.request).then(cached => {
-                if (cached) {
-                    console.log('[SW] Cache hit:', url);
-                    return cached;
-                }
-                console.log('[SW] Cache miss, fetching:', url);
-                return fetch(e.request);
-            })
+            fetch(e.request)
+                .then(response => {
+                    if (response && response.ok && e.request.method === 'GET') {
+                        const copy = response.clone();
+                        caches.open(CACHE_NAME).then(cache => cache.put(e.request, copy));
+                    }
+                    return response;
+                })
+                .catch(() => caches.match(e.request))
         );
     } else {
-        // External requests: pass through directly
-        console.log('[SW] External request (bypass):', url);
+        // External requests (e.g. Open Library, covers): pass through directly.
         e.respondWith(fetch(e.request));
     }
 });
