@@ -3368,5 +3368,14 @@
     "myRating": 6,
     "id": "9e5fbf96-bbc8-4d25-ac54-c6505293c746",
     "updatedAt": "2026-10-09T17:38:54.835Z"
+  },
+  {
+    "readDate": "2026-10-10",
+    "title": "Noise A Flaw in Human Judgment",
+    "author": "Daniel Kahneman, Olivier Sibony",
+    "myReview": null,
+    "myRating": 7,
+    "id": "9c4bf1d1-51df-4c87-a373-c426a2560680",
+    "updatedAt": "2026-10-10T13:46:17.923Z"
   }
 ]
