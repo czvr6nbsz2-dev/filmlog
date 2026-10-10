@@ -3376,7 +3376,8 @@
     "myReview": null,
     "myRating": 7,
     "id": "9c4bf1d1-51df-4c87-a373-c426a2560680",
-    "updatedAt": "2026-10-10T13:46:17.923Z"
+    "updatedAt": "2026-10-10T14:04:31.401Z",
+    "deletedAt": "2026-10-10T14:04:31.401Z"
   },
   {
     "readDate": "2026-10-10",
