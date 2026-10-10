@@ -1,21 +1,59 @@
 const SEARCH_URL = 'https://openlibrary.org/search.json';
 
-export async function searchBooks(title, author) {
-    const params = new URLSearchParams({ limit: '6' });
-    if (title) params.set('title', title);
-    if (author) params.set('author', author);
+// Only request the fields we actually use — smaller, faster responses.
+const SEARCH_FIELDS =
+    'key,title,subtitle,author_name,first_publish_year,cover_i,number_of_pages_median';
+
+async function runSearch(params) {
+    params.set('fields', SEARCH_FIELDS);
+    params.set('limit', '10');
 
     const res = await fetch(`${SEARCH_URL}?${params}`);
     if (!res.ok) throw new Error('Netwerkfout bij Open Library.');
 
     const data = await res.json();
+    return Array.isArray(data.docs) ? data.docs : [];
+}
 
-    if (!data.docs || data.docs.length === 0) {
+export async function searchBooks(title, author) {
+    title = (title || '').trim();
+    author = (author || '').trim();
+
+    let docs = [];
+
+    // 1. Free-text query combining everything the user typed. This is far more
+    //    forgiving than the strict title= field: it matches subtitles
+    //    (e.g. "Noise: A Flaw in Human Judgment"), punctuation and word order,
+    //    and ranks by relevance.
+    const queryParts = [title, author].filter(Boolean);
+    if (queryParts.length) {
+        docs = await runSearch(new URLSearchParams({ q: queryParts.join(' ') }));
+    }
+
+    // 2. Fallback: title only, in case a slightly-wrong author narrowed it to
+    //    nothing.
+    if (!docs.length && title && author) {
+        docs = await runSearch(new URLSearchParams({ q: title }));
+    }
+
+    // 3. Last resort: the old structured field search (also handles an
+    //    author-only lookup, which has no free-text title to query on).
+    if (!docs.length) {
+        const params = new URLSearchParams();
+        if (title) params.set('title', title);
+        if (author) params.set('author', author);
+        if ([...params].length) {
+            docs = await runSearch(params);
+        }
+    }
+
+    if (!docs.length) {
         throw new Error('Geen boeken gevonden.');
     }
 
-    return data.docs.slice(0, 6).map(doc => ({
-        title: doc.title,
+    return docs.slice(0, 6).map(doc => ({
+        // Show the full title incl. subtitle so the match is recognisable.
+        title: doc.subtitle ? `${doc.title}: ${doc.subtitle}` : doc.title,
         author: (doc.author_name || []).join(', '),
         year: doc.first_publish_year ? String(doc.first_publish_year) : null,
         workKey: doc.key, // e.g. "/works/OL123W"
