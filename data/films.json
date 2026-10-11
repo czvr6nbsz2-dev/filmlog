@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-10-11",
+    "title": "Naza",
+    "imdbID": "tt44766123",
+    "year": "2026",
+    "directors": "Yuval Abraham, Rachel Szor",
+    "actors": "Yuval Abraham",
+    "plot": "Filmed at night from Tel Aviv rooftops, this investigative documentary examines the civilian casualties of Israel's military operations in Gaza and the systems behind targeted killings of Palestinians.",
+    "imdbRating": "7.9",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMzA5YjdhYTYtNmY5ZS00Mzg1LTkyNDItOGQ1YzQ1MDYzNWJlXkEyXkFqcGc@._V1_QL75_UY562_CR21,0,380,562_.jpg",
+    "tmdbId": 1755291,
+    "tmdbRating": "8.1",
+    "genres": "Documentaire",
+    "runtime": "80",
+    "myReview": null,
+    "myRating": 8,
+    "id": "3eec956f-e922-4cc7-a632-372f19b1a99d",
+    "updatedAt": "2026-10-11T16:51:37.105Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-10-05",
     "title": "El ser querido",
     "imdbID": "tt33451014",
