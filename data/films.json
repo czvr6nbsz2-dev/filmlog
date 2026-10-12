@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-10-12",
+    "title": "Coward",
+    "imdbID": "tt39328391",
+    "year": "2026",
+    "directors": "Lukas Dhont",
+    "actors": "Willem De Schryver, Boris Bouchat, Valentin Campagne",
+    "plot": "Pierre, a young Belgian soldier wants to prove himself on the battlefield during the First World War. Behind the frontlines, he meets Francis, who is asked to find a way to boost morale.",
+    "imdbRating": "6.9",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BYjE2ZjUyNDQtMGUzNS00YTNjLTg3YzMtMDJhMTc4YTE2NGVhXkEyXkFqcGc@._V1_QL75_UX380_CR0,4,380,562_.jpg",
+    "tmdbId": 1437981,
+    "tmdbRating": null,
+    "genres": "Drama, Romantiek, Oorlog",
+    "runtime": "127",
+    "myReview": null,
+    "myRating": 8,
+    "id": "ee67a8c5-d702-4040-9a21-0d58125de376",
+    "updatedAt": "2026-10-12T20:23:15.617Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-10-11",
     "title": "Naza",
     "imdbID": "tt44766123",
