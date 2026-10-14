@@ -1,6 +1,15 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-10-14",
+    "title": "Natuurgeluiden met een verhaal",
+    "myReview": null,
+    "myRating": 7,
+    "id": "e1571ddc-4095-4d9f-a7c3-cb3f9e89fb8a",
+    "updatedAt": "2026-10-14T17:22:43.548Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-10-12",
     "title": "Coward",
     "imdbID": "tt39328391",
