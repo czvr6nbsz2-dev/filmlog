@@ -3393,5 +3393,20 @@
     "myRating": 7,
     "id": "a9b7563c-d769-4b54-9399-55d8d5f5cdcb",
     "updatedAt": "2026-10-10T14:04:19.910Z"
+  },
+  {
+    "readDate": "2026-10-15",
+    "title": "A different kind of power",
+    "author": "Jacinda Ardern",
+    "openLibraryKey": "/works/OL42454926W",
+    "publishYear": "2025",
+    "coverURL": "https://covers.openlibrary.org/b/id/15108022-M.jpg",
+    "description": null,
+    "subjects": null,
+    "numberOfPages": 340,
+    "myReview": null,
+    "myRating": 8,
+    "id": "85129b33-89e6-4fa3-b0c0-78b9a226b2e4",
+    "updatedAt": "2026-10-15T18:51:36.665Z"
   }
 ]
