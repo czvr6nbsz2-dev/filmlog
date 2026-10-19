@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-10-19",
+    "title": "Coyote vs. Acme",
+    "imdbID": "tt1756855",
+    "year": "2026",
+    "directors": "Dave Green",
+    "actors": "Will Forte, Lana Condor, John Cena",
+    "plot": "After enduring years of malfunctioning products, Wile E. Coyote teams up with a local personal injury attorney to take on ACME, the manufacturer of anything and everything used by the Looney Tunes characters.",
+    "imdbRating": "7.6",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BMDg5NDFkNTctZWE2ZC00MDYzLThlYjItZTljZDY3NTcwNjA3XkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+    "tmdbId": 1204680,
+    "tmdbRating": "7.5",
+    "genres": "Komedie, Avontuur, Familie",
+    "runtime": "103",
+    "myReview": null,
+    "myRating": 5,
+    "id": "9a0e55fb-2da3-442e-8c93-76626e1dc828",
+    "updatedAt": "2026-10-19T20:12:46.478Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-10-14",
     "title": "Natuurgeluiden met een verhaal",
     "myReview": null,
