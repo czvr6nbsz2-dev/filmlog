@@ -3438,5 +3438,20 @@
     "myRating": 7,
     "id": "e24a77fc-e8ad-4a35-8776-10a798e0ca9a",
     "updatedAt": "2026-10-24T11:28:17.756Z"
+  },
+  {
+    "readDate": "2026-10-24",
+    "title": "Ops centre",
+    "author": "Clancy",
+    "openLibraryKey": "/works/OL15833649W",
+    "publishYear": "2001",
+    "coverURL": "https://covers.openlibrary.org/b/id/6797625-M.jpg",
+    "description": "When the military arm of Op-Center is sent to Kashmir to capture an Islamic terrorist who is fomenting rebellion against the Indian government, they find themselves caught in the middle of a war between India and Pakistan.",
+    "subjects": "National Crisis Management Centre (Imaginary place), Fiction, Crisis management in government",
+    "numberOfPages": 372,
+    "myReview": null,
+    "myRating": 7,
+    "id": "4a09c8f2-741d-45f5-b99c-4d16b5861ff3",
+    "updatedAt": "2026-10-24T18:43:21.363Z"
   }
 ]
