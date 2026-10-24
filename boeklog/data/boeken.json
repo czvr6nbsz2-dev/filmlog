@@ -3423,5 +3423,20 @@
     "myRating": 8,
     "id": "7bca8aa1-9b64-4c94-8360-92a3610ffba6",
     "updatedAt": "2026-10-18T17:49:37.558Z"
+  },
+  {
+    "readDate": "2026-10-24",
+    "title": "The fox",
+    "author": "Fredrick forsyth",
+    "openLibraryKey": "/works/OL19749339W",
+    "publishYear": "2018",
+    "coverURL": "https://covers.openlibrary.org/b/id/15158712-M.jpg",
+    "description": "Former chief of the British Secret Intelligence Service Adrian Weston is awoken in the middle of the night by a phone call from the prime minister. Her news is shocking: the Pentagon, the NSA, and the CIA have been hacked simultaneously, their seemingly impenetrable firewalls breached by an unknown enemy known only as \"The Fox\". Even more surprisingly, the culprit is revealed to be a young British teenager, Luke Jennings. He has no agenda, no secrets, just a blisteringly brilliant mind. Extradition to the US seems likely - until Weston has another idea: If Luke can do this to us, what can he do to our enemies?",
+    "subjects": "Cyberterrorism, Hackers, Fiction, Terrorism, fiction, Fiction, espionage",
+    "numberOfPages": 320,
+    "myReview": null,
+    "myRating": 7,
+    "id": "e24a77fc-e8ad-4a35-8776-10a798e0ca9a",
+    "updatedAt": "2026-10-24T11:28:17.756Z"
   }
 ]
