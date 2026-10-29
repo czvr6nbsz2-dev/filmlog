@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-10-26",
+    "title": "Bitter Christmas",
+    "imdbID": "tt28088049",
+    "year": "2026",
+    "directors": "Pedro Almodóvar",
+    "actors": "Bárbara Lennie, Leonardo Sbaraglia, Aitana Sánchez-Gijón",
+    "plot": "In 2004, an ad director faces a turbulent Christmas weekend. In 2026, a filmmaker turns her story into a screenplay, blurring the lines between reality, fiction, and the people closest to him.",
+    "imdbRating": "6.3",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BN2I4ODhmMDItM2EzNS00NmM0LTkzOTQtMWM5MTNhOTYzNDM3XkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+    "tmdbId": 1088548,
+    "tmdbRating": "6.2",
+    "genres": "Drama, Komedie",
+    "runtime": "112",
+    "myReview": "Wat een geleuter!",
+    "myRating": 1,
+    "id": "54677112-1fdd-4f24-9e39-81930df6ac55",
+    "updatedAt": "2026-10-29T17:34:20.231Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-10-19",
     "title": "Coyote vs. Acme",
     "imdbID": "tt1756855",
