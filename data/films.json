@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-10-30",
+    "title": "All of a Sudden",
+    "imdbID": "tt36834996",
+    "year": "2026",
+    "directors": "Ryûsuke Hamaguchi",
+    "actors": "Heidi Becker-Babel, Virginie Efira, Tao Okamoto",
+    "plot": "Two scholars exchange letters about chance and risk. As the philosopher falls ill, their academic correspondence evolves into intimate discussions about mortality and a deeper connection forms between them.",
+    "imdbRating": "8.0",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BZGQ2NWE0MGYtNGMyOC00MjRmLTg2MDctMjY2OTlmNjI3OTI0XkEyXkFqcGc@._V1_QL75_UY562_CR9,0,380,562_.jpg",
+    "tmdbId": 1476614,
+    "tmdbRating": "7.8",
+    "genres": "Drama",
+    "runtime": "196",
+    "myReview": null,
+    "myRating": 8,
+    "id": "70abbd09-a30b-4582-9fe5-a035cc423dbe",
+    "updatedAt": "2026-10-30T18:31:10.420Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-10-26",
     "title": "Bitter Christmas",
     "imdbID": "tt28088049",
