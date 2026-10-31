@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-10-31",
+    "title": "Wild Horse Nine",
+    "imdbID": "tt15799564",
+    "year": "2026",
+    "directors": "Martin McDonagh",
+    "actors": "Sam Rockwell, Steve Buscemi, Parker Posey",
+    "plot": "CIA agents Chris and Lee face a trust-testing mission from Santiago to Easter Island during 1973 in Chile.",
+    "imdbRating": null,
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BNDc5ZDAzNmEtNTI2OS00YWI0LWE5MTYtZTJiN2RkNzRmMjA0XkEyXkFqcGc@._V1_QL75_UY562_CR35,0,380,562_.jpg",
+    "tmdbId": 891621,
+    "tmdbRating": "8.8",
+    "genres": "Komedie, Misdaad, Thriller",
+    "runtime": "117",
+    "myReview": null,
+    "myRating": 7,
+    "id": "e76eb65a-a64e-4b5a-8b40-8c76db9cc7e8",
+    "updatedAt": "2026-10-31T18:50:32.205Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-10-30",
     "title": "All of a Sudden",
     "imdbID": "tt36834996",
