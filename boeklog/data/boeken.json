@@ -3468,5 +3468,20 @@
     "myRating": 6,
     "id": "f0eb66af-b111-40ca-ba84-12b130a3d4c1",
     "updatedAt": "2026-10-28T18:54:19.113Z"
+  },
+  {
+    "readDate": "2026-11-01",
+    "title": "God human animal machine",
+    "author": "Meghan O'Gieblyn",
+    "openLibraryKey": "/works/OL24894855W",
+    "publishYear": "2021",
+    "coverURL": "https://covers.openlibrary.org/b/id/11794078-M.jpg",
+    "description": "For most of human history the world was a magical and enchanted place ruled by forces beyond our understanding. The rise of science and Descartes’s division of mind from world made materialism our ruling paradigm, in the process asking whether our own consciousness—i.e., souls—might be illusions. Now the inexorable rise of technology, with artificial intelligences that surpass our comprehension and control, and the spread of digital metaphors for self-understanding, the core questions of existence—identity, knowledge, the very nature and purpose of life itself—urgently require rethinking.\r\n\r\nMeghan O’Gieblyn tackles this challenge with philosophical rigor, intellectual reach, essayistic verve, refreshing originality, and an ironic sense of contradiction. She draws deeply and sometimes humorously from her own personal experience as a formerly religious believer still haunted by questions of faith, and she serves as the best possible guide to navigating the territory we are all entering.",
+    "subjects": "American literature",
+    "numberOfPages": 304,
+    "myReview": null,
+    "myRating": 7,
+    "id": "4aa03607-cd77-46b0-af72-719079c9ff49",
+    "updatedAt": "2026-11-01T13:41:53.182Z"
   }
 ]
