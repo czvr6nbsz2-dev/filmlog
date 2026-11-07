@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-11-07",
+    "title": "Dingo",
+    "imdbID": "tt0104109",
+    "year": "1991",
+    "directors": "Rolf de Heer",
+    "actors": "Colin Friels, Miles Davis, Helen Buday",
+    "plot": "Traces the pilgrimage of John Anderson, an average guy with a passion for jazz, from his home in outback Western Australia to the jazz clubs of Paris, to meet his idol, jazz trumpeter Billy Cross.",
+    "imdbRating": "6.8",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BZGEwZTFjZjItODI5Ni00MTU2LTkwMjAtMTUzZTE5MWViM2ZkXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 66634,
+    "tmdbRating": "5.9",
+    "genres": "Drama, Muziek",
+    "runtime": "109",
+    "myReview": null,
+    "myRating": 8,
+    "id": "ad837f7c-7dbb-4d38-b228-6593f3a1eb9b",
+    "updatedAt": "2026-11-07T14:19:46.965Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-10-31",
     "title": "Wild Horse Nine",
     "imdbID": "tt15799564",
