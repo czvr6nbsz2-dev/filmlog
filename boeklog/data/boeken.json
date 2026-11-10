@@ -3482,5 +3482,20 @@
     "myRating": 7,
     "id": "573e632a-3fff-4f10-8ed3-e610f74e8234",
     "updatedAt": "2026-11-10T21:02:20.733Z"
+  },
+  {
+    "readDate": "2026-11-10",
+    "title": "The cobra",
+    "author": "Fredrick forsythe",
+    "openLibraryKey": "/works/OL15413655W",
+    "publishYear": "2010",
+    "coverURL": null,
+    "description": null,
+    "subjects": "Drug traffic, Cocaine industry, Drug control, Fiction, United States",
+    "numberOfPages": 364,
+    "myReview": null,
+    "myRating": 8,
+    "id": "6d07a8ab-9941-4224-a430-e649bec00977",
+    "updatedAt": "2026-11-10T21:03:05.676Z"
   }
 ]
