@@ -3473,5 +3473,14 @@
     "myRating": 7,
     "id": "4aa03607-cd77-46b0-af72-719079c9ff49",
     "updatedAt": "2026-11-01T13:41:53.182Z"
+  },
+  {
+    "readDate": "2026-11-10",
+    "title": "The cobra",
+    "author": "Fredrik forsyth",
+    "myReview": null,
+    "myRating": 7,
+    "id": "573e632a-3fff-4f10-8ed3-e610f74e8234",
+    "updatedAt": "2026-11-10T21:02:20.733Z"
   }
 ]
