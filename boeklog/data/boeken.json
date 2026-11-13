@@ -3498,5 +3498,20 @@
     "id": "6d07a8ab-9941-4224-a430-e649bec00977",
     "updatedAt": "2026-11-10T21:03:11.885Z",
     "deletedAt": "2026-11-10T21:03:11.885Z"
+  },
+  {
+    "readDate": "2026-11-13",
+    "title": "AGI chronicles",
+    "author": "Kevin Roose",
+    "openLibraryKey": "/works/OL46198592W",
+    "publishYear": "2026",
+    "coverURL": "https://covers.openlibrary.org/b/id/15274512-M.jpg",
+    "description": null,
+    "subjects": null,
+    "numberOfPages": 448,
+    "myReview": null,
+    "myRating": 8,
+    "id": "3cb870d9-8311-45f0-8f51-4121c4005c36",
+    "updatedAt": "2026-11-13T15:58:25.736Z"
   }
 ]
