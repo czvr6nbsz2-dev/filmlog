@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-11-16",
+    "title": "Fatherland",
+    "imdbID": "tt37304295",
+    "year": "2026",
+    "directors": "Pawel Pawlikowski",
+    "actors": "Sandra Hüller, Hanns Zischler, August Diehl",
+    "plot": "At the height of the Cold War, Fatherland centers on the relationship between the writer Thomas Mann and his daughter Erika—actress, writer and rally driver—as they embark on a road trip in a black Buick cruiser across a Germany i...",
+    "imdbRating": "7.3",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BY2M5ZmVkMWMtOTNjZS00MjM3LTg3ODYtYjJmMDJjMjU0ODU5XkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+    "tmdbId": 1437696,
+    "tmdbRating": "7.2",
+    "genres": "Drama, Historisch",
+    "runtime": "82",
+    "myReview": null,
+    "myRating": 8,
+    "id": "2ed4cef7-063c-4798-9ce7-3cee3bb43487",
+    "updatedAt": "2026-11-16T21:00:08.968Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-11-07",
     "title": "Everybody Digs Bill Evans",
     "imdbID": "tt34347792",
