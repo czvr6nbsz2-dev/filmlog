@@ -3513,5 +3513,20 @@
     "myRating": 8,
     "id": "3cb870d9-8311-45f0-8f51-4121c4005c36",
     "updatedAt": "2026-11-13T15:58:25.736Z"
+  },
+  {
+    "readDate": "2026-11-17",
+    "title": "De dood van ivan iljitsj",
+    "author": null,
+    "openLibraryKey": "/works/OL34789698W",
+    "publishYear": null,
+    "coverURL": "https://covers.openlibrary.org/b/id/13539832-M.jpg",
+    "description": null,
+    "subjects": null,
+    "numberOfPages": null,
+    "myReview": null,
+    "myRating": 7,
+    "id": "57be116a-e186-4f0d-9ea4-a6fc3048915d",
+    "updatedAt": "2026-11-17T20:43:58.326Z"
   }
 ]
