@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-11-19",
+    "title": "Queen at Sea",
+    "imdbID": "tt27541205",
+    "year": "2026",
+    "directors": "Lance Hammer",
+    "actors": "Noah Hunt Basden, Juliette Binoche, Anna Calder-Marshall",
+    "plot": "As dementia erodes a woman's ability to communicate her inner life, her husband and daughter struggle to act in her best interest, navigating love and the fragile boundaries between care, protection, and autonomy.",
+    "imdbRating": "7.9",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BNDc3YjY5YWMtOWU3OC00N2Y1LTg2NWYtN2YzNjg5ZGFmMTkxXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1021848,
+    "tmdbRating": "7.3",
+    "genres": "Drama",
+    "runtime": "121",
+    "myReview": null,
+    "myRating": 9,
+    "id": "3c18f829-0eb0-4538-bdde-399ba294fa2b",
+    "updatedAt": "2026-11-19T19:36:51.711Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-11-16",
     "title": "Fatherland",
     "imdbID": "tt37304295",
