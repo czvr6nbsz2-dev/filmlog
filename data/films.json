@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-11-21",
+    "title": "The Only Living Pickpocket in New York",
+    "imdbID": "tt36482679",
+    "year": "2026",
+    "directors": "Noah Segan",
+    "actors": "Karina Arroyave, Tommy Bayiokos, Steve Buscemi",
+    "plot": "When a theft goes awry, a veteran pickpocket is sent on a mission through New York to reclaim it.",
+    "imdbRating": null,
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BZGM4MWFmNjMtZTFkZC00ZmQ5LWFkM2MtNjgxNTE2NTE0YWMxXkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1458099,
+    "tmdbRating": "7.5",
+    "genres": "Misdaad, Drama, Thriller",
+    "runtime": "88",
+    "myReview": null,
+    "myRating": 8,
+    "id": "85b44069-839b-4752-b2e9-daa2a9bffead",
+    "updatedAt": "2026-11-21T21:18:12.253Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-11-19",
     "title": "Queen at Sea",
     "imdbID": "tt27541205",
