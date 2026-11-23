@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-11-23",
+    "title": "Fjord",
+    "imdbID": "tt35410859",
+    "year": "2026",
+    "directors": "Cristian Mungiu",
+    "actors": "Sebastian Stan, Renate Reinsve, Lisa Carlehed",
+    "plot": "An immigrant Romanian family living in Norway is subject to an investigation and faces the scrutiny of the local judicial system.",
+    "imdbRating": "7.6",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BOGQwZTQ0YzgtZjk5Mi00NTg1LTg0MmMtZmNjNGUwYjhjNWJhXkEyXkFqcGc@._V1_QL75_UX380_CR0,0,380,562_.jpg",
+    "tmdbId": 1401459,
+    "tmdbRating": "7.2",
+    "genres": "Drama",
+    "runtime": "146",
+    "myReview": null,
+    "myRating": 7,
+    "id": "3e5cd54d-f5fd-4e66-9759-92b77d4ff262",
+    "updatedAt": "2026-11-23T21:11:35.065Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-11-21",
     "title": "The Only Living Pickpocket in New York",
     "imdbID": "tt36482679",
