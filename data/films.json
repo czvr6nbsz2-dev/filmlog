@@ -1,6 +1,26 @@
 [
   {
     "location": "bioscoop",
+    "watchDate": "2026-11-25",
+    "title": "Time and Water",
+    "imdbID": "tt39163015",
+    "year": "2026",
+    "directors": "Sara Dosa",
+    "actors": "Andri Snær Magnason",
+    "plot": "An Icelandic writer preserves vanishing glaciers, departed grandparents, family memories, and flowing time in his personal archives, transforming loss into a time capsule.",
+    "imdbRating": "8.2",
+    "posterURL": "https://m.media-amazon.com/images/M/MV5BZTkxNjFkOTMtMDZkMS00YWMxLWFkY2YtN2Y2ZWY0OTVlYjU3XkEyXkFqcGc@._V1_SX300.jpg",
+    "tmdbId": 1596278,
+    "tmdbRating": "6.3",
+    "genres": "Documentaire",
+    "runtime": "90",
+    "myReview": null,
+    "myRating": 7,
+    "id": "95bf4508-b5c5-449c-a3b8-e5a143e57022",
+    "updatedAt": "2026-11-25T21:26:40.593Z"
+  },
+  {
+    "location": "bioscoop",
     "watchDate": "2026-11-23",
     "title": "Fjord",
     "imdbID": "tt35410859",
